@@ -20,9 +20,40 @@ setInterval(changeSlide, 4500);
 // Mapa de Colombia
 const map = L.map("map").setView([4.5709, -74.2973], 6);
 
-L.marker([4.7110, -74.0721])
+const iconoSede = L.divIcon({
+  className: "",
+  html: `
+    <div style="
+      position: relative;
+      width: 18px;
+      height: 18px;
+      background: white;
+      border-radius: 50%;
+      border: 3px solid #C62828; /* borde rojo corporativo */
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    ">
+      <div style="
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 40px;
+        height: 40px;
+        background: rgba(198, 40, 40, 0.3);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        animation: pulse 1.5s infinite;
+      "></div>
+    </div>
+  `,
+  iconSize: [20, 20]
+});
+
+L.marker([8.74798, -75.88143], { icon: iconoSede })
   .addTo(map)
-  .bindPopup("Bogotá")
+  .bindPopup(`
+    <strong>Montería</strong><br>
+    Sede de la empresa
+  `)
   .openPopup();
 
 fetch("/static/colombia.geojson")
@@ -91,43 +122,80 @@ fetch("/static/colombia.geojson")
 
 map.setMaxBounds(colombiaBounds);
 
+
 // Zonas de ejemplo
 const zonasTrabajo = [
   {
-    ciudad: "Bogotá",
-    coords: [4.7110, -74.0721],
-    descripcion: "Proyectos residenciales y comerciales."
+    ciudad: "La Unión (Sucre)",
+    coords: [8.8606, -75.2833],
+    descripcion: "Proyecto en el municipio de La Unión, Sucre.",
+    scroll: false
   },
   {
-    ciudad: "Medellín",
-    coords: [6.2442, -75.5812],
-    descripcion: "Obras de infraestructura urbana."
+    ciudad: "Abriaquí (Antioquia)",
+    coords: [6.6278, -76.0647],
+    descripcion: "Proyecto en Abriaquí, Antioquia.",
+    scroll: false
   },
   {
-    ciudad: "Cali",
-    coords: [3.4516, -76.5320],
-    descripcion: "Adecuaciones civiles y consultoría."
+    ciudad: "Montelíbano (Córdoba)",
+    coords: [7.9792, -75.4200],
+    descripcion: "Proyecto en Montelíbano, Córdoba.",
+    scroll: true
   },
   {
-    ciudad: "Barranquilla",
-    coords: [10.9685, -74.7813],
-    descripcion: "Proyectos de construcción institucional."
+    ciudad: "Majagual (Sucre)",
+    coords: [8.5361, -74.6314],
+    descripcion: "Proyecto en Majagual, Sucre.",
+    scroll: true
   },
   {
-    ciudad: "Bucaramanga",
-    coords: [7.1193, -73.1227],
-    descripcion: "Diseño estructural e interventoría."
+    ciudad: "Moñitos (Córdoba)",
+    coords: [9.2456, -76.1361],
+    descripcion: "Proyecto en Moñitos, Córdoba.",
+    scroll: true
   }
 ];
 
 zonasTrabajo.forEach(zona => {
-  L.marker(zona.coords)
-    .addTo(map)
-    .bindPopup(`
+
+  const marker = L.marker(zona.coords).addTo(map);
+
+  if (zona.scroll) {
+    marker.bindPopup(`
+      <strong>${zona.ciudad}</strong><br>
+      ${zona.descripcion}<br><br>
+      <button class="boton-mapa" onclick="irAProyecto('${zona.ciudad}')">
+        Ver proyecto
+      </button>
+    `);
+
+    marker.on("click", function () {
+      irAProyecto(zona.ciudad);
+    });
+
+  } else {
+    marker.bindPopup(`
       <strong>${zona.ciudad}</strong><br>
       ${zona.descripcion}
     `);
+  }
+
 });
+
+function irAProyecto(ciudad) {
+  const id = ciudad
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // quita tildes
+    .replace(/\s+/g, "");
+
+  const elemento = document.getElementById(id);
+
+  if (elemento) {
+    elemento.scrollIntoView({ behavior: "smooth" });
+  }
+}
 
 // Formulario provisional
 const form = document.querySelector(".contact-form");
