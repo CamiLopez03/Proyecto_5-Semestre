@@ -221,4 +221,42 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  
+
 });
+
+let servicioActual = 0;
+
+function mostrarSlideServicio(index) {
+  const slides = document.querySelectorAll(".servicio-slide");
+  const dots = document.querySelectorAll(".servicio-dots .dot");
+
+  if (!slides.length) return;
+
+  slides.forEach(slide => slide.classList.remove("active"));
+  dots.forEach(dot => dot.classList.remove("active"));
+
+  slides[index].classList.add("active");
+  dots[index].classList.add("active");
+}
+
+function cambiarServicio(direccion) {
+  const slides = document.querySelectorAll(".servicio-slide");
+
+  servicioActual += direccion;
+
+  if (servicioActual >= slides.length) {
+    servicioActual = 0;
+  }
+
+  if (servicioActual < 0) {
+    servicioActual = slides.length - 1;
+  }
+
+  mostrarSlideServicio(servicioActual);
+}
+
+function irServicio(index) {
+  servicioActual = index;
+  mostrarSlideServicio(servicioActual);
+}
