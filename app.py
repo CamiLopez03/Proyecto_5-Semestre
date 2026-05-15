@@ -699,17 +699,140 @@ def constructora_admin():
         return redirect(url_for('login'))
     return render_template('constructora_admin.html')
 
-@app.route('/ventas_admin')
+
+@app.route('/ventas_admin', methods=['GET', 'POST'])
 def ventas_admin():
     if 'usuario' not in session:
         return redirect(url_for('login'))
-
+    conexion = mysql.connection
+    cur = conexion.cursor()
     cur = mysql.connection.cursor()
-
     cur.execute("SELECT COALESCE(SUM(valor_venta), 0) AS total FROM ventas")
     total_vendido = cur.fetchone()['total']
 
     cur.execute("SELECT COUNT(*) AS total FROM ventas WHERE MONTH(fecha) = MONTH(CURDATE()) AND YEAR(fecha) = YEAR(CURDATE())")
+
+        inmueble_id = request.form['inmueble_id']
+        cliente_id = request.form['cliente_id']
+
+        valor_venta = float(request.form['valor_venta'])
+        anticipo = float(request.form['anticipo'])
+
+        metodo_pago = ", ".join(request.form.getlist('metodo_pago'))
+
+        observacion = request.form['observacion']
+        saldo = valor_venta - anticipo
+
+        if saldo <= 0:
+            estado_pago = 'Pagado'
+        elif anticipo > 0:
+            estado_pago = 'Pendiente'
+        else:
+            estado_pago = 'Sin anticipo'
+
+        cur.execute("""
+            INSERT INTO ventas (
+                inmueble_id,
+                cliente_id,
+                valor_venta,
+                metodo_pago,
+                anticipo,
+                saldo,
+                estado_pago,
+                observacion
+            )
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
+        """, (
+            inmueble_id,
+            cliente_id,
+            valor_venta,
+            metodo_pago,
+            anticipo,
+            saldo,
+            estado_pago,
+            observacion
+        ))
+
+        cur.execute("""
+            UPDATE inmuebles
+            SET estado = 'Vendido'
+            WHERE id = %s
+        """, (inmueble_id,))
+
+        conexion.commit()
+
+        flash('Venta registrada correctamente.', 'success')
+
+        return redirect(url_for('ventas_admin'))
+
+    cur.execute("""
+        SELECT *
+        FROM inmuebles
+        WHERE estado = 'Disponible'
+        ORDER BY id DESC
+    """)
+
+    inmuebles_disponibles = cur.fetchall()
+    cur.execute("""
+        SELECT *
+        FROM clientes
+        ORDER BY nombre ASC
+    """)
+
+    clientes = cur.fetchall()
+
+    cur.execute("""
+        SELECT 
+            v.id,
+            v.valor_venta,
+            v.fecha,
+            v.observacion,
+            v.metodo_pago,
+            v.anticipo,
+            v.saldo,
+            v.estado_pago,
+
+            i.titulo AS inmueble,
+            i.ubicacion,
+
+            c.nombre AS cliente,
+            c.documento
+
+        FROM ventas v
+
+        INNER JOIN inmuebles i 
+            ON v.inmueble_id = i.id
+
+        INNER JOIN clientes c 
+            ON v.cliente_id = c.id
+
+        ORDER BY v.fecha DESC
+    """)
+
+    ventas = cur.fetchall()
+
+    cur.execute("""
+        SELECT COALESCE(SUM(valor_venta), 0) AS total
+        FROM ventas
+    """)
+
+    total_vendido = cur.fetchone()['total']
+
+    cur.execute("""
+        SELECT COUNT(*) AS total
+        FROM ventas
+    """)
+
+    total_ventas = cur.fetchone()['total']
+
+    cur.execute("""
+        SELECT COUNT(*) AS total
+        FROM ventas
+        WHERE MONTH(fecha) = MONTH(CURDATE())
+        AND YEAR(fecha) = YEAR(CURDATE())
+    """)
+
+
     ventas_mes = cur.fetchone()['total']
 
     cur.execute("SELECT COUNT(*) AS total FROM ventas")
@@ -743,6 +866,72 @@ def ventas_admin():
         ultimas_ventas=ultimas_ventas,
         ventas_grafico=ventas_grafico
     )
+
+@app.route('/clientes_admin', methods=['GET', 'POST'])
+def clientes_admin():
+    if 'usuario' not in session:
+        return redirect(url_for('login'))
+
+    cur = mysql.connection.cursor()
+
+    if request.method == 'POST':
+        nombre = request.form['nombre'].strip()
+        documento = request.form['documento'].strip()
+        telefono = request.form['telefono'].strip()
+        email = request.form['email'].strip()
+        direccion = request.form['direccion'].strip()
+        tipo_interes = request.form['tipo_interes']
+        observacion = request.form['observacion'].strip()
+
+        if not nombre or not telefono:
+            flash('El nombre y el teléfono son obligatorios.', 'danger')
+            return redirect(url_for('clientes_admin'))
+
+        cur.execute("""
+            INSERT INTO clientes (nombre, documento, telefono, email, direccion, tipo_interes, observacion)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """, (nombre, documento, telefono, email, direccion, tipo_interes, observacion))
+
+        mysql.connection.commit()
+        flash('Cliente registrado correctamente.', 'success')
+        return redirect(url_for('clientes_admin'))
+
+    cur.execute("SELECT * FROM clientes ORDER BY id DESC")
+    clientes = cur.fetchall()
+
+    cur.execute("SELECT COUNT(*) AS total FROM clientes")
+    total_clientes = cur.fetchone()['total']
+
+    cur.execute("SELECT COUNT(*) AS total FROM clientes WHERE tipo_interes = 'Compra'")
+    clientes_compra = cur.fetchone()['total']
+
+    cur.execute("SELECT COUNT(*) AS total FROM clientes WHERE tipo_interes = 'Arriendo'")
+    clientes_arriendo = cur.fetchone()['total']
+
+    cur.close()
+
+    return render_template(
+        'clientes_admin.html',
+        clientes=clientes,
+        total_clientes=total_clientes,
+        clientes_compra=clientes_compra,
+        clientes_arriendo=clientes_arriendo
+    )
+
+
+@app.route('/eliminar_cliente/<int:id>')
+def eliminar_cliente(id):
+    if 'usuario' not in session:
+        return redirect(url_for('login'))
+
+    cur = mysql.connection.cursor()
+    cur.execute("DELETE FROM clientes WHERE id = %s", (id,))
+    mysql.connection.commit()
+    cur.close()
+
+    flash('Cliente eliminado correctamente.', 'success')
+    return redirect(url_for('clientes_admin'))
+
 
 @app.route('/compras_admin')
 def compras_admin():
