@@ -1,458 +1,38 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar Inmueble</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="shortcut icon" href="../static/imagenes/Logo Civi.png">
+{% extends "base_admin.html" %}
+
+{% block title %}Registrar Inmueble - CiviWeb Manager{% endblock %}
+
+{% block admin_actions %}
+<a href="{{ url_for('inmobiliaria_admin') }}">
+    <i class="fa fa-arrow-left"></i> Inmobiliaria
+</a>
+
+<a href="{{ url_for('inmuebles') }}">
+    <i class="fa fa-building"></i> Inmuebles
+</a>
+{% endblock %}
+
+{% block breadcrumb %}
+<div class="breadcrumb">
+    <a href="{{ url_for('dashboard') }}">Inicio</a>
+    <span>/</span>
+    <a href="{{ url_for('inmobiliaria_admin') }}">Inmobiliaria</a>
+    <span>/</span>
+    <a href="{{ url_for('inmuebles') }}">Inmuebles</a>
+    <span>/</span>
+    <strong>Registrar inmueble</strong>
+</div>
+{% endblock %}
+
+{% block content %}
+<section class="page-title">
+    <h1>Registrar Inmueble</h1>
+    <p>Agrega casas, apartamentos o lotes al módulo inmobiliario.</p>
+</section>
+
+<section class="section-box">
+    <form method="POST" enctype="multipart/form-data" class="form-admin">
 
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #1a1a1a, #981313);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .form-container {
-            max-width: 900px;
-            width: 100%;
-            margin: 30px auto;
-
-            background: white;
-            border-radius: 26px;
-            overflow: hidden;
-            box-shadow: 0 18px 45px rgba(0,0,0,0.35);
-        }
-
-        .form-header {
-            background: #111;
-            color: white;
-            padding: 28px;
-            text-align: center;
-        }
-
-        .form-header h1 {
-            font-size: 34px;
-            margin-bottom: 8px;
-        }
-
-        .form-header p {
-            color: #ddd;
-        }
-
-        form {
-            padding: 35px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 22px;
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .input-group.full {
-            grid-column: span 2;
-        }
-
-        label {
-            font-weight: bold;
-            margin-bottom: 8px;
-            color: #222;
-        }
-
-        input, select, textarea {
-            padding: 14px 16px;
-            border-radius: 12px;
-            border: 1px solid #ccc;
-            outline: none;
-            font-size: 15px;
-            font-family: inherit;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            border-color: #981313;
-            box-shadow: 0 0 0 3px rgba(152,19,19,0.12);
-        }
-
-        textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .buttons {
-            grid-column: span 2;
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
-        }
-
-        button, .btn-back {
-            border: none;
-            padding: 14px 24px;
-            border-radius: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            font-size: 15px;
-        }
-
-        button {
-            background: #981313;
-            color: white;
-        }
-
-        .btn-back {
-            background: #eee;
-            color: #222;
-        }
-
-        @media(max-width: 800px) {
-            form {
-                grid-template-columns: 1fr;
-            }
-
-            .input-group.full,
-            .buttons {
-                grid-column: span 1;
-            }
-        }
-        /* =========================================
-        INICIO RESPONSIVE REGISTRAR INMUEBLE
-        PEGAR AL FINAL
-        ========================================= */
-
-        /* Mejor control general */
-        body {
-            padding: 20px;
-        }
-
-        /* Mejor visual para archivos */
-        input[type="file"] {
-            padding: 12px;
-            background: #fafafa;
-            cursor: pointer;
-        }
-
-        small {
-            margin-top: 6px;
-            color: #666;
-            font-size: 13px;
-            line-height: 1.5;
-        }
-
-        /* Laptop */
-        @media (max-width: 1100px) {
-
-            .form-container {
-                max-width: 95%;
-            }
-
-            .form-header h1 {
-                font-size: 30px;
-            }
-
-            form {
-                padding: 30px;
-            }
-        }
-
-        /* Tablet */
-        @media(max-width: 800px) {
-
-            body {
-                padding: 15px;
-            }
-
-            .form-container {
-                border-radius: 20px;
-            }
-
-            .form-header {
-                padding: 24px;
-            }
-
-            .form-header h1 {
-                font-size: 28px;
-            }
-
-            .form-header p {
-                font-size: 14px;
-            }
-
-            form {
-                grid-template-columns: 1fr;
-                padding: 24px;
-                gap: 18px;
-            }
-
-            .input-group.full,
-            .buttons {
-                grid-column: span 1;
-            }
-
-            .buttons {
-                flex-direction: column;
-            }
-
-            button,
-            .btn-back {
-                width: 100%;
-                text-align: center;
-            }
-        }
-
-        /* Celulares */
-        @media(max-width: 600px) {
-
-            body {
-                padding: 10px;
-            }
-
-            .form-container {
-                border-radius: 18px;
-            }
-
-            .form-header {
-                padding: 20px 15px;
-            }
-
-            .form-header h1 {
-                font-size: 24px;
-            }
-
-            .form-header p {
-                font-size: 13px;
-                line-height: 1.6;
-            }
-
-            form {
-                padding: 18px;
-                gap: 16px;
-            }
-
-            label {
-                font-size: 14px;
-            }
-
-            input,
-            select,
-            textarea {
-                padding: 13px;
-                font-size: 14px;
-            }
-
-            textarea {
-                min-height: 100px;
-            }
-
-            input[type="file"] {
-                padding: 10px;
-                font-size: 13px;
-            }
-
-            small {
-                font-size: 12px;
-            }
-
-            button,
-            .btn-back {
-                padding: 13px;
-                font-size: 14px;
-            }
-        }
-
-        /* Pantallas pequeñas */
-        @media(max-width: 400px) {
-
-            .form-header h1 {
-                font-size: 21px;
-            }
-
-            .form-header p {
-                font-size: 12px;
-            }
-
-            input,
-            select,
-            textarea {
-                font-size: 13px;
-            }
-
-            small {
-                font-size: 11px;
-            }
-        }
-
-        /* =========================================
-        FIN RESPONSIVE REGISTRAR INMUEBLE
-        ========================================= */
-
-        /* =========================================
-        CORRECCION VISUAL REAL REGISTRAR INMUEBLE
-        PEGAR AL FINAL
-        ========================================= */
-
-        /* Mejor ancho real */
-        .form-container {
-            width: 100%;
-        }
-
-        /* Inputs archivo premium */
-        input[type="file"] {
-            width: 100%;
-            max-width: 100%;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            border-radius: 12px;
-        }
-
-        /* Botón archivo */
-        input[type="file"]::-webkit-file-upload-button {
-            background: #981313;
-            color: white;
-            border: none;
-            padding: 10px 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-right: 10px;
-        }
-
-        /* Precio mejor */
-        input[type="number"]::-webkit-outer-spin-button,
-        input[type="number"]::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
-        /* TABLET */
-        @media(max-width: 800px) {
-
-            body {
-                padding: 10px !important;
-            }
-
-            .form-container {
-                max-width: 100% !important;
-                width: 100% !important;
-            }
-
-            form {
-                padding: 18px !important;
-            }
-        }
-
-        /* MOVIL REAL */
-        @media(max-width: 600px) {
-
-            body {
-                padding: 14px !important;
-            }
-
-            .form-container {
-                border-radius: 12px !important;
-            }
-
-            .form-header {
-                padding: 16px 12px !important;
-            }
-
-            .form-header h1 {
-                font-size: 22px !important;
-            }
-
-            .form-header p {
-                font-size: 12px !important;
-            }
-
-            form {
-                padding: 12px !important;
-                gap: 14px !important;
-            }
-
-            label {
-                font-size: 13px !important;
-            }
-
-            input,
-            select,
-            textarea {
-                padding: 12px !important;
-                font-size: 16px !important;
-                border-radius: 10px !important;
-            }
-
-            textarea {
-                min-height: 90px !important;
-            }
-
-            input[type="file"] {
-                padding: 8px !important;
-                font-size: 12px !important;
-            }
-
-            input[type="file"]::-webkit-file-upload-button {
-                padding: 7px 10px;
-                font-size: 12px;
-            }
-
-            small {
-                font-size: 11px !important;
-            }
-
-            .buttons {
-                gap: 10px !important;
-            }
-
-            button,
-            .btn-back {
-                padding: 12px !important;
-                font-size: 14px !important;
-                border-radius: 12px !important;
-            }
-        }
-
-        /* iPhone SE / pequeños */
-        @media(max-width: 400px) {
-
-            .form-header h1 {
-                font-size: 20px !important;
-            }
-
-            input,
-            select,
-            textarea {
-                font-size: 15px !important;
-            }
-
-            button,
-            .btn-back {
-                font-size: 13px !important;
-            }
-        }
-
-        /* =========================================
-        FIN CORRECCION VISUAL REAL REGISTRAR INMUEBLE
-        ========================================= */
-    </style>
-</head>
-
-<body>
-
-<div class="form-container">
-    <div class="form-header">
-        <h1>Registrar Inmueble</h1>
-        <p>Agrega casas, apartamentos o lotes al módulo inmobiliario.</p>
-    </div>
-
-    <form 
-    method="POST" enctype="multipart/form-data">
         <div class="input-group">
             <label>Título</label>
             <input type="text" name="titulo" placeholder="Ej: Apartamento moderno" required>
@@ -463,17 +43,17 @@
             <select name="tipo" required>
                 <option value="Casa">Casa</option>
                 <option value="Apartamento">Apartamento</option>
-
+                <option value="Lote">Lote</option>
             </select>
         </div>
 
         <div class="input-group">
-    <label>Tipo de negocio</label>
-    <select name="tipo_negocio" required>
-        <option value="Venta">Venta</option>
-        <option value="Arriendo">Arriendo</option>
-    </select>
-</div>
+            <label>Tipo de negocio</label>
+            <select name="tipo_negocio" required>
+                <option value="Venta">Venta</option>
+                <option value="Arriendo">Arriendo</option>
+            </select>
+        </div>
 
         <div class="input-group">
             <label>Ubicación</label>
@@ -487,7 +67,7 @@
 
         <div class="input-group">
             <label>Estado</label>
-            <select name="estado">
+            <select name="estado" required>
                 <option value="Disponible">Disponible</option>
                 <option value="Reservado">Reservado</option>
                 <option value="Vendido">Vendido</option>
@@ -495,31 +75,32 @@
         </div>
 
         <div class="input-group">
-            <label>Imagen</label>
-           <input type="file" name="imagen" accept="image/*" required>
+            <label>Imagen principal</label>
+            <input type="file" name="imagen" accept="image/*" required>
         </div>
+
         <div class="input-group full">
-    <label>Galería del inmueble</label>
-    <input type="file" name="galeria" accept="image/*,video/mp4" multiple>
-    <small>Puedes subir varias fotos y un video MP4 corto del inmueble.</small>
-</div>
+            <label>Galería del inmueble</label>
+            <input type="file" name="galeria" accept="image/*,video/mp4" multiple>
+            <small>Puedes subir varias fotos y un video MP4 corto del inmueble.</small>
+        </div>
 
         <div class="input-group full">
             <label>Descripción</label>
             <textarea name="descripcion" placeholder="Describe las características del inmueble"></textarea>
         </div>
 
-        <div class="buttons">
-            <a href="{{ url_for('inmobiliaria_admin') }}" class="btn-back">
+        <div class="form-actions">
+            <a href="{{ url_for('inmuebles') }}" class="btn-back">
                 <i class="fa fa-arrow-left"></i> Volver
             </a>
 
-            <button type="submit">
+            <button type="submit" class="btn-save">
                 <i class="fa fa-save"></i> Guardar inmueble
             </button>
         </div>
-    </form>
-</div>
 
-</body>
-</html>
+    </form>
+</section>
+
+{% endblock %}

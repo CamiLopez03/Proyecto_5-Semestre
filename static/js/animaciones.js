@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .openPopup();
 
   // Cargar mapa Colombia
-  fetch("/static/colombia.geojson")
+  fetch("/static/js/colombia.geojson")
     .then(res => res.json())
     .then(data => {
 
