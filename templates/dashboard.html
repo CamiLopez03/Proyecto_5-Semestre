@@ -1,833 +1,15 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Administrativo - CiviWeb Manager</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="shortcut icon" href="../static/imagenes/Logo Civi.png">
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
 
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #f4f5f7;
-            color: #222;
-        }
+{% extends "base_admin.html" %}
 
-        .admin-header {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: #111;
-            color: white;
-            padding: 22px 55px;
-            min-height: 115px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
-        }
+{% block title %}Panel Administrativo - CiviWeb Manager{% endblock %}
 
-        .admin-logo {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            font-weight: 800;
-            font-size: 19px;
-        }
-
-        .admin-logo img {
-            width: 180px;
-            height: auto;
-            object-fit: contain;
-        }
-
-        
-
-        .admin-nav {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-        }
-
-        .admin-nav a,
-        .dropbtn {
-            color: white;
-            background: transparent;
-            border: none;
-            text-decoration: none;
-            padding: 15px 22px;
-            border-radius: 30px;
-            font-weight: 700;
-            transition: 0.3s;
-            font-size: 18px;
-            cursor: pointer;
-            font-family: inherit;
-        }
-
-        .admin-nav a:hover,
-        .admin-nav a.active,
-        .dropbtn:hover,
-        .logout-link {
-            background: #981313;
-        }
-
-        .dropdown {
-            position: relative;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            top: 48px;
-            left: 0;
-            min-width: 250px;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.20);
-            padding: 10px;
-            z-index: 3000;
-        }
-
-        .dropdown-content a {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #222;
-            padding: 13px 15px;
-            border-radius: 12px;
-            font-size: 14px;
-            text-decoration: none;
-            font-weight: 700;
-        }
-
-        .dropdown-content a:hover {
-            background: #981313;
-            color: white;
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-
-        .main-content {
-            padding: 45px 60px;
-            max-width: 1650px;
-            margin: auto;
-        }
-
-        .topbar {
-            background: white;
-            border-radius: 22px;
-            padding: 30px 34px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-            margin-bottom: 32px;
-        }
-
-        .topbar h1 {
-            color: #981313;
-            font-size: 32px;
-            margin-bottom: 8px;
-        }
-
-        .topbar p {
-            color: #555;
-            margin-bottom: 8px;
-            font-size: 16px;
-        }
-
-        .role-badge {
-            display: inline-block;
-            background: #981313;
-            color: white;
-            padding: 7px 15px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        .logout-btn {
-            background: #981313;
-            color: white;
-            padding: 13px 26px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-
-        .logout-btn:hover {
-            background: #c11b1b;
-        }
-
-        .module-title {
-            margin: 10px 0 22px;
-        }
-
-        .module-title h2 {
-            color: #981313;
-            font-size: 27px;
-            margin-bottom: 6px;
-        }
-
-        .module-title p {
-            color: #666;
-        }
-
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            margin-bottom: 36px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 24px;
-            padding: 28px;
-            min-height: 240px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            transition: 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 18px 40px rgba(152,19,19,0.14);
-        }
-
-        .card i {
-            font-size: 42px;
-            color: #981313;
-            margin-bottom: 22px;
-        }
-
-        .card h3 {
-            font-size: 20px;
-            margin-bottom: 14px;
-            color: #111;
-        }
-
-        .card p {
-            color: #666;
-            line-height: 1.7;
-            font-size: 15px;
-        }
-
-        .panel-grid {
-            display: grid;
-            grid-template-columns: 1.2fr 1fr;
-            gap: 26px;
-        }
-
-        .panel {
-            background: white;
-            border-radius: 24px;
-            padding: 32px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        }
-
-        .panel h2 {
-            color: #981313;
-            margin-bottom: 22px;
-            font-size: 25px;
-        }
-
-        .info-list p {
-            padding: 14px 0;
-            border-bottom: 1px solid #eee;
-            color: #444;
-            line-height: 1.6;
-        }
-
-        .quick-actions {
-            display: grid;
-            gap: 14px;
-        }
-
-        .quick-actions a {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            background: #f5f5f5;
-            padding: 18px 20px;
-            border-radius: 16px;
-            text-decoration: none;
-            color: #222;
-            font-weight: 700;
-            transition: 0.3s ease;
-            font-size: 16px;
-        }
-
-        .quick-actions a:hover {
-            background: #981313;
-            color: white;
-            transform: translateX(5px);
-        }
-
-        .info-list p {
-            padding: 18px 0;
-            border-bottom: 1px solid #ececec;
-            color: #444;
-            font-size: 16px;
-            line-height: 1.5;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 28px;
-            margin-bottom: 42px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, #981313, #c11b1b);
-            min-height: 185px;
-            color: white;
-            overflow: hidden;
-            border-radius: 24px;
-            padding: 32px;
-            box-shadow: 0 10px 30px rgba(152,19,19,0.25);
-        }
-
-        .stat-card h3 {
-            font-size: 18px;
-            margin-bottom: 22px;
-            opacity: 0.9;
-        }
-
-        .stat-card p {
-            font-size: 58px;
-            font-weight: 900;
-        }
-
-                .stat-card .stat-icon {
-            position: absolute;
-            right: 28px;
-            bottom: 24px;
-            width: 95px;
-            height: 95px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.12);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .stat-card .stat-icon i {
-            font-size: 48px;
-            color: rgba(255,255,255,0.45);
-        }
-
-                .card-link {
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-
-        .card-link:hover {
-            cursor: pointer;
-        }
-
-        .dropdown-content {
-            position: absolute;
-            top: 75px;
-            background: white;
-            min-width: 330px;
-            border-radius: 24px;
-            padding: 16px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.18);
-            display: none;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .dropdown-content a {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-
-            padding: 18px 20px;
-            border-radius: 18px;
-
-            text-decoration: none;
-            color: #222;
-
-            font-size: 19px;
-            font-weight: 700;
-
-            transition: 0.3s;
-        }
-
-        .dropdown-content a i {
-            font-size: 20px;
-            width: 24px;
-        }
-
-        .dropdown-content a:hover {
-            background: #981313;
-            color: white;
-            transform: translateX(4px);
-        }
-        .dropdown {
-            position: relative;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            top: 65px;
-            left: 0;
-            min-width: 330px;
-            background: white;
-            border-radius: 24px;
-            padding: 16px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.18);
-            flex-direction: column;
-            gap: 10px;
-            z-index: 3000;
-        }
-
-        .dropdown-content.show {
-            display: flex;
-        }
-
-
-        @media (max-width: 1050px) {
-            .admin-header {
-                flex-direction: column;
-                gap: 16px;
-            }
-
-            .admin-nav {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-
-            .cards,
-            .panel-grid,
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .main-content {
-                padding: 25px;
-            }
-
-            .topbar {
-                flex-direction: column;
-                text-align: center;
-                gap: 18px;
-            }
-        }
-        /* =========================================
-        INICIO RESPONSIVE DASHBOARD ADMIN
-        PEGAR AL FINAL
-        ========================================= */
-
-        /* Tablets grandes */
-        @media (max-width: 1300px) {
-
-            .admin-header {
-                padding: 18px 25px;
-            }
-
-            .main-content {
-                padding: 30px 25px;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .cards {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .panel-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .dropdown-content {
-                min-width: 280px;
-            }
-        }
-
-        /* Tablet */
-        @media (max-width: 1050px) {
-
-            .admin-header {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 18px;
-                min-height: auto;
-                padding: 18px;
-            }
-
-            .admin-logo {
-                justify-content: center;
-            }
-
-            .admin-logo img {
-                width: 150px;
-            }
-
-            /* Menú adaptable */
-            .admin-nav {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 10px;
-                width: 100%;
-            }
-
-            .admin-nav a,
-            .dropbtn {
-                padding: 12px 16px;
-                font-size: 15px;
-            }
-
-            .dropdown {
-                position: relative;
-            }
-
-            .dropdown-content {
-                position: absolute;
-                top: 55px;
-                left: 50%;
-                transform: translateX(-50%);
-                min-width: 260px;
-                max-width: 90vw;
-            }
-
-            .topbar {
-                flex-direction: column;
-                text-align: center;
-                gap: 18px;
-                padding: 24px;
-            }
-
-            .topbar h1 {
-                font-size: 28px;
-            }
-
-            .stats-grid,
-            .cards {
-                grid-template-columns: 1fr;
-            }
-
-            .stat-card p {
-                font-size: 46px;
-            }
-        }
-
-        /* Celulares */
-        @media (max-width: 768px) {
-
-            body {
-                overflow-x: hidden;
-            }
-
-            .admin-header {
-                padding: 15px 12px;
-            }
-
-            .admin-logo img {
-                width: 130px;
-            }
-
-            .admin-nav {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .admin-nav a,
-            .dropbtn {
-                width: 100%;
-                text-align: center;
-                font-size: 14px;
-                padding: 12px;
-            }
-
-            .dropdown {
-                width: 100%;
-            }
-
-            .dropdown-content {
-                position: static;
-                transform: none;
-                width: 100%;
-                min-width: auto;
-                margin-top: 8px;
-                border-radius: 18px;
-                box-shadow: none;
-                border: 1px solid #eee;
-            }
-
-            .dropdown-content a {
-                font-size: 15px;
-                padding: 14px;
-            }
-
-            .main-content {
-                padding: 18px 12px;
-            }
-
-            .topbar {
-                padding: 20px;
-                border-radius: 18px;
-            }
-
-            .topbar h1 {
-                font-size: 24px;
-            }
-
-            .topbar p {
-                font-size: 14px;
-            }
-
-            .logout-btn {
-                width: 100%;
-                text-align: center;
-            }
-
-            .module-title h2 {
-                font-size: 24px;
-            }
-
-            .card {
-                min-height: auto;
-                padding: 22px;
-                border-radius: 18px;
-            }
-
-            .card i {
-                font-size: 34px;
-            }
-
-            .card h3 {
-                font-size: 18px;
-            }
-
-            .card p {
-                font-size: 14px;
-            }
-
-            .panel {
-                padding: 22px;
-                border-radius: 18px;
-            }
-
-            .panel h2 {
-                font-size: 22px;
-            }
-
-            .quick-actions a {
-                padding: 15px;
-                font-size: 14px;
-            }
-
-            .stat-card {
-                min-height: auto;
-                padding: 24px;
-                border-radius: 18px;
-            }
-
-            .stat-card h3 {
-                font-size: 15px;
-            }
-
-            .stat-card p {
-                font-size: 38px;
-            }
-
-            .stat-card .stat-icon {
-                width: 75px;
-                height: 75px;
-                right: 18px;
-                bottom: 18px;
-            }
-
-            .stat-card .stat-icon i {
-                font-size: 34px;
-            }
-        }
-
-        /* Pantallas pequeñas */
-        @media (max-width: 480px) {
-
-            .topbar h1 {
-                font-size: 22px;
-            }
-
-            .role-badge {
-                font-size: 11px;
-                padding: 6px 12px;
-            }
-
-            .module-title h2 {
-                font-size: 21px;
-            }
-
-            .card,
-            .panel,
-            .stat-card {
-                padding: 18px;
-            }
-
-            .card h3,
-            .panel h2 {
-                font-size: 18px;
-            }
-
-            .stat-card p {
-                font-size: 32px;
-            }
-
-            .dropdown-content a {
-                font-size: 14px;
-            }
-        }
-
-        /* =========================================
-        FIN RESPONSIVE DASHBOARD ADMIN
-        ========================================= */
-
-        /* =========================================
-        CORRECCION REAL DASHBOARD MOVIL
-        PEGAR AL FINAL
-        ========================================= */
-
-        /* Checkbox oculto */
-        #admin-menu-toggle {
-            display: none;
-        }
-
-        /* Botón hamburguesa */
-        .admin-hamburger {
-            display: none;
-            flex-direction: column;
-            gap: 6px;
-            cursor: pointer;
-            margin-left: auto;
-            z-index: 5000;
-        }
-
-        .admin-hamburger span {
-            width: 30px;
-            height: 3px;
-            background: white;
-            border-radius: 4px;
-        }
-
-        /* MOVIL REAL */
-        @media (max-width: 768px) {
-
-            .admin-header {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-                min-height: auto;
-                position: relative;
-            }
-
-            .admin-logo {
-                justify-content: flex-start;
-            }
-
-            /* Mostrar hamburguesa */
-            .admin-hamburger {
-                display: flex;
-            }
-
-            /* Ocultar menú inicialmente */
-            .admin-nav {
-                display: none;
-                position: absolute;
-                top: 100%;
-                right: 0;
-                width: 100%;
-                background: #111;
-                flex-direction: column;
-                padding: 15px;
-                gap: 10px;
-                z-index: 4000;
-                box-shadow: 0 10px 25px rgba(0,0,0,0.35);
-            }
-
-            /* Mostrar menú al activar */
-            #admin-menu-toggle:checked + .admin-hamburger + .admin-nav {
-                display: flex;
-            }
-
-            .admin-nav a,
-            .dropbtn {
-                width: 100%;
-                text-align: center;
-                padding: 14px;
-            }
-
-            .dropdown {
-                width: 100%;
-            }
-
-            .dropdown-content {
-                position: static !important;
-                transform: none !important;
-                width: 100%;
-                min-width: auto;
-                margin-top: 8px;
-                border-radius: 14px;
-                box-shadow: none;
-                border: 1px solid #333;
-            }
-
-            .dropdown-content a {
-                font-size: 14px;
-            }
-        }
-
-        /* =========================================
-        FIN CORRECCION REAL DASHBOARD MOVIL
-        ========================================= */
-        /* Ocultar círculo decorativo en móviles */
-        @media (max-width: 768px) {
-            .stat-card .stat-icon {
-                display: none;
-            }
-        }
-    </style>
-</head>
-
-<body>
-
+{% block header %}
 <header class="admin-header">
     <div class="admin-logo">
-        <img src="{{ url_for('static', filename='imagenes/Civi.png') }}" alt="Logo">
-        
-    </div>
+        <img src="{{ url_for('static', filename='Imagenes/Civi.png') }}" alt="Logo">
+    </div>>
 
-    <!-- INICIO MENU HAMBURGUESA -->
-    <input type="checkbox" id="admin-menu-toggle">
-
-    <label for="admin-menu-toggle" class="admin-hamburger">
-        <span></span>
-        <span></span>
-        <span></span>
-    </label>
-    <!-- FIN MENU HAMBURGUESA -->
-
-    <nav class="admin-nav">
+     <nav class="admin-nav">
 
     <a href="{{ url_for('dashboard') }}" class="active">
         <i class="fa fa-home"></i> Inicio
@@ -895,8 +77,10 @@
 
 </nav>
 </header>
+{% endblock %}
 
-<main class="main-content">
+{% block content %}
+
 
     <div class="topbar">
         <div>
@@ -910,29 +94,37 @@
         </a>
     </div>
 
-    <section class="stats-grid">
+   <section class="stats-grid">
     <div class="stat-card">
         <h3>Proyectos activos</h3>
         <p>{{ proyectos_activos }}</p>
-        
+        <div class="stat-icon">
+            <i class="fa fa-building"></i>
+        </div>
     </div>
 
     <div class="stat-card">
         <h3>Inmuebles disponibles</h3>
         <p>{{ inmuebles_disponibles }}</p>
-        
+        <div class="stat-icon">
+            <i class="fa fa-house-chimney"></i>
+        </div>
     </div>
 
     <div class="stat-card">
         <h3>Ventas registradas</h3>
         <p>{{ ventas_registradas }}</p>
-        
+        <div class="stat-icon">
+            <i class="fa fa-chart-line"></i>
+        </div>
     </div>
 
     <div class="stat-card">
         <h3>Usuarios del sistema</h3>
         <p>{{ usuarios_sistema }}</p>
-       
+        <div class="stat-icon">
+            <i class="fa fa-users"></i>
+        </div>
     </div>
 </section>
 
@@ -941,39 +133,33 @@
         <p>Accede rápidamente a las áreas principales del sistema.</p>
     </div>
 
-    <section class="cards">
+    <section class="dashboard-cards">
 
-    <a href="{{ url_for('constructora_admin') }}" class="card card-link">
+    <a href="{{ url_for('constructora_admin') }}" class="dashboard-card card-link">
         <i class="fa fa-hard-hat"></i>
         <h3>Constructora</h3>
         <p>Control de proyectos, obras, servicios, zonas de trabajo y reportes técnicos.</p>
     </a>
 
-    <a href="{{ url_for('inmobiliaria_admin') }}" class="card card-link">
+    <a href="{{ url_for('inmobiliaria_admin') }}" class="dashboard-card card-link">
         <i class="fa fa-house-chimney"></i>
         <h3>Inmobiliaria</h3>
         <p>Administración de casas, apartamentos, reservas, ventas y disponibilidad.</p>
     </a>
 
-    <a href="{{ url_for('usuarios') }}" class="card card-link">
+    <a href="{{ url_for('usuarios') }}" class="dashboard-card card-link">
         <i class="fa fa-users"></i>
         <h3>Usuarios</h3>
         <p>Gestión de cuentas, roles, permisos y acceso al sistema administrativo.</p>
     </a>
 
-    <a href="{{ url_for('ventas_admin') }}" class="card card-link">
+    <a href="{{ url_for('ventas_admin') }}" class="dashboard-card card-link">
         <i class="fa fa-handshake"></i>
         <h3>Ventas</h3>
         <p>Seguimiento de ventas inmobiliarias, clientes compradores y valores comerciales.</p>
     </a>
 
-    <a href="{{ url_for('compras_admin') }}" class="card card-link">
-        <i class="fa fa-cart-shopping"></i>
-        <h3>Compras</h3>
-        <p>Control de compras, proveedores, costos operativos y recursos del negocio.</p>
-    </a>
-
-    <a href="{{ url_for('reportes_admin') }}" class="card card-link">
+    <a href="{{ url_for('reportes_admin') }}" class="dashboard-card card-link">
         <i class="fa fa-chart-line"></i>
         <h3>Reportes</h3>
         <p>Indicadores generales de gestión, rendimiento comercial y control financiero.</p>
@@ -1046,5 +232,5 @@ window.addEventListener('click', function(e) {
     }
 });
 </script>
-</body>
-</html>
+
+{% endblock %}

@@ -13,21 +13,19 @@
 
 <body>
 
+{% block header %}
 <header class="admin-header">
     <div class="admin-logo">
         <img src="{{ url_for('static', filename='Imagenes/Civi.png') }}" alt="CiviWeb Manager">
     </div>
 
     <div class="admin-actions">
-        {% block admin_actions %}
-        <a href="{{ url_for('dashboard') }}">
-            <i class="fa fa-home"></i> Dashboard
-        </a>
-        {% endblock %}
+        {% block admin_actions %}{% endblock %}
     </div>
 </header>
+{% endblock %}
 
-<main class="container">
+<main class="main-content container">
 
     {% block breadcrumb %}{% endblock %}
 
