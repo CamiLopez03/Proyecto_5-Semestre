@@ -24,7 +24,7 @@ body {
   font-family: 'Segoe UI', sans-serif;
   background: var(--blanco);
   color: var(--negro);
-  padding-top: 110px;
+  padding-top: 100px;
 }
 
 .header {
@@ -172,7 +172,7 @@ body {
 
 
 .section {
-  padding: 90px 25px;
+  padding: 140px 25px 90px;
   max-width: 1200px;
   margin: auto;
 }
@@ -196,9 +196,7 @@ body {
   color: var(--gris-oscuro);
 }
 
-.section {
-  padding: 30px 25px;
-}
+
 
 .cards {
   display: grid;
@@ -1490,6 +1488,7 @@ PEGAR AL FINAL
   }
 }
 
+
 /* =========================================
 FIN RESPONSIVE GLOBAL + MENU HAMBURGUESA
 ========================================= */
@@ -1517,6 +1516,8 @@ INICIO AJUSTES INDEX BOTONES HERO
     height: 300px;
   }
 }
+
+
 /* =========================================
 FIN AJUSTES INDEX BOTONES HERO
 ========================================= */

@@ -80,6 +80,8 @@
 
         <select id="rol" name="rol">
   <option value="usuario" {% if form and form.rol == 'usuario' %}selected{% endif %}>Usuario</option>
+  <option value="vendedor" {% if form and form.rol == 'vendedor' %}selected{% endif %}>Vendedor</option>
+  <option value="supervisor" {% if form and form.rol == 'supervisor' %}selected{% endif %}>Supervisor</option>
   <option value="admin" {% if form and form.rol == 'admin' %}selected{% endif %}>Administrador</option>
 </select>
 

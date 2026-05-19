@@ -1094,12 +1094,108 @@ def inmobiliaria_publica():
         inmuebles_publicos=inmuebles_publicos
     )
 
-@app.route('/reservas_admin')
+@app.route('/reservas_admin', methods=['GET', 'POST'])
 def reservas_admin():
+
     if 'usuario' not in session:
         return redirect(url_for('login'))
 
-    return render_template('reservas_admin.html')
+    cursor = mysql.connection.cursor()
+    if request.method == 'POST':
+
+        inmueble_id = request.form['inmueble_id']
+        cliente_id = request.form['cliente_id']
+        fecha_limite = request.form['fecha_limite']
+        valor_reserva = request.form['valor_reserva']
+        observacion = request.form['observacion']
+
+        cursor.execute("""
+            INSERT INTO reservas
+            (inmueble_id, cliente_id, fecha_limite, valor_reserva, observacion)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (
+            inmueble_id,
+            cliente_id,
+            fecha_limite,
+            valor_reserva,
+            observacion
+        ))
+
+        cursor.execute("""
+            UPDATE inmuebles
+            SET estado = 'Reservado'
+            WHERE id = %s
+        """, (inmueble_id,))
+
+        mysql.connection.commit()
+
+        flash('Reserva registrada correctamente.', 'success')
+
+        return redirect(url_for('reservas_admin'))
+
+    cursor.execute("""
+        SELECT * FROM inmuebles
+        WHERE estado = 'Disponible'
+    """)
+    inmuebles = cursor.fetchall()
+
+    cursor.execute("""
+        SELECT * FROM clientes_inmobiliaria
+    """)
+    clientes = cursor.fetchall()
+
+    cursor.execute("""
+        SELECT
+            r.*,
+            i.titulo AS inmueble,
+            i.ubicacion,
+            c.nombre AS cliente,
+            c.telefono
+        FROM reservas r
+        INNER JOIN inmuebles i
+            ON r.inmueble_id = i.id
+        INNER JOIN clientes_inmobiliaria c
+            ON r.cliente_id = c.id
+        ORDER BY r.fecha_reserva DESC
+    """)
+
+    reservas = cursor.fetchall()
+
+    cursor.close()
+
+    return render_template(
+        'reservas_admin.html',
+        inmuebles=inmuebles,
+        clientes=clientes,
+        reservas=reservas
+    )
+
+@app.route('/cancelar_reserva/<int:id>/<int:inmueble_id>')
+def cancelar_reserva(id, inmueble_id):
+
+    if 'usuario' not in session:
+        return redirect(url_for('login'))
+
+    cursor = mysql.connection.cursor()
+
+    cursor.execute("""
+        UPDATE reservas
+        SET estado = 'Cancelada'
+        WHERE id = %s
+    """, (id,))
+
+    cursor.execute("""
+        UPDATE inmuebles
+        SET estado = 'Disponible'
+        WHERE id = %s
+    """, (inmueble_id,))
+
+    mysql.connection.commit()
+    cursor.close()
+
+    flash('Reserva cancelada.', 'success')
+
+    return redirect(url_for('reservas_admin'))
 
 @app.route('/guardar_contacto', methods=['POST'])
 def guardar_contacto():
