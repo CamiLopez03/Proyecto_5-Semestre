@@ -118,7 +118,7 @@
                         <i class="fa fa-pen"></i> Editar
                     </a>
 
-                    <a href="#" class="delete">
+                    <a href="#" class="delete" onclick="abrirPopupEliminar({{ p.id }}); return false;">
                         <i class="fa fa-trash"></i> Eliminar
                     </a>
                 </div>
@@ -134,4 +134,29 @@
         {% endif %}
     </section>
 
+            <!-- POPUP ELIMINAR -->
+        <div class="custom-popup" id="popupEliminar">
+            <div class="popup-box">
+                <i class="fa fa-trash"></i>
+
+                <h3>¿Eliminar proyecto?</h3>
+                <p>
+                    Esta acción eliminará el proyecto permanentemente.
+                </p>
+
+                <div class="popup-actions">
+
+                    <button class="cancel-btn"
+                            onclick="cerrarPopupEliminar()">
+                        Cancelar
+                    </button>
+
+                        <button id="btnConfirmarEliminar">
+                            Eliminar
+                        </button>
+
+                    </a>
+                </div>
+            </div>
+        </div>
 {% endblock %}

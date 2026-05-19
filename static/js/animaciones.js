@@ -327,3 +327,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 });
+
+let proyectoEliminar = null;
+
+function abrirPopupEliminar(id){
+    proyectoEliminar = id;
+    document.getElementById('popupEliminar')
+        .classList.add('active');
+}
+
+function cerrarPopupEliminar(){
+    document.getElementById('popupEliminar')
+        .classList.remove('active');
+}
+
+document.getElementById('btnConfirmarEliminar')
+.addEventListener('click', function(){
+    window.location.href =
+        "/eliminar_proyecto/" + proyectoEliminar;
+});

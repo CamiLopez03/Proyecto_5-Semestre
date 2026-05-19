@@ -1,0 +1,62 @@
+{% extends "base_admin.html" %}
+{% block content %}
+
+<section class="form-card">
+    <h2>Editar proyecto</h2>
+
+    <form method="POST">
+        <div class="input-group">
+            <label>Nombre</label>
+            <input type="text" name="nombre"
+                   value="{{ proyecto.nombre }}" required>
+        </div>
+
+        <div class="input-group">
+            <label>Estado</label>
+
+            <select name="estado" required>
+
+                <option value="Activo"
+                    {% if proyecto.estado == 'Activo' %}selected{% endif %}>
+                    Activo
+                </option>
+                <option value="Pendiente"
+                    {% if proyecto.estado == 'Pendiente' %}selected{% endif %}>
+                    Pendiente
+                </option>
+                <option value="Pausado"
+                    {% if proyecto.estado == 'Pausado' %}selected{% endif %}>
+                    Pausado
+                </option>
+                <option value="Finalizado"
+                    {% if proyecto.estado == 'Finalizado' %}selected{% endif %}>
+                    Finalizado
+                </option>
+
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Tipo de trabajo</label>
+
+            <input type="text"
+                   name="tipo_trabajo"
+                   value="{{ proyecto.tipo_trabajo }}"
+                   required>
+        </div>
+
+        <div class="input-group full">
+            <label>Descripción</label>
+
+            <textarea name="descripcion" required>{{ proyecto.descripcion }}</textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">
+            Guardar cambios
+        </button>
+
+    </form>
+
+</section>
+
+{% endblock %}

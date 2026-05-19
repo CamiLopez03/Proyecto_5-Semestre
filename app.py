@@ -1063,9 +1063,86 @@ def crear_proyecto():
     return redirect(url_for('proyectos_admin'))
 
 
-@app.route('/editar_proyecto/<int:id>')
+@app.route('/editar_proyecto/<int:id>', methods=['GET', 'POST'])
 def editar_proyecto(id):
-    return render_template('editarPro.html')
+
+    if 'usuario' not in session:
+        return redirect(url_for('login'))
+
+    cur = mysql.connection.cursor()
+
+    # Buscar proyecto
+    cur.execute("""
+        SELECT *
+        FROM proyectos_constructora
+        WHERE id = %s
+    """, (id,))
+
+    proyecto = cur.fetchone()
+
+    if not proyecto:
+        flash('Proyecto no encontrado.', 'danger')
+        return redirect(url_for('proyectos_admin'))
+
+    if request.method == 'POST':
+
+        nombre = request.form['nombre']
+        tipo_trabajo = request.form['tipo_trabajo']
+        descripcion = request.form['descripcion']
+        estado = request.form['estado']
+
+        cur.execute("""
+            UPDATE proyectos_constructora
+            SET nombre=%s,
+                tipo_trabajo=%s,
+                descripcion=%s,
+                estado=%s
+            WHERE id=%s
+        """, (
+            nombre,
+            tipo_trabajo,
+            descripcion,
+            estado,
+            id
+        ))
+
+        mysql.connection.commit()
+        cur.close()
+
+        flash('Proyecto actualizado correctamente.', 'success')
+
+        return redirect(url_for('proyectos_admin'))
+
+    cur.close()
+
+    return render_template(
+        'editar_Proyecto.html',
+        proyecto=proyecto
+    )
+
+@app.route('/eliminar_proyecto/<int:id>')
+def eliminar_proyecto(id):
+
+    if 'usuario' not in session:
+        return redirect(url_for('login'))
+    cur = mysql.connection.cursor()
+
+    # Primero eliminar relación cliente-proyecto
+    cur.execute("""
+        DELETE FROM cliente_proyecto
+        WHERE proyecto_id = %s
+    """, (id,))
+
+    # Luego eliminar proyecto
+    cur.execute("""
+        DELETE FROM proyectos_constructora
+        WHERE id = %s
+    """, (id,))
+
+    mysql.connection.commit()
+    cur.close()
+    flash('Proyecto eliminado correctamente.', 'success')
+    return redirect(url_for('proyectos_admin'))
 
 @app.route('/inmobiliaria')
 def inmobiliaria_publica():
