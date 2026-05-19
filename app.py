@@ -348,12 +348,6 @@ def dashboard():
     if 'usuario' not in session:
         return redirect(url_for('login'))
 
-    rol = session.get('rol', 'usuario')
-
-    # Redirigir usuarios no-admin a su propio panel
-    if rol != 'admin':
-        return redirect(url_for('dashboard_usuario'))
-
     cur = mysql.connection.cursor()
 
     cur.execute("SELECT COUNT(*) AS total FROM proyectos_constructora WHERE estado = 'Activo'")
@@ -385,124 +379,6 @@ def logout():
     session.clear()
     flash('Sesion cerrada correctamente.', 'success')
     return redirect(url_for('login'))
-
-
-# Permisos por rol
-PERMISOS_POR_ROL = {
-    'admin': {
-        'constructora': True,
-        'inmobiliaria': True,
-        'ver_proyectos': True,
-        'ver_servicios': True,
-        'ver_contactos': True,
-        'ver_clientes_constructora': True,
-        'ver_inmuebles': True,
-        'registrar_inmueble': True,
-        'ver_clientes_inmobiliaria': True,
-        'ver_reservas': True,
-        'ver_ventas': True,
-        'ver_reportes': True,
-        'gestionar_usuarios': True,
-    },
-    'vendedor': {
-        'constructora': False,
-        'inmobiliaria': True,
-        'ver_proyectos': False,
-        'ver_servicios': False,
-        'ver_contactos': True,
-        'ver_clientes_constructora': False,
-        'ver_inmuebles': True,
-        'registrar_inmueble': True,
-        'ver_clientes_inmobiliaria': True,
-        'ver_reservas': True,
-        'ver_ventas': True,
-        'ver_reportes': False,
-        'gestionar_usuarios': False,
-    },
-    'supervisor': {
-        'constructora': True,
-        'inmobiliaria': True,
-        'ver_proyectos': True,
-        'ver_servicios': True,
-        'ver_contactos': True,
-        'ver_clientes_constructora': True,
-        'ver_inmuebles': True,
-        'registrar_inmueble': True,
-        'ver_clientes_inmobiliaria': True,
-        'ver_reservas': True,
-        'ver_ventas': True,
-        'ver_reportes': False,
-        'gestionar_usuarios': False,
-    },
-    'usuario': {
-        'constructora': True,
-        'inmobiliaria': True,
-        'ver_proyectos': True,
-        'ver_servicios': True,
-        'ver_contactos': False,
-        'ver_clientes_constructora': False,
-        'ver_inmuebles': True,
-        'registrar_inmueble': False,
-        'ver_clientes_inmobiliaria': False,
-        'ver_reservas': False,
-        'ver_ventas': False,
-        'ver_reportes': False,
-        'gestionar_usuarios': False,
-    },
-}
-
-def get_permisos(rol):
-    """Retorna el diccionario de permisos para el rol dado.
-       Si el rol no está definido, se usa el perfil más restrictivo ('usuario')."""
-    return PERMISOS_POR_ROL.get(rol, PERMISOS_POR_ROL['usuario'])
-
-
-@app.route('/mi-panel')
-def dashboard_usuario():
-    if 'usuario' not in session:
-        return redirect(url_for('login'))
-
-    rol = session.get('rol', 'usuario')
-    if rol == 'admin':
-        return redirect(url_for('dashboard'))
-
-    permisos = get_permisos(rol)
-    cur = mysql.connection.cursor()
-
-    inmuebles_disponibles = 0
-    proyectos_activos = 0
-    ventas_registradas = 0
-    reservas_activas = 0
-
-    if permisos.get('ver_inmuebles'):
-        cur.execute("SELECT COUNT(*) AS total FROM inmuebles WHERE estado = 'Disponible'")
-        inmuebles_disponibles = cur.fetchone()['total']
-
-    if permisos.get('ver_proyectos'):
-        cur.execute("SELECT COUNT(*) AS total FROM proyectos_constructora WHERE estado = 'Activo'")
-        proyectos_activos = cur.fetchone()['total']
-
-    if permisos.get('ver_ventas'):
-        cur.execute("SELECT COUNT(*) AS total FROM ventas")
-        ventas_registradas = cur.fetchone()['total']
-
-    if permisos.get('ver_reservas'):
-        cur.execute("SELECT COUNT(*) AS total FROM reservas WHERE estado = 'Activa'")
-        reservas_activas = cur.fetchone()['total']
-
-    cur.close()
-
-    return render_template(
-        'dashboard_usuario.html',
-        usuario=session['usuario'],
-        rol=rol,
-        permisos=permisos,
-        inmuebles_disponibles=inmuebles_disponibles,
-        proyectos_activos=proyectos_activos,
-        ventas_registradas=ventas_registradas,
-        reservas_activas=reservas_activas
-    )
-
 
 @app.route('/usuarios')
 def usuarios():
@@ -1199,60 +1075,72 @@ def inmobiliaria_publica():
 
 @app.route('/reservas_admin', methods=['GET', 'POST'])
 def reservas_admin():
+
     if 'usuario' not in session:
         return redirect(url_for('login'))
 
-    cur = mysql.connection.cursor()
-
+    cursor = mysql.connection.cursor()
     if request.method == 'POST':
-        inmueble_id  = request.form['inmueble_id']
-        cliente_id   = request.form['cliente_id']
+
+        inmueble_id = request.form['inmueble_id']
+        cliente_id = request.form['cliente_id']
         fecha_limite = request.form['fecha_limite']
-        valor_reserva = float(request.form['valor_reserva'])
-        observacion  = request.form.get('observacion', '').strip()
+        valor_reserva = request.form['valor_reserva']
+        observacion = request.form['observacion']
 
-        cur.execute("""
-            INSERT INTO reservas (inmueble_id, cliente_id, fecha_limite, valor_reserva, observacion)
+        cursor.execute("""
+            INSERT INTO reservas
+            (inmueble_id, cliente_id, fecha_limite, valor_reserva, observacion)
             VALUES (%s, %s, %s, %s, %s)
-        """, (inmueble_id, cliente_id, fecha_limite, valor_reserva, observacion))
+        """, (
+            inmueble_id,
+            cliente_id,
+            fecha_limite,
+            valor_reserva,
+            observacion
+        ))
 
-        cur.execute("UPDATE inmuebles SET estado = 'Reservado' WHERE id = %s", (inmueble_id,))
+        cursor.execute("""
+            UPDATE inmuebles
+            SET estado = 'Reservado'
+            WHERE id = %s
+        """, (inmueble_id,))
 
         mysql.connection.commit()
+
         flash('Reserva registrada correctamente.', 'success')
-        cur.close()
+
         return redirect(url_for('reservas_admin'))
 
-    cur.execute("""
-        SELECT id, titulo, ubicacion, precio
-        FROM inmuebles
+    cursor.execute("""
+        SELECT * FROM inmuebles
         WHERE estado = 'Disponible'
-        ORDER BY titulo ASC
     """)
-    inmuebles = cur.fetchall()
+    inmuebles = cursor.fetchall()
 
-    cur.execute("""
-        SELECT id, nombre, telefono
-        FROM clientes_inmobiliaria
-        ORDER BY nombre ASC
+    cursor.execute("""
+        SELECT * FROM clientes_inmobiliaria
     """)
-    clientes = cur.fetchall()
+    clientes = cursor.fetchall()
 
-    cur.execute("""
+    cursor.execute("""
         SELECT
-            r.id, r.fecha_reserva, r.fecha_limite,
-            r.valor_reserva, r.estado, r.observacion,
-            r.inmueble_id,
-            i.titulo AS inmueble, i.ubicacion,
-            c.nombre AS cliente, c.telefono
+            r.*,
+            i.titulo AS inmueble,
+            i.ubicacion,
+            c.nombre AS cliente,
+            c.telefono
         FROM reservas r
-        INNER JOIN inmuebles i ON r.inmueble_id = i.id
-        INNER JOIN clientes_inmobiliaria c ON r.cliente_id = c.id
+        INNER JOIN inmuebles i
+            ON r.inmueble_id = i.id
+        INNER JOIN clientes_inmobiliaria c
+            ON r.cliente_id = c.id
         ORDER BY r.fecha_reserva DESC
     """)
-    reservas = cur.fetchall()
 
-    cur.close()
+    reservas = cursor.fetchall()
+
+    cursor.close()
 
     return render_template(
         'reservas_admin.html',
@@ -1261,19 +1149,31 @@ def reservas_admin():
         reservas=reservas
     )
 
-
 @app.route('/cancelar_reserva/<int:id>/<int:inmueble_id>')
 def cancelar_reserva(id, inmueble_id):
+
     if 'usuario' not in session:
         return redirect(url_for('login'))
 
-    cur = mysql.connection.cursor()
-    cur.execute("UPDATE reservas SET estado = 'Cancelada' WHERE id = %s", (id,))
-    cur.execute("UPDATE inmuebles SET estado = 'Disponible' WHERE id = %s", (inmueble_id,))
-    mysql.connection.commit()
-    cur.close()
+    cursor = mysql.connection.cursor()
 
-    flash('Reserva cancelada. El inmueble vuelve a estar disponible.', 'success')
+    cursor.execute("""
+        UPDATE reservas
+        SET estado = 'Cancelada'
+        WHERE id = %s
+    """, (id,))
+
+    cursor.execute("""
+        UPDATE inmuebles
+        SET estado = 'Disponible'
+        WHERE id = %s
+    """, (inmueble_id,))
+
+    mysql.connection.commit()
+    cursor.close()
+
+    flash('Reserva cancelada.', 'success')
+
     return redirect(url_for('reservas_admin'))
 
 @app.route('/guardar_contacto', methods=['POST'])

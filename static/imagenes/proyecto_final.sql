@@ -426,6 +426,7 @@ ALTER TABLE `inmueble_multimedia`
 ALTER TABLE `ventas`
   ADD CONSTRAINT `ventas_ibfk_1` FOREIGN KEY (`inmueble_id`) REFERENCES `inmuebles` (`id`),
   ADD CONSTRAINT `ventas_ibfk_2` FOREIGN KEY (`cliente_id`) REFERENCES `clientes_inmobiliaria` (`id`);
+<<<<<<< HEAD
 
 -- --------------------------------------------------------
 

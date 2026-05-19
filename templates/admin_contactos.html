@@ -1,352 +1,143 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clientes Interesados - CiviWeb Manager</title>
-    <link rel="shortcut icon" href="../static/imagenes/Logo Civi.png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+{% extends "base_admin.html" %}
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+{% block title %}Clientes Interesados - CiviWeb Manager{% endblock %}
 
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #f4f5f7;
-            color: #222;
-        }
+{% block admin_actions %}
+<a href="{{ url_for('constructora_admin') }}">
+    <i class="fa fa-arrow-left"></i> Volver
+</a>
 
-        .admin-header {
-            background: #111;
-            color: white;
-            padding: 18px 60px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
-        }
+<a href="{{ url_for('index') }}">
+    <i class="fa fa-globe"></i> Sitio Web
+</a>
+{% endblock %}
 
-        .admin-logo img {
-            width: 180px;
-            height: auto;
-        }
+{% block breadcrumb %}
+<div class="breadcrumb">
+    <a href="{{ url_for('dashboard') }}">Inicio</a>
+    <span>/</span>
+    <a href="{{ url_for('constructora_admin') }}">Constructora</a>
+    <span>/</span>
+    <strong>Clientes interesados</strong>
+</div>
+{% endblock %}
 
-        .admin-actions {
-            display: flex;
-            gap: 12px;
-        }
+{% block content %}
 
-        .admin-actions a {
-            text-decoration: none;
-            background: #981313;
-            color: white;
-            padding: 13px 22px;
-            border-radius: 28px;
-            font-weight: 800;
-            transition: 0.3s;
-        }
+<section class="page-title">
+    <h1>Clientes Interesados</h1>
+    <p>Consulta, organiza y prioriza solicitudes recibidas desde el formulario del sitio web.</p>
+</section>
 
-        .admin-actions a:hover {
-            background: #c11b1b;
-            transform: translateY(-3px);
-        }
+<section class="table-card">
 
-        .container {
-            max-width: 1450px;
-            margin: 45px auto;
-            padding: 0 35px;
-        }
+    <h2>
+        <i class="fa fa-users"></i>
+        Solicitudes de Clientes
+    </h2>
 
-        .page-title {
-            background: white;
-            border-radius: 24px;
-            padding: 34px;
-            margin-bottom: 32px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        }
+    {% if contactos and contactos|length > 0 %}
 
-        .page-title h1 {
-            color: #981313;
-            font-size: 38px;
-            margin-bottom: 8px;
-        }
+    <div class="table-responsive">
 
-        .page-title p {
-            color: #666;
-            font-size: 17px;
-        }
+        <table class="clientes-table">
 
-        .table-card {
-            background: white;
-            border-radius: 24px;
-            padding: 34px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        }
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Servicio</th>
+                    <th>Mensaje</th>
+                    <th>Tiempo</th>
+                    <th>Estado</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
 
-        .table-card h2 {
-            color: #981313;
-            font-size: 28px;
-            margin-bottom: 24px;
-        }
+            <tbody>
 
-        .table-responsive {
-            overflow-x: auto;
-        }
+                {% for c in contactos %}
 
-        .clientes-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 1200px;
-        }
+                <tr class="{% if c.estado == 'Prioridad Alta' %}prioridad-row{% endif %}">
 
-        .clientes-table th {
-            background: #981313;
-            color: white;
-            padding: 16px;
-            text-align: left;
-            font-size: 14px;
-        }
+                    <td>
+                        {% if c.fecha_envio %}
+                            {{ c.fecha_envio.strftime('%d/%m/%Y') }}<br>
+                            {{ c.fecha_envio.strftime('%H:%M') }}
+                        {% else %}
+                            Sin fecha
+                        {% endif %}
+                    </td>
 
-        .clientes-table td {
-            padding: 16px;
-            border-bottom: 1px solid #eee;
-            vertical-align: top;
-            font-size: 15px;
-        }
+                    <td>
+                        <strong>{{ c.nombre or 'Sin nombre' }}</strong><br><br>
 
-        .clientes-table tr:hover {
-            background: #f9f9f9;
-        }
+                        {% if c.telefono %}
+                            <i class="fa fa-phone"></i> {{ c.telefono }}<br>
+                        {% endif %}
 
-        .clientes-table strong {
-            color: #111;
-            font-size: 16px;
-        }
+                        {% if c.correo %}
+                            <i class="fa fa-envelope"></i> {{ c.correo }}
+                        {% endif %}
+                    </td>
 
-        .status {
-            display: inline-block;
-            padding: 8px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 900;
-            color: white;
-        }
+                    <td>{{ c.servicio or 'No especificado' }}</td>
 
-        .Pendiente {
-            background: #555;
-        }
+                    <td>{{ c.mensaje or 'Sin mensaje' }}</td>
 
-        .Contactado {
-            background: #1f9d55;
-        }
+                    <td>{{ c.tiempo or '0 días' }}</td>
 
-        .Prioridad-Alta {
-            background: #c58a00;
-        }
+                    <td>
+                        <span class="status {{ (c.estado or 'Pendiente')|replace(' ', '-') }}">
+                            {{ c.estado or 'Pendiente' }}
+                        </span>
+                    </td>
 
-        .edit {
-            display: inline-block;
-            text-decoration: none;
-            background: #981313;
-            color: white;
-            padding: 10px 16px;
-            border-radius: 22px;
-            font-weight: 800;
-            font-size: 13px;
-            transition: 0.3s;
-        }
+                    <td>
 
-        .edit:hover {
-            background: #c11b1b;
-            transform: translateY(-2px);
-        }
+                        {% if c.estado != 'Contactado' %}
 
-        .done {
-            color: #1f9d55;
-            font-weight: bold;
-        }
+                        <a href="{{ url_for('marcar_contactado', id=c.id) }}" class="edit">
+                            <i class="fa fa-check"></i> Marcar
+                        </a>
 
-        .prioridad-row {
-            background: rgba(197, 138, 0, 0.08);
-        }
+                        {% else %}
 
-        .flash-messages {
-            margin-bottom: 20px;
-        }
+                        <span class="done">
+                            <i class="fa fa-circle-check"></i> Finalizado
+                        </span>
 
-        .flash {
-            padding: 14px 18px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
+                        {% endif %}
 
-        .flash.success {
-            background: #d4edda;
-            color: #155724;
-        }
+                    </td>
 
-        .flash.danger {
-            background: #f8d7da;
-            color: #721c24;
-        }
+                </tr>
 
-        .empty {
-            background: #f6f6f6;
-            border-radius: 20px;
-            padding: 45px;
-            text-align: center;
-            color: #666;
-        }
+                {% endfor %}
 
-        .empty i {
-            font-size: 48px;
-            color: #981313;
-            margin-bottom: 15px;
-        }
+            </tbody>
 
-        @media(max-width: 1000px) {
-            .admin-header {
-                flex-direction: column;
-                gap: 18px;
-                text-align: center;
-            }
+        </table>
 
-            .container {
-                padding: 0 15px;
-            }
-
-            .page-title h1 {
-                font-size: 28px;
-            }
-        }
-    </style>
-</head>
-
-<body>
-
-<header class="admin-header">
-    <div class="admin-logo">
-        <img src="{{ url_for('static', filename='imagenes/Civi.png') }}" alt="CiviWeb Manager">
     </div>
 
-    <div class="admin-actions">
-        <a href="{{ url_for('constructora_admin') }}">
-            <i class="fa fa-arrow-left"></i> Volver
-        </a>
+    {% else %}
 
-        <a href="{{ url_for('index') }}">
-            <i class="fa fa-globe"></i> Sitio Web
-        </a>
+    <div class="empty">
+
+        <i class="fa fa-user-clock"></i>
+
+        <h3>No hay clientes registrados</h3>
+
+        <p>
+            Cuando alguien complete el formulario del sitio web,
+            aparecerá aquí automáticamente.
+        </p>
+
     </div>
-</header>
 
-<main class="container">
+    {% endif %}
 
-    <section class="page-title">
-        <h1>Clientes Interesados</h1>
-        <p>Consulta, organiza y prioriza solicitudes recibidas desde el formulario del sitio web.</p>
-    </section>
+</section>
 
-    <section class="table-card">
-        <h2><i class="fa fa-users"></i> Solicitudes de Clientes</h2>
-            {% if contactos and contactos|length > 0 %}
-            <div class="table-responsive">
-                <table class="clientes-table">
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Cliente</th>
-                            <th>Servicio</th>
-                            <th>Mensaje</th>
-                            <th>Tiempo</th>
-                            <th>Estado</th>
-                            <th>Acción</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {% for c in contactos %}
-                        <tr class="{% if c.estado == 'Prioridad Alta' %}prioridad-row{% endif %}">
-
-                            <!-- FECHA -->
-                            <td>
-                                {% if c.fecha_envio %}
-                                    {{ c.fecha_envio.strftime('%d/%m/%Y') }}<br>
-                                    {{ c.fecha_envio.strftime('%H:%M') }}
-                                {% else %}
-                                    Sin fecha
-                                {% endif %}
-                            </td>
-
-                            <!-- CLIENTE -->
-                            <td>
-                                <strong>{{ c.nombre or 'Sin nombre' }}</strong><br><br>
-
-                                {% if c.telefono %}
-                                    <i class="fa fa-phone"></i> {{ c.telefono }}<br>
-                                {% endif %}
-
-                                {% if c.correo %}
-                                    <i class="fa fa-envelope"></i> {{ c.correo }}
-                                {% endif %}
-                            </td>
-
-                            <!-- SERVICIO -->
-                            <td>
-                                {{ c.servicio or 'No especificado' }}
-                            </td>
-
-                            <!-- MENSAJE -->
-                            <td>
-                                {{ c.mensaje or 'Sin mensaje' }}
-                            </td>
-
-                            <!-- TIEMPO -->
-                            <td>
-                                {{ c.tiempo or '0 días' }}
-                            </td>
-
-                            <!-- ESTADO -->
-                            <td>
-                                <span class="status {{ (c.estado or 'Pendiente')|replace(' ', '-') }}">
-                                    {{ c.estado or 'Pendiente' }}
-                                </span>
-                            </td>
-
-                            <!-- ACCIÓN -->
-                            <td>
-                                {% if c.estado != 'Contactado' %}
-                                <a href="{{ url_for('marcar_contactado', id=c.id) }}" class="edit">
-                                    <i class="fa fa-check"></i> Marcar
-                                </a>
-                                {% else %}
-                                <span class="done">
-                                    <i class="fa fa-circle-check"></i> Finalizado
-                                </span>
-                                {% endif %}
-                            </td>
-
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            {% else %}
-            <div class="empty">
-                <i class="fa fa-user-clock"></i>
-                <h3>No hay clientes registrados</h3>
-                <p>Cuando alguien complete el formulario del sitio web, aparecerá aquí automáticamente.</p>
-            </div>
-            {% endif %}
-    </section>
-
-</main>
-
-</body>
-</html>
+{% endblock %}

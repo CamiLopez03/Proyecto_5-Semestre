@@ -1,0 +1,2782 @@
+/*Inicio de estilo de login.html*/
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a, #891010);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+          .login-container {
+            display: flex;
+            width: 800px;
+            background: #ffffff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+        }
+
+        /* LADO IZQUIERDO (LOGO) */
+        .left-side {
+            width: 40%;
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .left-side img {
+            width: 140px;
+        }
+
+        /* (FORMULARIO) */
+            .right-side {
+            width: 60%;
+            padding: 40px 50px;
+            box-sizing: border-box;
+        }
+
+        .right-side h2 {
+            margin: 0;
+            color: #1a1a1a;
+        }
+
+        .right-side p {
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .input-group input:focus {
+            border-color: #b91c1c;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            background: #891010;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #7f1d1d;
+        }
+
+        .links {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .links a {
+            color: #b91c1c;
+            text-decoration: none;
+            margin: 0 10px;
+            font-weight: bold;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        .input-icon {
+            position: relative;
+        }
+
+        .input-icon i {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .input-icon i.fa-user,
+        .input-icon i.fa-lock {
+            left: 12px;
+        }
+
+        .input-icon input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px 45px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        .toggle-password {
+            right: 12px;
+            cursor: pointer;
+        }
+
+        .alert {
+            margin: 15px 0;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .alert.success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #22c55e;
+        }
+
+        .back-home {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            background: #891010;
+            padding: 10px;
+            border-radius: 50%;
+            text-decoration: none;
+            transition: 0.3s;
+            z-index: 1000;
+        }
+
+        .back-home:hover {
+            background: #c11b1b;
+            transform: scale(1.1);
+        }
+
+        .alert.danger {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        /* =========================================
+        INICIO RESPONSIVE LOGIN
+        PEGAR AL FINAL
+        ========================================= */
+
+        /* Mejor control */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Contenedor flexible */
+        .login-container {
+            max-width: 850px;
+            width: 100%;
+        }
+
+        /* Laptop */
+        @media (max-width: 992px) {
+
+            .login-container {
+                width: 95%;
+            }
+
+            .left-side img {
+                width: 120px;
+            }
+
+            .right-side {
+                padding: 35px;
+            }
+
+            .right-side h2 {
+                font-size: 26px;
+            }
+        }
+
+        /* Tablet */
+        @media (max-width: 768px) {
+
+            body {
+                padding: 15px;
+                align-items: center;
+            }
+
+            .login-container {
+                flex-direction: column;
+                width: 100%;
+                border-radius: 18px;
+            }
+
+            .left-side,
+            .right-side {
+                width: 100%;
+            }
+
+            .left-side {
+                padding: 28px 20px;
+            }
+
+            .left-side img {
+                width: 130px;
+            }
+
+            .right-side {
+                padding: 28px 22px;
+            }
+
+            .right-side h2 {
+                font-size: 24px;
+                line-height: 1.4;
+            }
+
+            .right-side p {
+                font-size: 14px;
+                margin-bottom: 20px;
+            }
+
+            .input-group label {
+                font-size: 14px;
+            }
+
+            .input-icon input {
+                padding: 12px 42px;
+                font-size: 14px;
+            }
+
+            button {
+                padding: 14px;
+                font-size: 15px;
+            }
+
+            .links a {
+                display: inline-block;
+                margin-top: 8px;
+                font-size: 14px;
+            }
+
+            .back-home {
+                top: 15px;
+                left: 15px;
+                padding: 9px;
+            }
+        }
+
+        /* Celulares */
+        @media (max-width: 480px) {
+
+            body {
+                padding: 10px;
+            }
+
+            .login-container {
+                border-radius: 16px;
+            }
+
+            .left-side {
+                padding: 22px 15px;
+            }
+
+            .left-side img {
+                width: 110px;
+            }
+
+            .right-side {
+                padding: 22px 18px;
+            }
+
+            .right-side h2 {
+                font-size: 21px;
+            }
+
+            .right-side p {
+                font-size: 13px;
+            }
+
+            .input-icon i.fa-user,
+            .input-icon i.fa-lock {
+                left: 10px;
+            }
+
+            .toggle-password {
+                right: 10px;
+            }
+
+            .input-icon input {
+                padding: 12px 38px;
+                font-size: 14px;
+            }
+
+            .alert {
+                padding: 10px;
+                font-size: 13px;
+            }
+
+            button {
+                padding: 13px;
+                font-size: 14px;
+            }
+
+            .back-home {
+                padding: 8px;
+                top: 10px;
+                left: 10px;
+            }
+        }
+
+        /* Pantallas muy pequeñas */
+        @media (max-width: 360px) {
+
+            .right-side h2 {
+                font-size: 19px;
+            }
+
+            .right-side p {
+                font-size: 12px;
+            }
+
+            .input-icon input {
+                font-size: 13px;
+            }
+        }
+
+        /* =========================================
+        FIN RESPONSIVE LOGIN
+        ========================================= */
+   /*Fin de estilo de login.html*/
+
+   /* Inicio de estilo de confirmar_codigo.html */
+      body {
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #1a1a1a, #891010);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .confirm-container {
+        display: flex;
+        width: 850px;
+        background: #ffffff;
+        border-radius: 22px;
+        overflow: hidden;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+      }
+
+      .left-side {
+        width: 40%;
+        background: #111;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+      }
+
+      .left-side img {
+        width: 210px;
+        max-width: 100%;
+      }
+
+      .right-side {
+        width: 60%;
+        padding: 50px;
+        box-sizing: border-box;
+        text-align: center;
+      }
+
+      .icon-box {
+        width: 70px;
+        height: 70px;
+        background: #891010;
+        color: white;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        margin-bottom: 18px;
+      }
+
+      h2 {
+        margin: 0;
+        color: #1a1a1a;
+        font-size: 30px;
+      }
+
+      .subtitle {
+        color: #666;
+        margin: 15px 0 25px;
+      }
+
+      .alert {
+        margin-bottom: 18px;
+        background: #891010;
+        color: white;
+        border-radius: 10px;
+        padding: 13px;
+        text-align: center;
+      }
+
+      .codigo-input {
+        width: 100%;
+        padding: 16px;
+        font-size: 24px;
+        text-align: center;
+        border: 1px solid #ccc;
+        border-radius: 14px;
+        margin-bottom: 20px;
+        outline: none;
+      }
+
+      .codigo-input:focus {
+        border-color: #891010;
+        box-shadow: 0 0 0 3px rgba(137,16,16,0.15);
+      }
+
+      .btn-confirmar {
+        width: 100%;
+        border: none;
+        background: linear-gradient(135deg, #891010, #c11b1b);
+        color: white;
+        padding: 15px;
+        border-radius: 30px;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.3s;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+      }
+
+      .btn-confirmar:hover {
+        background: linear-gradient(135deg, #c11b1b, #891010);
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+      }
+
+      .links {
+        margin-top: 25px;
+      }
+
+      .links a {
+        color: #b91c1c;
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      .links a:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 768px) {
+        .confirm-container {
+          flex-direction: column;
+          width: 92%;
+        }
+
+        .left-side,
+        .right-side {
+          width: 100%;
+        }
+
+        .right-side {
+          padding: 35px 25px;
+        }
+      }
+
+      /* =========================================
+      INICIO RESPONSIVE CONFIRMAR CODIGO
+      PEGAR AL FINAL
+      ========================================= */
+
+      /* Mejor control general */
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        padding: 20px;
+      }
+
+      /* Contenedor más flexible */
+      .confirm-container {
+        max-width: 850px;
+        width: 100%;
+      }
+
+      /* Tablet */
+      @media (max-width: 992px) {
+
+        .confirm-container {
+          width: 95%;
+        }
+
+        .left-side {
+          padding: 30px;
+        }
+
+        .left-side img {
+          width: 180px;
+        }
+
+        .right-side {
+          padding: 40px 30px;
+        }
+
+        h2 {
+          font-size: 26px;
+        }
+
+        .subtitle {
+          font-size: 15px;
+          line-height: 1.6;
+        }
+      }
+
+      /* Móvil */
+      @media (max-width: 768px) {
+
+        body {
+          padding: 15px;
+        }
+
+        .confirm-container {
+          flex-direction: column;
+          width: 100%;
+          border-radius: 18px;
+        }
+
+        .left-side,
+        .right-side {
+          width: 100%;
+        }
+
+        .left-side {
+          padding: 28px 20px;
+        }
+
+        .left-side img {
+          width: 160px;
+        }
+
+        .right-side {
+          padding: 30px 22px;
+        }
+
+        .icon-box {
+          width: 62px;
+          height: 62px;
+          font-size: 28px;
+        }
+
+        h2 {
+          font-size: 24px;
+        }
+
+        .subtitle {
+          font-size: 14px;
+          margin: 12px 0 20px;
+        }
+
+        .codigo-input {
+          padding: 14px;
+          font-size: 22px;
+        }
+
+        .btn-confirmar {
+          padding: 14px;
+          font-size: 15px;
+        }
+
+        .links {
+          margin-top: 22px;
+        }
+
+        .links a {
+          display: inline-block;
+          margin: 6px 0;
+          font-size: 15px;
+        }
+      }
+
+      /* Celulares pequeños */
+      @media (max-width: 480px) {
+
+        body {
+          padding: 10px;
+        }
+
+        .confirm-container {
+          border-radius: 16px;
+        }
+
+        .left-side {
+          padding: 22px 15px;
+        }
+
+        .left-side img {
+          width: 135px;
+        }
+
+        .right-side {
+          padding: 25px 18px;
+        }
+
+        .icon-box {
+          width: 56px;
+          height: 56px;
+          font-size: 24px;
+          margin-bottom: 14px;
+        }
+
+        h2 {
+          font-size: 21px;
+        }
+
+        .subtitle {
+          font-size: 13px;
+        }
+
+        .alert {
+          padding: 12px;
+          font-size: 14px;
+        }
+
+        .codigo-input {
+          padding: 13px;
+          font-size: 20px;
+          border-radius: 12px;
+        }
+
+        .btn-confirmar {
+          font-size: 14px;
+          padding: 13px;
+          border-radius: 25px;
+        }
+
+        .links a {
+          font-size: 14px;
+        }
+      }
+
+      /* Pantallas extremadamente pequeñas */
+      @media (max-width: 360px) {
+
+        .codigo-input {
+          font-size: 18px;
+        }
+
+        h2 {
+          font-size: 19px;
+        }
+
+        .subtitle {
+          font-size: 12px;
+        }
+      }
+
+      /* =========================================
+      FIN RESPONSIVE CONFIRMAR CODIGO
+      ========================================= */
+
+      /*Fin de estilo de confirmar_codigo.html*/
+
+      /* Inicio de estilo de mostrar_recuperacion.html */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a, #891010);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .recover-container {
+            display: flex;
+            width: 800px;
+            background: #ffffff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+        }
+
+        .left-side {
+            width: 40%;
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .left-side img {
+            width: 150px;
+        }
+
+        .right-side {
+            width: 60%;
+            padding: 45px 50px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #1a1a1a;
+        }
+
+        .alert {
+            margin: 15px 0;
+            background: #891010;
+            color: white;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .link-box {
+            margin: 20px 0;
+        }
+
+        .link-box a {
+            display: inline-block;
+            background: #891010;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .link-box a:hover {
+            background: #6f0c0c;
+        }
+
+        .links {
+            margin-top: 25px;
+        }
+
+        .links a {
+            color: #b91c1c;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        .info {
+            color: #666;
+            margin-top: 10px;
+        }
+
+        /* =========================================
+        INICIO RESPONSIVE RECUPERAR CONTRASEÑA
+        PEGAR AL FINAL
+        ========================================= */
+
+        /* Mejor control */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            padding: 20px;
+        }
+
+        /* Contenedor adaptable */
+        .recover-container {
+            max-width: 850px;
+            width: 100%;
+        }
+
+        /* Mejoras visuales */
+        .alert.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .alert.danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Evita romper links largos */
+        .link-box a {
+            word-break: break-word;
+            max-width: 100%;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        /* Laptop */
+        @media (max-width: 992px) {
+
+            .recover-container {
+                width: 95%;
+            }
+
+            .left-side img {
+                width: 130px;
+            }
+
+            .right-side {
+                padding: 38px 35px;
+            }
+
+            h2 {
+                font-size: 28px;
+            }
+
+            .info {
+                font-size: 15px;
+            }
+        }
+
+        /* Tablet */
+        @media (max-width: 768px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .recover-container {
+                flex-direction: column;
+                width: 100%;
+                border-radius: 18px;
+            }
+
+            .left-side,
+            .right-side {
+                width: 100%;
+            }
+
+            .left-side {
+                padding: 28px 20px;
+            }
+
+            .left-side img {
+                width: 125px;
+            }
+
+            .right-side {
+                padding: 30px 24px;
+            }
+
+            h2 {
+                font-size: 24px;
+                line-height: 1.4;
+            }
+
+            .alert {
+                font-size: 14px;
+                padding: 12px;
+            }
+
+            .link-box a {
+                width: 100%;
+                padding: 14px;
+                font-size: 15px;
+            }
+
+            .info {
+                font-size: 14px;
+                line-height: 1.7;
+            }
+
+            .links a {
+                display: inline-block;
+                font-size: 14px;
+            }
+        }
+
+        /* Celulares */
+        @media (max-width: 480px) {
+
+            body {
+                padding: 10px;
+            }
+
+            .recover-container {
+                border-radius: 16px;
+            }
+
+            .left-side {
+                padding: 22px 15px;
+            }
+
+            .left-side img {
+                width: 105px;
+            }
+
+            .right-side {
+                padding: 24px 18px;
+            }
+
+            h2 {
+                font-size: 21px;
+            }
+
+            .alert {
+                padding: 10px;
+                font-size: 13px;
+            }
+
+            .link-box {
+                margin: 18px 0;
+            }
+
+            .link-box a {
+                font-size: 14px;
+                padding: 13px;
+                border-radius: 10px;
+            }
+
+            .info {
+                font-size: 13px;
+            }
+
+            .links a {
+                font-size: 13px;
+            }
+        }
+
+        /* Pantallas pequeñas */
+        @media (max-width: 360px) {
+
+            h2 {
+                font-size: 19px;
+            }
+
+            .info {
+                font-size: 12px;
+            }
+
+            .link-box a {
+                font-size: 13px;
+            }
+        }
+
+        /* =========================================
+        FIN RESPONSIVE RECUPERAR CONTRASEÑA
+        ========================================= */
+        /*Fin de estilo de mostrar_recuperacion.html*/
+
+        /* Inicio de estilo de modificar_correo.html */
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a, #891010);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modificar-container {
+            display: flex;
+            width: 800px;
+            background: #ffffff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+        }
+
+        .left-side {
+            width: 40%;
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .left-side img {
+            width: 150px;
+        }
+
+        .right-side {
+            width: 60%;
+            padding: 45px 50px;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            margin: 0;
+            text-align: center;
+            color: #1a1a1a;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        .input-group label {
+            font-weight: bold;
+            color: #222;
+        }
+
+        .input-icon {
+            position: relative;
+            margin-top: 6px;
+        }
+
+        .input-icon i {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .left-icon {
+            left: 12px;
+        }
+
+        .input-icon input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px 45px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .input-icon input:focus {
+            border-color: #891010;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            background: #891010;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 15px;
+        }
+
+        button:hover {
+            background: #6f0c0c;
+        }
+
+        .links {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .links a {
+            color: #b91c1c;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            margin-bottom: 15px;
+            background: #891010;
+            color: white;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        /* =========================================
+        INICIO RESPONSIVE MODIFICAR CORREO
+        PEGAR AL FINAL
+        ========================================= */
+
+        /* Mejor control general */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            padding: 20px;
+        }
+
+        /* Contenedor flexible */
+        .modificar-container {
+            max-width: 850px;
+            width: 100%;
+        }
+
+        /* Mejoras visuales alertas */
+        .alert.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .alert.danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Laptop */
+        @media (max-width: 992px) {
+
+            .modificar-container {
+                width: 95%;
+            }
+
+            .left-side img {
+                width: 130px;
+            }
+
+            .right-side {
+                padding: 38px 35px;
+            }
+
+            h2 {
+                font-size: 28px;
+            }
+
+            .subtitle {
+                font-size: 15px;
+            }
+        }
+
+        /* Tablet */
+        @media (max-width: 768px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .modificar-container {
+                flex-direction: column;
+                width: 100%;
+                border-radius: 18px;
+            }
+
+            .left-side,
+            .right-side {
+                width: 100%;
+            }
+
+            .left-side {
+                padding: 28px 20px;
+            }
+
+            .left-side img {
+                width: 125px;
+            }
+
+            .right-side {
+                padding: 30px 24px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            .subtitle {
+                font-size: 14px;
+                line-height: 1.6;
+                margin-bottom: 20px;
+            }
+
+            .input-group label {
+                font-size: 14px;
+            }
+
+            .input-icon input {
+                padding: 12px 42px;
+                font-size: 14px;
+            }
+
+            button {
+                padding: 14px;
+                font-size: 15px;
+            }
+
+            .links {
+                margin-top: 18px;
+            }
+
+            .links a {
+                display: inline-block;
+                font-size: 14px;
+            }
+        }
+
+        /* Celulares */
+        @media (max-width: 480px) {
+
+            body {
+                padding: 10px;
+            }
+
+            .modificar-container {
+                border-radius: 16px;
+            }
+
+            .left-side {
+                padding: 22px 15px;
+            }
+
+            .left-side img {
+                width: 105px;
+            }
+
+            .right-side {
+                padding: 24px 18px;
+            }
+
+            h2 {
+                font-size: 21px;
+            }
+
+            .subtitle {
+                font-size: 13px;
+            }
+
+            .input-group {
+                margin-bottom: 16px;
+            }
+
+            .input-icon input {
+                padding: 12px 38px;
+                font-size: 14px;
+            }
+
+            .left-icon {
+                left: 10px;
+            }
+
+            .alert {
+                padding: 10px;
+                font-size: 13px;
+            }
+
+            button {
+                padding: 13px;
+                font-size: 14px;
+            }
+
+            .links a {
+                font-size: 13px;
+            }
+        }
+
+        /* Pantallas muy pequeñas */
+        @media (max-width: 360px) {
+
+            h2 {
+                font-size: 19px;
+            }
+
+            .subtitle {
+                font-size: 12px;
+            }
+
+            .input-icon input {
+                font-size: 13px;
+            }
+        }
+
+        /* =========================================
+        FIN RESPONSIVE MODIFICAR CORREO
+        ========================================= */
+
+    /*Fin de estilo de modificar_correo.html*/
+
+    /*Inicio de estilo de register.html*/
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a, #891010);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .register-container {
+            display: flex;
+            width: 850px;
+            background: #ffffff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+        }
+
+        .left-side {
+            width: 38%;
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .left-side img {
+            width: 150px;
+        }
+
+        .right-side {
+            width: 62%;
+            padding: 38px 50px;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            margin: 0;
+            text-align: center;
+            color: #1a1a1a;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            margin-bottom: 14px;
+        }
+
+        .input-group label {
+            font-weight: bold;
+            color: #222;
+        }
+
+        .input-icon {
+            position: relative;
+            margin-top: 6px;
+        }
+
+        .input-icon i {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .input-icon .left-icon {
+            left: 12px;
+        }
+
+        .input-icon input,
+        .input-icon select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px 45px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            outline: none;
+            font-size: 15px;
+            background: white;
+        }
+
+        .input-icon input:focus,
+        .input-icon select:focus {
+            border-color: #891010;
+        }
+
+        .toggle-password {
+            right: 12px;
+            cursor: pointer;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            background: #891010;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 8px;
+            font-size: 15px;
+        }
+
+        button:hover {
+            background: #6f0c0c;
+        }
+
+        .links {
+            margin-top: 18px;
+            text-align: center;
+        }
+
+        .links a {
+            color: #b91c1c;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            margin-bottom: 15px;
+            background: #891010;
+            color: white;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+        
+        .select-box select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background: white;
+            cursor: pointer;
+        }
+
+
+        .select-arrow {
+            position: absolute;
+            right: 12px;
+            pointer-events: none;
+            color: #666;
+        }
+
+        .select-box select:focus + .select-arrow {
+            color: #891010;
+        }
+
+        /* =========================================
+        INICIO RESPONSIVE REGISTER
+        PEGAR AL FINAL
+        ========================================= */
+
+        /* Mejor control */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            padding: 20px;
+        }
+
+        /* Contenedor adaptable */
+        .register-container {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        /* Alertas mejoradas */
+        .alert.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .alert.danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Laptop */
+        @media (max-width: 992px) {
+
+            .register-container {
+                width: 95%;
+            }
+
+            .left-side img {
+                width: 130px;
+            }
+
+            .right-side {
+                padding: 34px 32px;
+            }
+
+            h2 {
+                font-size: 28px;
+            }
+
+            .subtitle {
+                font-size: 15px;
+            }
+        }
+
+        /* Tablet */
+        @media (max-width: 768px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .register-container {
+                flex-direction: column;
+                width: 100%;
+                border-radius: 18px;
+            }
+
+            .left-side,
+            .right-side {
+                width: 100%;
+            }
+
+            .left-side {
+                padding: 28px 20px;
+            }
+
+            .left-side img {
+                width: 125px;
+            }
+
+            .right-side {
+                padding: 30px 24px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            .subtitle {
+                font-size: 14px;
+                line-height: 1.6;
+                margin-bottom: 20px;
+            }
+
+            .input-group {
+                margin-bottom: 16px;
+            }
+
+            .input-group label {
+                font-size: 14px;
+            }
+
+            .input-icon input,
+            .input-icon select {
+                padding: 12px 42px;
+                font-size: 14px;
+            }
+
+            .left-icon {
+                left: 10px;
+            }
+
+            .toggle-password,
+            .select-arrow {
+                right: 10px;
+            }
+
+            button {
+                padding: 14px;
+                font-size: 15px;
+            }
+
+            .links a {
+                display: inline-block;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        }
+
+        /* Celulares */
+        @media (max-width: 480px) {
+
+            body {
+                padding: 10px;
+            }
+
+            .register-container {
+                border-radius: 16px;
+            }
+
+            .left-side {
+                padding: 22px 15px;
+            }
+
+            .left-side img {
+                width: 105px;
+            }
+
+            .right-side {
+                padding: 24px 18px;
+            }
+
+            h2 {
+                font-size: 21px;
+            }
+
+            .subtitle {
+                font-size: 13px;
+            }
+
+            .input-group {
+                margin-bottom: 14px;
+            }
+
+            .input-icon input,
+            .input-icon select {
+                padding: 12px 38px;
+                font-size: 14px;
+            }
+
+            .alert {
+                padding: 10px;
+                font-size: 13px;
+            }
+
+            button {
+                padding: 13px;
+                font-size: 14px;
+            }
+
+            .links {
+                margin-top: 16px;
+            }
+
+            .links a {
+                font-size: 13px;
+            }
+        }
+
+        /* Pantallas pequeñas */
+        @media (max-width: 360px) {
+
+            h2 {
+                font-size: 19px;
+            }
+
+            .subtitle {
+                font-size: 12px;
+            }
+
+            .input-icon input,
+            .input-icon select {
+                font-size: 13px;
+            }
+        }
+
+        /* =========================================
+        FIN RESPONSIVE REGISTER
+        ========================================= */
+
+    /*Fin de estilo de register.html*/
+
+    /*Inicio de estilo de recover.html*/
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a, #891010);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .recover-container {
+            display: flex;
+            width: 800px;
+            background: #ffffff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+        }
+
+        .left-side {
+            width: 40%;
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .left-side img {
+            width: 150px;
+        }
+
+        .right-side {
+            width: 60%;
+            padding: 45px 50px;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            margin: 0;
+            text-align: center;
+            color: #1a1a1a;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        .input-group label {
+            font-weight: bold;
+            color: #222;
+        }
+
+        .input-icon {
+            position: relative;
+            margin-top: 6px;
+        }
+
+        .input-icon i {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .left-icon {
+            left: 12px;
+        }
+
+        .input-icon input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px 45px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .input-icon input:focus {
+            border-color: #891010;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            background: #891010;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 15px;
+        }
+
+        button:hover {
+            background: #6f0c0c;
+        }
+
+        .links {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .links a {
+            color: #b91c1c;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            margin-bottom: 15px;
+            background: #891010;
+            color: white;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .info-text {
+            color: #666;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 18px;
+            line-height: 1.5;
+        }
+
+        /* =========================================
+        INICIO RESPONSIVE RECOVER
+        PEGAR AL FINAL
+        ========================================= */
+
+        /* Mejor control */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            padding: 20px;
+        }
+
+        /* Contenedor adaptable */
+        .recover-container {
+            max-width: 850px;
+            width: 100%;
+        }
+
+        /* Alertas mejoradas */
+        .alert.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .alert.danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Laptop */
+        @media (max-width: 992px) {
+
+            .recover-container {
+                width: 95%;
+            }
+
+            .left-side img {
+                width: 130px;
+            }
+
+            .right-side {
+                padding: 38px 35px;
+            }
+
+            h2 {
+                font-size: 28px;
+            }
+
+            .subtitle {
+                font-size: 15px;
+            }
+        }
+
+        /* Tablet */
+        @media (max-width: 768px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .recover-container {
+                flex-direction: column;
+                width: 100%;
+                border-radius: 18px;
+            }
+
+            .left-side,
+            .right-side {
+                width: 100%;
+            }
+
+            .left-side {
+                padding: 28px 20px;
+            }
+
+            .left-side img {
+                width: 125px;
+            }
+
+            .right-side {
+                padding: 30px 24px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            .subtitle {
+                font-size: 14px;
+                line-height: 1.6;
+                margin-bottom: 20px;
+            }
+
+            .input-group label {
+                font-size: 14px;
+            }
+
+            .input-icon input {
+                padding: 12px 42px;
+                font-size: 14px;
+            }
+
+            button {
+                padding: 14px;
+                font-size: 15px;
+            }
+
+            .info-text {
+                font-size: 13px;
+                line-height: 1.7;
+            }
+
+            .links a {
+                display: inline-block;
+                font-size: 14px;
+            }
+        }
+
+        /* Celulares */
+        @media (max-width: 480px) {
+
+            body {
+                padding: 10px;
+            }
+
+            .recover-container {
+                border-radius: 16px;
+            }
+
+            .left-side {
+                padding: 22px 15px;
+            }
+
+            .left-side img {
+                width: 105px;
+            }
+
+            .right-side {
+                padding: 24px 18px;
+            }
+
+            h2 {
+                font-size: 21px;
+            }
+
+            .subtitle {
+                font-size: 13px;
+            }
+
+            .input-group {
+                margin-bottom: 16px;
+            }
+
+            .input-icon input {
+                padding: 12px 38px;
+                font-size: 14px;
+            }
+
+            .left-icon {
+                left: 10px;
+            }
+
+            .alert {
+                padding: 10px;
+                font-size: 13px;
+            }
+
+            button {
+                padding: 13px;
+                font-size: 14px;
+            }
+
+            .info-text {
+                font-size: 12px;
+            }
+
+            .links a {
+                font-size: 13px;
+            }
+        }
+
+        /* Pantallas pequeñas */
+        @media (max-width: 360px) {
+
+            h2 {
+                font-size: 19px;
+            }
+
+            .subtitle {
+                font-size: 12px;
+            }
+
+            .input-icon input {
+                font-size: 13px;
+            }
+        }
+
+        /* =========================================
+        FIN RESPONSIVE RECOVER
+        ========================================= */
+    
+    /*Fin de estilo de recover.html*/
+
+    /*Inicio de estilo de reset_password.html*/
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a, #891010);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .reset-container {
+            display: flex;
+            width: 800px;
+            background: #ffffff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+        }
+
+        .left-side {
+            width: 40%;
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .left-side img {
+            width: 150px;
+        }
+
+        .right-side {
+            width: 60%;
+            padding: 45px 50px;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            text-align: center;
+            color: #1a1a1a;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        .input-group label {
+            font-weight: bold;
+            color: #222;
+        }
+
+        .input-icon {
+            position: relative;
+            margin-top: 6px;
+        }
+
+        .input-icon i {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .left-icon {
+            left: 12px;
+        }
+
+        .right-icon {
+            right: 12px;
+            cursor: pointer;
+        }
+
+        .input-icon input {
+            width: 100%;
+            padding: 12px 40px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        .input-icon input:focus {
+            border-color: #891010;
+        }
+
+        button {
+    
+        }
+        button {
+            width: 100%;
+            max-width: 320px;
+             margin: 15px auto 0;
+            display: block;
+            padding: 13px;
+            background: #891010;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #6f0c0c;
+        }
+
+        .input-group {
+            text-align: center;
+        }
+
+        .alert {
+            margin-bottom: 15px;
+            background: #891010;
+            color: white;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .links {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .links a {
+            color: #b91c1c;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        /* =========================================
+        INICIO RESPONSIVE RESET PASSWORD
+        PEGAR AL FINAL
+        ========================================= */
+
+        /* Mejor control */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            padding: 20px;
+        }
+
+        /* Contenedor adaptable */
+        .reset-container {
+            max-width: 850px;
+            width: 100%;
+        }
+
+        /* Alertas mejoradas */
+        .alert.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .alert.danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Inputs más profesionales */
+        .input-icon input {
+            font-size: 15px;
+            outline: none;
+        }
+
+        /* Laptop */
+        @media (max-width: 992px) {
+
+            .reset-container {
+                width: 95%;
+            }
+
+            .left-side img {
+                width: 130px;
+            }
+
+            .right-side {
+                padding: 38px 35px;
+            }
+
+            h2 {
+                font-size: 28px;
+            }
+
+            .subtitle {
+                font-size: 15px;
+            }
+        }
+
+        /* Tablet */
+        @media (max-width: 768px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .reset-container {
+                flex-direction: column;
+                width: 100%;
+                border-radius: 18px;
+            }
+
+            .left-side,
+            .right-side {
+                width: 100%;
+            }
+
+            .left-side {
+                padding: 28px 20px;
+            }
+
+            .left-side img {
+                width: 125px;
+            }
+
+            .right-side {
+                padding: 30px 24px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            .subtitle {
+                font-size: 14px;
+                line-height: 1.6;
+                margin-bottom: 20px;
+            }
+
+            .input-group {
+                margin-bottom: 16px;
+            }
+
+            .input-group label {
+                font-size: 14px;
+            }
+
+            .input-icon input {
+                padding: 12px 42px;
+                font-size: 14px;
+            }
+
+            .left-icon {
+                left: 10px;
+            }
+
+            .right-icon {
+                right: 10px;
+            }
+
+            button {
+                padding: 14px;
+                font-size: 15px;
+            }
+
+            .links a {
+                display: inline-block;
+                font-size: 14px;
+            }
+        }
+
+        /* Celulares */
+        @media (max-width: 480px) {
+
+            body {
+                padding: 10px;
+            }
+
+            .reset-container {
+                border-radius: 16px;
+            }
+
+            .left-side {
+                padding: 22px 15px;
+            }
+
+            .left-side img {
+                width: 105px;
+            }
+
+            .right-side {
+                padding: 24px 18px;
+            }
+
+            h2 {
+                font-size: 21px;
+            }
+
+            .subtitle {
+                font-size: 13px;
+            }
+
+            .input-group {
+                margin-bottom: 14px;
+            }
+
+            .input-icon input {
+                padding: 12px 38px;
+                font-size: 14px;
+            }
+
+            .alert {
+                padding: 10px;
+                font-size: 13px;
+            }
+
+            button {
+                padding: 13px;
+                font-size: 14px;
+            }
+
+            .links a {
+                font-size: 13px;
+            }
+        }
+
+        /* Pantallas pequeñas */
+        @media (max-width: 360px) {
+
+            h2 {
+                font-size: 19px;
+            }
+
+            .subtitle {
+                font-size: 12px;
+            }
+
+            .input-icon input {
+                font-size: 13px;
+            }
+        }
+
+        /* =========================================
+        FIN RESPONSIVE RESET PASSWORD
+        ========================================= */
+    /*Fin de estilo de reset_password.html*/
+
+    /*Inicio de estilo de verificar_codigo_recuperacion.html*/
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a, #891010);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .reset-container {
+            display: flex;
+            width: 800px;
+            background: #ffffff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+        }
+
+        .left-side {
+            width: 40%;
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .left-side img {
+            width: 150px;
+        }
+
+        .right-side {
+            width: 60%;
+            padding: 45px 50px;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            text-align: center;
+            color: #1a1a1a;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+            text-align: center;
+        }
+
+        .input-group label {
+            font-weight: bold;
+            color: #222;
+        }
+
+        .input-icon {
+            position: relative;
+            margin-top: 6px;
+        }
+
+        .input-icon i {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            left: 12px;
+        }
+
+        .input-icon input {
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto;
+            display: block;
+            padding: 12px 40px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .input-icon input:focus {
+            border-color: #891010;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            max-width: 320px;
+            margin: 15px auto 0;
+            display: block;
+            padding: 13px;
+            background: #891010;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #6f0c0c;
+        }
+
+        .alert {
+            margin-bottom: 15px;
+            background: #891010;
+            color: white;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .links {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .links a {
+            color: #b91c1c;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        /* =========================================
+        INICIO RESPONSIVE VERIFICAR CODIGO
+        PEGAR AL FINAL
+        ========================================= */
+
+        /* Mejor control */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            padding: 20px;
+        }
+
+        /* Contenedor adaptable */
+        .reset-container {
+            max-width: 850px;
+            width: 100%;
+        }
+
+        /* Alertas mejoradas */
+        .alert.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .alert.danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Input premium */
+        .input-icon input {
+            font-size: 20px;
+            outline: none;
+        }
+
+        /* Laptop */
+        @media (max-width: 992px) {
+
+            .reset-container {
+                width: 95%;
+            }
+
+            .left-side img {
+                width: 130px;
+            }
+
+            .right-side {
+                padding: 38px 35px;
+            }
+
+            h2 {
+                font-size: 28px;
+            }
+
+            .subtitle {
+                font-size: 15px;
+            }
+        }
+
+        /* Tablet */
+        @media (max-width: 768px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .reset-container {
+                flex-direction: column;
+                width: 100%;
+                border-radius: 18px;
+            }
+
+            .left-side,
+            .right-side {
+                width: 100%;
+            }
+
+            .left-side {
+                padding: 28px 20px;
+            }
+
+            .left-side img {
+                width: 125px;
+            }
+
+            .right-side {
+                padding: 30px 24px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            .subtitle {
+                font-size: 14px;
+                line-height: 1.6;
+                margin-bottom: 20px;
+            }
+
+            .input-group {
+                margin-bottom: 16px;
+            }
+
+            .input-group label {
+                font-size: 14px;
+            }
+
+            .input-icon input {
+                padding: 12px 42px;
+                font-size: 18px;
+            }
+
+            .input-icon i {
+                left: 10px;
+            }
+
+            button {
+                padding: 14px;
+                font-size: 15px;
+            }
+
+            .links a {
+                display: inline-block;
+                font-size: 14px;
+            }
+        }
+
+        /* Celulares */
+        @media (max-width: 480px) {
+
+            body {
+                padding: 10px;
+            }
+
+            .reset-container {
+                border-radius: 16px;
+            }
+
+            .left-side {
+                padding: 22px 15px;
+            }
+
+            .left-side img {
+                width: 105px;
+            }
+
+            .right-side {
+                padding: 24px 18px;
+            }
+
+            h2 {
+                font-size: 21px;
+            }
+
+            .subtitle {
+                font-size: 13px;
+            }
+
+            .input-group {
+                margin-bottom: 14px;
+            }
+
+            .input-icon input {
+                padding: 12px 38px;
+                font-size: 17px;
+
+            }
+
+            .alert {
+                padding: 10px;
+                font-size: 13px;
+            }
+
+            button {
+                padding: 13px;
+                font-size: 14px;
+            }
+
+            .links a {
+                font-size: 13px;
+            }
+        }
+
+        /* Pantallas pequeñas */
+        @media (max-width: 360px) {
+
+            h2 {
+                font-size: 19px;
+            }
+
+            .subtitle {
+                font-size: 12px;
+            }
+
+            .input-icon input {
+                font-size: 15px;
+            }
+        }
+
+        /* =========================================
+        FIN RESPONSIVE VERIFICAR CODIGO
+        ========================================= */
+    /*Fin de estilo de verificar_codigo_recuperacion.html*/
+
+    /* ARREGLO FINAL PARA LOGIN Y REGISTRO */
+
+.login-container input,
+.login-container select {
+    text-align: left !important;
+    letter-spacing: normal !important;
+    font-weight: normal !important;
+    font-size: 15px !important;
+}
+
+.login-container input::placeholder {
+    letter-spacing: normal !important;
+}
+
+.login-container .input-icon input,
+.login-container .input-icon select {
+    padding-left: 45px !important;
+    padding-right: 45px !important;
+}
+
+.login-container .toggle-password {
+    left: auto !important;
+    right: 14px !important;
+}
+
+.login-container .input-icon i.fa-user,
+.login-container .input-icon i.fa-lock,
+.login-container .input-icon i.fa-envelope,
+.login-container .input-icon i.fa-user-shield {
+    left: 14px !important;
+    right: auto !important;
+}
+
+.login-container button {
+    font-size: 15px !important;
+}
+
+/* ARREGLO OJITO DENTRO DEL INPUT */
+
+.input-icon {
+    position: relative;
+    width: 100%;
+}
+
+.input-icon input {
+    width: 100%;
+    padding-left: 45px !important;
+    padding-right: 50px !important;
+}
+
+.input-icon .toggle-password {
+    position: absolute !important;
+    right: 16px !important;
+    left: auto !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    cursor: pointer;
+    z-index: 5;
+}
+
+/* ARREGLO TEXTO REGISTRO */
+
+.right-side input,
+.right-side select {
+    text-align: left ;
+    font-weight: normal ;
+}
+
+.right-side input::placeholder {
+    text-align: left;
+}

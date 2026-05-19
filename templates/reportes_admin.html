@@ -22,6 +22,7 @@
 
 {% block content %}
 
+<<<<<<< HEAD
     <section class="page-title" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
         <div>
             <h1>Reportes Generales</h1>
@@ -34,6 +35,13 @@
 
    <div id="reporte-pdf">
 
+=======
+    <section class="page-title">
+        <h1>Reportes Generales</h1>
+        <p>Indicadores financieros, comerciales y administrativos del sistema.</p>
+    </section>
+
+>>>>>>> main
    <section class="stats-grid reportes-stats">
         <div class="stat-card">
             <h3>Ingresos</h3>
@@ -52,7 +60,11 @@
 
         <div class="stat-card">
             <h3>Inmuebles disponibles</h3>
+<<<<<<< HEAD
             <p>{{ (inmuebles_disponibles) }}</p>
+=======
+            <p>${{ (inmuebles_disponibles) }}</p>
+>>>>>>> main
         </div>
     </section>
 
@@ -68,14 +80,20 @@
         </div>
     </section>
 
+<<<<<<< HEAD
     </div><!-- fin #reporte-pdf -->
 
+=======
+>>>>>>> main
 
 
 {% endblock %}
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<<<<<<< HEAD
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+=======
+>>>>>>> main
 
 <script>
     function exportarPDF() {
