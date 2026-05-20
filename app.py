@@ -739,11 +739,11 @@ def ventas_admin():
         inmueble_id = request.form['inmueble_id']
         cliente_id = request.form['cliente_id']
         valor_venta = float(request.form['valor_venta'])
-        anticipo = float(request.form['anticipo'])
-        metodo_pago = ", ".join(request.form.getlist('metodo_pago'))
         observacion = request.form['observacion']
-
-        saldo = valor_venta - anticipo
+        metodo_pago = request.form['metodo_pago']
+        porcentaje_anticipo = int(request.form['porcentaje_anticipo'])
+        anticipo = float(request.form['anticipo'])
+        saldo = float(request.form['saldo'])
 
         if saldo <= 0:
             estado_pago = 'Pagado'
@@ -753,15 +753,15 @@ def ventas_admin():
             estado_pago = 'Sin anticipo'
 
         cur.execute("""
-            INSERT INTO ventas (
-                inmueble_id, cliente_id, valor_venta, metodo_pago,
-                anticipo, saldo, estado_pago, observacion
-            )
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
-        """, (
-            inmueble_id, cliente_id, valor_venta, metodo_pago,
-            anticipo, saldo, estado_pago, observacion
-        ))
+                    INSERT INTO ventas (
+                    inmueble_id, cliente_id, valor_venta, metodo_pago,
+                    porcentaje_anticipo, anticipo, saldo, estado_pago, observacion
+                    )
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                    """, (
+                        inmueble_id, cliente_id, valor_venta, metodo_pago,
+                        porcentaje_anticipo, anticipo, saldo, estado_pago, observacion
+                        ))
 
         cur.execute("""
             UPDATE inmuebles
@@ -775,9 +775,9 @@ def ventas_admin():
 
     cur.execute("""
         SELECT *
-        FROM inmuebles
-        WHERE estado = 'Disponible'
-        ORDER BY id DESC
+FROM inmuebles
+WHERE estado = 'Disponible' AND tipo_negocio = 'Venta'
+ORDER BY id DESC
     """)
     inmuebles_disponibles = cur.fetchall()
 
