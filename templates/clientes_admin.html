@@ -50,56 +50,50 @@
         </div>
     </section>
 
-    <section class="section-box">
-        <h2><i class="fa fa-user-plus"></i> Registrar nuevo cliente</h2>
+    <section class="filters">
 
-        <form method="POST">
+    <form method="GET" class="filters-form">
 
-            <div class="input-group">
-                <label>Nombre completo</label>
-                <input type="text" name="nombre" placeholder="Ej: María Gómez" required>
-            </div>
+        <div class="filter-group">
+            <input type="text"
+                   name="buscar"
+                   placeholder="Buscar cliente, teléfono o correo..."
+                   value="{{ buscar }}">
+        </div>
 
-            <div class="input-group">
-                <label>Documento</label>
-                <input type="text" name="documento" placeholder="Ej: 1002456789">
-            </div>
+        <div class="filter-group">
+            <select name="tipo_interes">
 
-            <div class="input-group">
-                <label>Teléfono</label>
-                <input type="text" name="telefono" placeholder="Ej: 3001234567" required>
-            </div>
+                <option value="">Todos los intereses</option>
 
-            <div class="input-group">
-                <label>Correo electrónico</label>
-                <input type="email" name="email" placeholder="Ej: cliente@gmail.com">
-            </div>
+                <option value="Compra"
+                    {% if tipo_interes == 'Compra' %}selected{% endif %}>
+                    Compra
+                </option>
 
-            <div class="input-group">
-                <label>Dirección</label>
-                <input type="text" name="direccion" placeholder="Ej: Montería, Córdoba">
-            </div>
+                <option value="Arriendo"
+                    {% if tipo_interes == 'Arriendo' %}selected{% endif %}>
+                    Arriendo
+                </option>
 
-            <div class="input-group">
-                <label>Tipo de interés</label>
-                <select name="tipo_interes" required>
-                    <option value="Compra">Compra</option>
-                    <option value="Arriendo">Arriendo</option>
-                    <option value="Reserva">Reserva</option>
-                </select>
-            </div>
+                <option value="Reserva"
+                    {% if tipo_interes == 'Reserva' %}selected{% endif %}>
+                    Reserva
+                </option>
 
-            <div class="input-group full">
-                <label>Observación</label>
-                <textarea name="observacion" placeholder="Ej: Cliente interesado en apartamento familiar en zona norte."></textarea>
-            </div>
+            </select>
+        </div>
 
-            <button type="submit" class="btn-submit">
-                <i class="fa fa-save"></i> Guardar cliente
-            </button>
+        <button type="submit" class="btn-filter">
+            <i class="fa fa-filter"></i> Filtrar
+        </button>
 
-        </form>
-    </section>
+        <button type="button" class="btn-filter"
+            id="open-client-modal">
+            <i class="fa fa-plus"></i> Nuevo cliente
+        </button>
+    </form>
+</section>
 
     <section class="section-box">
         <h2><i class="fa fa-list"></i> Clientes registrados</h2>
@@ -153,5 +147,131 @@
         </div>
         {% endif %}
     </section>
+
+    <section class="pagination">
+
+        {% if pagina > 1 %}
+            <a href="?pagina={{ pagina - 1 }}&buscar={{ buscar }}&tipo_interes={{ tipo_interes }}">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        {% endif %}
+
+        {% for p in range(1, total_paginas + 1) %}
+
+            <a href="?pagina={{ p }}&buscar={{ buscar }}&tipo_interes={{ tipo_interes }}"
+            class="{% if p == pagina %}active{% endif %}">
+                {{ p }}
+            </a>
+
+        {% endfor %}
+
+        {% if pagina < total_paginas %}
+            <a href="?pagina={{ pagina + 1 }}&buscar={{ buscar }}&tipo_interes={{ tipo_interes }}">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        {% endif %}
+
+    </section>
+
+    <div class="modal-overlay" id="client-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>Registrar Cliente</h2>
+
+                <button
+                    type="button"
+                    class="close-modal"
+                    id="close-client-modal">
+                    <i class="fa fa-xmark"></i>
+                </button>
+
+            </div>
+
+            <form method="POST" action="{{ url_for('clientes_admin') }}">
+
+                <div class="modal-grid">
+                    <div class="input-group">
+                        <label>Nombre completo</label>
+
+                        <input
+                            type="text"
+                            name="nombre"
+                            required>
+
+                    </div>
+
+                    <div class="input-group">
+
+                        <label>Documento</label>
+
+                        <input
+                            type="text"
+                            name="documento"
+                            required>
+
+                    </div>
+
+                    <div class="input-group">
+
+                        <label>Teléfono</label>
+
+                        <input
+                            type="text"
+                            name="telefono"
+                            required>
+
+                    </div>
+
+                    <div class="input-group">
+                        <label>Correo</label>
+                        <input
+                            type="email"
+                            name="email"
+                            required>
+
+                    </div>
+
+                    <div class="input-group">
+
+                        <label>Dirección</label>
+
+                        <input
+                            type="text"
+                            name="direccion"
+                            required>
+
+                    </div>
+
+                    <div class="input-group">
+
+                        <label>Tipo interés</label>
+                        <select name="tipo_interes" required>
+                            <option value="" disabled selected> Seleccione un tipo de interés </option>
+                            <option value="Compra">Compra</option>
+                            <option value="Arriendo">Arriendo</option>
+                            <option value="Reserva">Reserva</option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="input-group full">
+                        <label>Observación</label>
+                        <textarea
+                            name="observacion"
+                            required></textarea>
+
+                    </div>
+
+                </div>
+
+                <button type="submit" class="save-btn">
+                    <i class="fa fa-floppy-disk"></i>
+                    Guardar cliente
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

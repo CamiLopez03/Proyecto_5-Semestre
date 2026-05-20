@@ -346,3 +346,67 @@ document.getElementById('btnConfirmarEliminar')
     window.location.href =
         "/eliminar_proyecto/" + proyectoEliminar;
 });
+
+const modal = document.getElementById('client-modal');
+const openBtn = document.getElementById('open-client-modal');
+const closeBtn = document.getElementById('close-client-modal');
+
+openBtn.addEventListener('click', () => {
+    modal.classList.add('active');
+});
+
+closeBtn.addEventListener('click', () => {
+    modal.classList.remove('active');
+});
+
+window.addEventListener('click', (e) => {
+    if(e.target === modal){
+        modal.classList.remove('active');
+    }
+});
+
+const inmuebleSelect = document.getElementById("inmuebleSelect");
+const valorVenta = document.getElementById("valorVenta");
+const slider = document.getElementById("anticipoSlider");
+
+const porcentajeTexto = document.getElementById("porcentajeTexto");
+const valorAnticipo = document.getElementById("valorAnticipo");
+const saldoPendiente = document.getElementById("saldoPendiente");
+
+const anticipoInput = document.getElementById("anticipoInput");
+const saldoInput = document.getElementById("saldoInput");
+
+function formatoMoneda(valor) {
+    return new Intl.NumberFormat("es-CO", {
+        style: "currency",
+        currency: "COP",
+        minimumFractionDigits: 0
+    }).format(valor);
+}
+
+function calcularAnticipo() {
+    const precio = Number(valorVenta.value || 0);
+    const porcentaje = Number(slider.value || 0);
+
+    const anticipo = precio * porcentaje / 100;
+    const saldo = precio - anticipo;
+
+    porcentajeTexto.textContent = porcentaje + "%";
+    valorAnticipo.textContent = formatoMoneda(anticipo);
+    saldoPendiente.textContent = formatoMoneda(saldo);
+
+    anticipoInput.value = anticipo;
+    saldoInput.value = saldo;
+}
+
+inmuebleSelect.addEventListener("change", function () {
+    const opcion = this.options[this.selectedIndex];
+    const precio = opcion.dataset.precio || 0;
+
+    valorVenta.value = precio;
+    slider.value = 0;
+
+    calcularAnticipo();
+});
+
+slider.addEventListener("input", calcularAnticipo);
