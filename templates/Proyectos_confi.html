@@ -173,7 +173,7 @@
 
             {% if pagina > 1 %}
                 <a href="{{ url_for(
-                    'proyectos_constructora',
+                    'proyectos_admin',
                     pagina=pagina-1,
                     buscar=buscar,
                     estado=estado
@@ -186,7 +186,7 @@
 
                 <a
                     href="{{ url_for(
-                        'proyectos_constructora',
+                        'proyectos_admin',
                         pagina=p,
                         buscar=buscar,
                         estado=estado
@@ -201,7 +201,7 @@
 
             {% if pagina < total_paginas %}
                 <a href="{{ url_for(
-                    'proyectos_constructora',
+                    'proyectos_admin',
                     pagina=pagina+1,
                     buscar=buscar,
                     estado=estado

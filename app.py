@@ -1278,7 +1278,7 @@ def reportes_admin():
     )
 
 @app.route('/proyectos')
-def proyectos_constructora():
+def proyectos_admin():
 
     cur = mysql.connection.cursor()
     cur.execute("""
@@ -1527,11 +1527,6 @@ def reservas_admin():
         return redirect(url_for('login'))
 
     cur = mysql.connection.cursor()
-
-    # =========================
-    # REGISTRAR RESERVA
-    # =========================
-
     if request.method == 'POST':
 
         inmueble_id = request.form['inmueble_id']
