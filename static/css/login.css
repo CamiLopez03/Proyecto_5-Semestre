@@ -2582,7 +2582,6 @@
     border: 1px solid #e5e5e5;
     border-radius: 14px;
 
-    overflow: hidden;
     background: #fff;
 
     position: relative;
@@ -2816,41 +2815,51 @@ DERECHA
 .register-container .right-side{
     width: 60%;
 
-    background: white;
+    background: #ffffff;
 
-    padding: 30px 42px;
+    padding: 30px 50px 30px 35px;
 
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 10px;
+
+    position: relative;
+
+    border-top-left-radius: 35px;
+    border-bottom-left-radius: 35px;
+
+    z-index: 10;
+
+    box-shadow:
+    -10px 0 40px rgba(0,0,0,.05);
 }
 
 /* FORMULARIO */
 
 .register-container form{
-    width: 88%;
-    margin: 0 auto;
-}
+    width: 100%;
+    max-width: 470px;
 
+    margin-left: 15px;
+}
 /* =========================================
 ICONO SUPERIOR
 ========================================= */
 
 .register-container .register-icon{
-    width: 52px;
-    height: 52px;
+    width: 58px;
+    height: 58px;
 
     border-radius: 50%;
 
     background:
-    linear-gradient(135deg,#a50f15,#d91c23);
+    linear-gradient(135deg,#9f0d12,#c1121f);
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    margin: 0 auto 18px;
+    margin-bottom: 18px;
 }
 
 .register-container .register-icon i{
@@ -2863,25 +2872,30 @@ TITULO
 ========================================= */
 
 .register-container h2{
-    font-size: 22px;
+    font-size: 36px;
+
     font-weight: 700;
 
     color: #111;
 
-    text-align: center;
+    margin: 0;
 
-    margin-bottom: 10px;
+    text-align: left;
 }
 
 /* SUBTITULO */
 
 .register-container .subtitle{
-    text-align: center;
+    margin-top: 8px;
+    margin-bottom: 32px;
 
-    font-size: 13px;
-    color: #777;
+    font-size: 14px;
 
-    margin-bottom: 22px;
+    color: #8a8a8a;
+
+    text-align: left;
+
+    line-height: 1.5;
 }
 
 /* =========================================
@@ -2908,22 +2922,10 @@ INPUTS
 /* CAJA INPUT */
 
 .register-container .input-icon{
-    display: flex;
-    align-items: center;
+    position: relative;
 
-    height: 40px;
-
-    border: 1px solid #e5e5e5;
-
-    border-radius: 14px;
-
-    overflow: hidden;
-
-    background: white;
-
-    transition: .3s ease;
+    width: 100%;
 }
-
 /* FOCUS */
 
 .register-container .input-icon:focus-within{
@@ -2935,50 +2937,65 @@ INPUTS
 /* ICONOS */
 
 .register-container .input-icon i{
-    width: 42px;
-    height: 100%;
+    position: absolute;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    left: 18px;
 
-    font-size: 13px;
+    top: 50%;
 
-    background: #fff5f5;
+    transform: translateY(-50%);
 
     color: #c1121f;
 
-    flex-shrink: 0;
+    font-size: 16px;
+
+    z-index: 2;
+
+    background: transparent;
+
+    pointer-events: none;
 }
 
 /* INPUT */
 
 .register-container .input-icon input,
 .register-container .input-icon select{
-    flex: 1;
+    width: 100%;
 
-    height: 100%;
+    height: 54px;
 
-    border: none;
+    border: 1px solid #e8e8e8;
+
     outline: none;
 
-    padding: 0 14px;
+    border-radius: 12px;
 
-    font-size: 13px;
+    padding-left: 72px;
+
+    padding-right: 16px;
+
+    font-size: 15px;
 
     background: white;
 
     color: #111;
-}
 
+    box-sizing: border-box;
+}
 /* OJITO */
 
 .register-container .toggle-password{
-    width: 42px !important;
+    width: 48px !important;
 
     background: white !important;
 
-    color: #999 !important;
+    color: #c1121f !important;
+
+    border-left: 1px solid #efefef;
+
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
 
     cursor: pointer;
 }
@@ -2990,11 +3007,17 @@ INPUTS
 }
 
 .register-container .select-arrow{
-    width: 42px !important;
+    width: 48px !important;
 
     background: white !important;
 
     color: #777 !important;
+
+    border-left: 1px solid #efefef;
+
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
 }
 
 /* =========================================
@@ -3003,23 +3026,23 @@ BOTON
 
 .register-container button{
     width: 100%;
-    height: 42px;
+    height: 54px;
 
     border: none;
 
-    border-radius: 14px;
+    border-radius: 10px;
 
     background:
-    linear-gradient(135deg,#b80f16,#d91c23);
+    linear-gradient(135deg,#a80f15,#c9151b);
 
     color: white;
 
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
 
     cursor: pointer;
 
-    margin-top: 10px;
+    margin-top: 18px;
 
     transition: .3s ease;
 }
@@ -3027,7 +3050,8 @@ BOTON
 .register-container button:hover{
     transform: translateY(-2px);
 
-    box-shadow: 0 12px 25px rgba(185,28,28,.25);
+    box-shadow:
+    0 15px 30px rgba(185,28,28,.22);
 }
 
 /* =========================================
