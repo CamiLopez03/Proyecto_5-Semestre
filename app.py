@@ -392,12 +392,37 @@ def usuarios():
         flash('No tienes permisos para ver usuarios.', 'danger')
         return redirect(url_for('dashboard'))
 
+    buscar = request.args.get('buscar', '')
+    rol = request.args.get('rol', '')
+
+    query = """
+        SELECT id, username, email, rol, email_confirmado
+        FROM usuarios
+        WHERE 1=1
+    """
+
+    valores = []
+
+    if buscar:
+        query += " AND (username LIKE %s OR email LIKE %s)"
+        busqueda = f"%{buscar}%"
+        valores.extend([busqueda, busqueda])
+
+    if rol:
+        query += " AND rol = %s"
+        valores.append(rol)
+
     cur = mysql.connection.cursor()
-    cur.execute("SELECT id, username, email, rol, email_confirmado FROM usuarios")
+    cur.execute(query, valores)
     usuarios = cur.fetchall()
     cur.close()
 
-    return render_template('usuarios.html', usuarios=usuarios)
+    return render_template(
+    'usuarios.html',
+    usuarios=usuarios,
+    buscar=buscar,
+    rol=rol
+)
 
 
 @app.route('/eliminar_usuario/<int:id>')
@@ -763,7 +788,10 @@ def ventas_admin():
     """)
     clientes = cur.fetchall()
 
-    cur.execute("""
+    buscar = request.args.get('buscar', '')
+    metodo_pago = request.args.get('metodo_pago', '')
+
+    query = """
         SELECT 
             v.id,
             v.valor_venta,
@@ -777,11 +805,42 @@ def ventas_admin():
             i.ubicacion,
             c.nombre AS cliente,
             c.documento
+
         FROM ventas v
-        INNER JOIN inmuebles i ON v.inmueble_id = i.id
-        INNER JOIN clientes_inmobiliaria c ON v.cliente_id = c.id
-        ORDER BY v.fecha DESC
-    """)
+
+        INNER JOIN inmuebles i
+            ON v.inmueble_id = i.id
+
+        INNER JOIN clientes_inmobiliaria c
+            ON v.cliente_id = c.id
+
+        WHERE 1=1
+    """
+
+    valores = []
+
+    if buscar:
+        query += """
+            AND (
+                c.nombre LIKE %s
+                OR i.titulo LIKE %s
+            )
+        """
+        busqueda = f"%{buscar}%"
+
+        valores.extend([
+            busqueda,
+            busqueda
+        ])
+
+    if metodo_pago:
+        query += " AND v.metodo_pago LIKE %s "
+        valores.append(f"%{metodo_pago}%")
+
+    query += " ORDER BY v.fecha DESC "
+
+    cur.execute(query, valores)
+
     ventas = cur.fetchall()
 
     cur.execute("SELECT COALESCE(SUM(valor_venta), 0) AS total FROM ventas")
@@ -832,17 +891,19 @@ def ventas_admin():
     cur.close()
 
     return render_template(
-        'ventas_admin.html',
-        inmuebles_disponibles=inmuebles_disponibles,
-        clientes=clientes,
-        ventas=ventas,
-        total_vendido=total_vendido,
-        total_ventas=total_ventas,
-        ventas_mes=ventas_mes,
-        inmuebles_vendidos=inmuebles_vendidos,
-        ultimas_ventas=ultimas_ventas,
-        ventas_grafico=ventas_grafico
-    )
+    'ventas_admin.html',
+    inmuebles_disponibles=inmuebles_disponibles,
+    clientes=clientes,
+    ventas=ventas,
+    total_vendido=total_vendido,
+    total_ventas=total_ventas,
+    ventas_mes=ventas_mes,
+    inmuebles_vendidos=inmuebles_vendidos,
+    ultimas_ventas=ultimas_ventas,
+    ventas_grafico=ventas_grafico,
+    buscar=buscar,
+    metodo_pago=metodo_pago
+)
 
 @app.route('/clientes_admin', methods=['GET', 'POST'])
 def clientes_admin():
@@ -865,26 +926,121 @@ def clientes_admin():
             return redirect(url_for('clientes_admin'))
 
         cur.execute("""
-            INSERT INTO clientes (nombre, documento, telefono, email, direccion, tipo_interes, observacion)
+            INSERT INTO clientes_inmobiliaria
+            (nombre, documento, telefono, email, direccion, tipo_interes, observacion)
+
             VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """, (nombre, documento, telefono, email, direccion, tipo_interes, observacion))
+        """, (
+            nombre,
+            documento,
+            telefono,
+            email,
+            direccion,
+            tipo_interes,
+            observacion
+        ))
 
         mysql.connection.commit()
         flash('Cliente registrado correctamente.', 'success')
         return redirect(url_for('clientes_admin'))
 
-    cur.execute("SELECT * FROM clientes_inmobiliaria ORDER BY id DESC")
-    clientes = cur.fetchall()
+    # FILTROS
+    buscar = request.args.get('buscar', '')
+    tipo_interes = request.args.get('tipo_interes', '')
 
+    query = """
+        SELECT *
+        FROM clientes_inmobiliaria
+        WHERE 1=1
+    """
+
+    valores = []
+
+    if buscar:
+
+        query += """
+            AND (
+                nombre LIKE %s
+                OR telefono LIKE %s
+                OR email LIKE %s
+            )
+        """
+        busqueda = f"%{buscar}%"
+        valores.extend([
+            busqueda,
+            busqueda,
+            busqueda
+        ])
+
+    if tipo_interes:
+
+        query += " AND tipo_interes = %s "
+        valores.append(tipo_interes)
+    query += " ORDER BY id DESC "
+
+    # ESTADÍSTICAS
     cur.execute("SELECT COUNT(*) AS total FROM clientes_inmobiliaria")
     total_clientes = cur.fetchone()['total']
 
-    cur.execute("SELECT COUNT(*) AS total FROM clientes_inmobiliaria WHERE tipo_interes = 'Compra'")
+    cur.execute("""
+        SELECT COUNT(*) AS total
+        FROM clientes_inmobiliaria
+        WHERE tipo_interes = 'Compra'
+    """)
+
     clientes_compra = cur.fetchone()['total']
 
-    cur.execute("SELECT COUNT(*) AS total FROM clientes_inmobiliaria WHERE tipo_interes = 'Arriendo'")
+    cur.execute("""
+        SELECT COUNT(*) AS total
+        FROM clientes_inmobiliaria
+        WHERE tipo_interes = 'Arriendo'
+    """)
+
     clientes_arriendo = cur.fetchone()['total']
 
+    # PAGINACIÓN
+    pagina = request.args.get('pagina', 1, type=int)
+    por_pagina = 10
+    offset = (pagina - 1) * por_pagina
+
+    count_query = """
+        SELECT COUNT(*) AS total
+        FROM clientes_inmobiliaria
+        WHERE 1=1
+    """
+
+    count_valores = []
+
+    if buscar:
+
+        count_query += """
+            AND (
+                nombre LIKE %s
+                OR telefono LIKE %s
+                OR email LIKE %s
+            )
+        """
+
+        busqueda = f"%{buscar}%"
+        count_valores.extend([
+            busqueda,
+            busqueda,
+            busqueda
+        ])
+
+    if tipo_interes:
+        count_query += " AND tipo_interes = %s "
+        count_valores.append(tipo_interes)
+
+    cur.execute(count_query, count_valores)
+    total_registros = cur.fetchone()['total']
+
+    # CONSULTA FINAL PAGINADA
+    query += " LIMIT %s OFFSET %s "
+    valores.extend([por_pagina, offset])
+    cur.execute(query, valores)
+    clientes = cur.fetchall()
+    total_paginas = (total_registros + por_pagina - 1) // por_pagina
     cur.close()
 
     return render_template(
@@ -892,7 +1048,11 @@ def clientes_admin():
         clientes=clientes,
         total_clientes=total_clientes,
         clientes_compra=clientes_compra,
-        clientes_arriendo=clientes_arriendo
+        clientes_arriendo=clientes_arriendo,
+        buscar=buscar,
+        tipo_interes=tipo_interes,
+        pagina=pagina,
+        total_paginas=total_paginas
     )
 
 
@@ -1434,15 +1594,10 @@ def clientes_constructora():
         return redirect(url_for('login'))
 
     pagina = request.args.get('page', 1, type=int)
-
     buscar = request.args.get('buscar', '')
-
     tipo = request.args.get('tipo', '')
-
     por_pagina = 10
-
     offset = (pagina - 1) * por_pagina
-
     cur = mysql.connection.cursor()
 
     sql = """
@@ -1499,18 +1654,13 @@ def clientes_constructora():
     """
 
     valores.extend([por_pagina, offset])
-
     cur.execute(sql, valores)
-
     resultados = cur.fetchall()
 
     # TOTAL
     cur.execute("SELECT FOUND_ROWS() AS total")
-
     total = cur.fetchone()['total']
-
     total_paginas = (total + por_pagina - 1) // por_pagina
-
     cur.close()
 
     clientes_dict = {}

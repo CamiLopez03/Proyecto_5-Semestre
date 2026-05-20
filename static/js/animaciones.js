@@ -346,3 +346,21 @@ document.getElementById('btnConfirmarEliminar')
     window.location.href =
         "/eliminar_proyecto/" + proyectoEliminar;
 });
+
+const modal = document.getElementById('client-modal');
+const openBtn = document.getElementById('open-client-modal');
+const closeBtn = document.getElementById('close-client-modal');
+
+openBtn.addEventListener('click', () => {
+    modal.classList.add('active');
+});
+
+closeBtn.addEventListener('click', () => {
+    modal.classList.remove('active');
+});
+
+window.addEventListener('click', (e) => {
+    if(e.target === modal){
+        modal.classList.remove('active');
+    }
+});

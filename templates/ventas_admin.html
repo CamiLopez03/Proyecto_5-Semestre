@@ -32,6 +32,48 @@
     </p>
 </section>
 
+<section class="filters">
+
+    <form method="GET" class="filters-form">
+
+        <div class="filter-group">
+            <input type="text"
+                   name="buscar"
+                   placeholder="Buscar cliente o inmueble..."
+                   value="{{ buscar }}">
+        </div>
+
+        <div class="filter-group">
+            <select name="metodo_pago">
+
+                <option value="">Todos los métodos</option>
+
+                <option value="Efectivo"
+                    {% if metodo_pago == 'Efectivo' %}selected{% endif %}>
+                    Efectivo
+                </option>
+
+                <option value="Transferencia"
+                    {% if metodo_pago == 'Transferencia' %}selected{% endif %}>
+                    Transferencia
+                </option>
+
+                <option value="Crédito"
+                    {% if metodo_pago == 'Crédito' %}selected{% endif %}>
+                    Crédito
+                </option>
+
+            </select>
+        </div>
+
+        <button type="submit" class="btn-filter">
+            <i class="fa fa-filter"></i> Filtrar
+        </button>
+
+    </form>
+
+</section>
+
 <section class="stats">
     <div class="stat-card">
         <h3>Total vendido</h3>
