@@ -815,6 +815,7 @@
         .inmueble-card {
             background: white;
             border-radius: 24px;
+            
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             transition: 0.3s;
@@ -877,11 +878,12 @@
         }
 
         .acciones {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 18px;
-        }
+    margin-top: auto;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding-top: 18px;
+}
 
         .acciones a {
             text-decoration: none;
@@ -4948,6 +4950,26 @@ RESERVAS ADMIN
     background: #8f0909;
 }
 
+.inmueble-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.inmueble-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.acciones {
+    margin-top: auto;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding-top: 18px;
+}
+
 @keyframes popupShow{
 
     from{
@@ -4974,3 +4996,36 @@ RESERVAS ADMIN
 .cancel-btn:hover{
     background: #bbb !important;
 }
+
+.flash-container {
+    margin-bottom: 24px;
+}
+
+.alert {
+    padding: 16px 20px;
+    border-radius: 16px;
+    font-weight: 800;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.alert.success {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #22c55e;
+}
+
+.alert.danger {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #ef4444;
+}
+
+.alert.warning {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #f59e0b;
+}
+

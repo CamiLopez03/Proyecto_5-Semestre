@@ -61,15 +61,15 @@
 
             <div class="input-group">
                 <label>Inmueble disponible</label>
-                <select name="inmueble_id" required>
-                    <option value="">Seleccione un inmueble</option>
+               <select name="inmueble_id" id="inmuebleSelect" required>
+    <option value="">Seleccione un inmueble</option>
 
-                    {% for i in inmuebles_disponibles %}
-                    <option value="{{ i.id }}">
-                        {{ i.titulo }} - {{ i.ubicacion }} - COP ${{ "{:,.0f}".format(i.precio) }}
-                    </option>
-                    {% endfor %}
-                </select>
+    {% for i in inmuebles_disponibles %}
+    <option value="{{ i.id }}" data-precio="{{ i.precio }}">
+        {{ i.titulo }} - {{ i.ubicacion }} - ${{ "{:,.0f}".format(i.precio) }}
+    </option>
+    {% endfor %}
+</select>
             </div>
 
             <div class="input-group">
@@ -87,7 +87,7 @@
 
             <div class="input-group">
                 <label>Valor de venta</label>
-                <input type="number" name="valor_venta" placeholder="Ej: 580000000" required>
+                <input type="number" name="valor_venta" id="valorVenta" placeholder="Seleccione un inmueble" readonly required>
             </div>
 
             <div class="input-group">
@@ -104,27 +104,41 @@
     <label>Método de pago</label>
 
     <div style="display: flex; gap: 18px; flex-wrap: wrap;">
+
         <label>
-            <input type="checkbox" name="metodo_pago" value="Efectivo">
+            <input type="radio" name="metodo_pago" value="Efectivo" required>
             Efectivo
         </label>
 
         <label>
-            <input type="checkbox" name="metodo_pago" value="Transferencia">
+            <input type="radio" name="metodo_pago" value="Transferencia">
             Transferencia
         </label>
 
-        <label>
-            <input type="checkbox" name="metodo_pago" value="Crédito">
-            Crédito
-        </label>
     </div>
 </div>
 
-<div class="input-group">
-    <label>Anticipo</label>
-    <input type="number" name="anticipo" placeholder="Ej: 50000000" value="0" required>
+
+<div class="input-group full">
+    <label>Porcentaje de anticipo</label>
+
+    <input type="range" id="anticipoSlider" name="porcentaje_anticipo" min="0" max="100" value="0">
+
+    <p>
+        Anticipo: <strong id="porcentajeTexto">0%</strong> -
+        <strong id="valorAnticipo">$0</strong>
+    </p>
+
+    <p>
+        Saldo pendiente:
+        <strong id="saldoPendiente">$0</strong>
+    </p>
 </div>
+
+<input type="hidden" name="anticipo" id="anticipoInput" value="0">
+<input type="hidden" name="saldo" id="saldoInput" value="0">
+
+
 
             <button type="submit" class="btn-submit">
                 <i class="fa fa-save"></i> Registrar venta
@@ -174,5 +188,53 @@
         </div>
         {% endif %}
     </section>
+
+    <script>
+const inmuebleSelect = document.getElementById("inmuebleSelect");
+const valorVenta = document.getElementById("valorVenta");
+const slider = document.getElementById("anticipoSlider");
+
+const porcentajeTexto = document.getElementById("porcentajeTexto");
+const valorAnticipo = document.getElementById("valorAnticipo");
+const saldoPendiente = document.getElementById("saldoPendiente");
+
+const anticipoInput = document.getElementById("anticipoInput");
+const saldoInput = document.getElementById("saldoInput");
+
+function formatoMoneda(valor) {
+    return new Intl.NumberFormat("es-CO", {
+        style: "currency",
+        currency: "COP",
+        minimumFractionDigits: 0
+    }).format(valor);
+}
+
+function calcularAnticipo() {
+    const precio = Number(valorVenta.value || 0);
+    const porcentaje = Number(slider.value || 0);
+
+    const anticipo = precio * porcentaje / 100;
+    const saldo = precio - anticipo;
+
+    porcentajeTexto.textContent = porcentaje + "%";
+    valorAnticipo.textContent = formatoMoneda(anticipo);
+    saldoPendiente.textContent = formatoMoneda(saldo);
+
+    anticipoInput.value = anticipo;
+    saldoInput.value = saldo;
+}
+
+inmuebleSelect.addEventListener("change", function () {
+    const opcion = this.options[this.selectedIndex];
+    const precio = opcion.dataset.precio || 0;
+
+    valorVenta.value = precio;
+    slider.value = 0;
+
+    calcularAnticipo();
+});
+
+slider.addEventListener("input", calcularAnticipo);
+</script>
 
 {% endblock %}
