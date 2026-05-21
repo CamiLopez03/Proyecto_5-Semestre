@@ -232,15 +232,31 @@
 </main>
 
 <script>
-function toggleMenu(id) {
-    document.querySelectorAll('.dropdown-content').forEach(menu => {
-        if (menu.id !== id) {
-            menu.classList.remove('show');
-        }
+function toggleMenu(id){
+
+    const menu = document.getElementById(id);
+
+    const abierto = menu.classList.contains('show');
+
+    document.querySelectorAll('.dropdown-content').forEach(item=>{
+        item.classList.remove('show');
     });
 
-    document.getElementById(id).classList.toggle('show');
+    if(!abierto){
+        menu.classList.add('show');
+    }
 }
+
+window.addEventListener('click', function(e){
+
+    if(!e.target.closest('.dropdown')){
+
+        document.querySelectorAll('.dropdown-content').forEach(menu=>{
+            menu.classList.remove('show');
+        });
+
+    }
+});
 
 window.addEventListener('click', function(e) {
     if (!e.target.closest('.dropdown')) {
