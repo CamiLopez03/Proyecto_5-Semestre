@@ -527,8 +527,6 @@ def usuarios():
             rol=rol,
         pagina=pagina,
         total_paginas=total_paginas,
-        pagina=pagina,
-        total_paginas=total_paginas
         )
 
 
