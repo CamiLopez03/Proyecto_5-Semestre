@@ -1,5 +1,4 @@
 import email
-from tkinter import INSERT
 from flask import Flask, render_template, request, redirect, url_for, session, flash, current_app
 from flask_mysqldb import MySQL
 import random
