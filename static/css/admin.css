@@ -5888,5 +5888,138 @@ FIX REAL IPHONE SE
 
 }
 
+.factura-top{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:30px;
+}
 
+.factura-top p{
+    margin-bottom:10px;
+    color:#444;
+}
 
+@media(max-width:768px){
+
+    .factura-top{
+        grid-template-columns:1fr;
+    }
+
+}
+
+.resumen-factura .stat-card p{
+    font-size:32px !important;
+    word-break:break-word;
+}
+
+.resumen-factura .stat-card{
+    min-height:220px;
+}
+
+.factura-actions{
+    display:flex;
+    justify-content:center;
+    margin-top:30px;
+}
+
+.btn-imprimir{
+    background:#981313;
+    color:white;
+    border:none;
+    padding:15px 28px;
+    border-radius:30px;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.3s;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.btn-imprimir:hover{
+    background:#7d0f0f;
+    transform:translateY(-2px);
+}
+
+@media(max-width:768px){
+
+    .resumen-factura .stat-card p{
+        font-size:24px !important;
+    }
+
+}
+
+@media print{
+
+    .admin-header,
+    .breadcrumb,
+    button{
+        display:none;
+    }
+
+    body{
+        background:white;
+    }
+
+    .section-box,
+    .page-title{
+        box-shadow:none;
+        border:1px solid #ddd;
+    }
+
+}
+
+@media print{
+
+    .admin-header,
+    .breadcrumb,
+    .factura-actions{
+        display:none !important;
+    }
+
+    body{
+        background:white;
+    }
+
+    .section-box,
+    .page-title{
+        box-shadow:none !important;
+        border:1px solid #ddd;
+    }
+
+}
+
+@media print {
+
+    @page{
+        size: A4;
+        margin: 10mm;
+    }
+
+    .admin-header,
+    .breadcrumb,
+    .factura-actions{
+        display:none !important;
+    }
+
+    .resumen-print,
+    .section-box,
+    .page-title{
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    .section-box{
+        margin-bottom:10px !important;
+        padding:15px !important;
+        box-shadow:none !important;
+    }
+
+    .page-title{
+        margin-bottom:10px !important;
+        padding:15px !important;
+        box-shadow:none !important;
+    }
+
+}

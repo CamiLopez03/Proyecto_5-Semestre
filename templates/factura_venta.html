@@ -1,19 +1,145 @@
 {% extends "base_admin.html" %}
 
-{% block title %}Factura de venta{% endblock %}
+{% block title %}Factura de Venta{% endblock %}
 
 {% block content %}
+
+<nav class="breadcrumb">
+    <a href="{{ url_for('dashboard') }}">
+        <i class="fas fa-home"></i> Inicio
+    </a>
+
+    <span>/</span>
+
+    <a href="{{ url_for('ventas_admin') }}">
+        Ventas
+    </a>
+
+    <span>/</span>
+
+    <strong>Factura #{{ venta.id }}</strong>
+</nav>
+
 <section class="page-title">
-    <h1>Factura de Venta #{{ venta.id }}</h1>
-    <p>Cliente: {{ venta.cliente }}</p>
+    <h1>
+        <i class="fas fa-file-invoice-dollar"></i>
+        Factura de Venta #{{ venta.id }}
+    </h1>
+
+    <p>
+        Generada para {{ venta.cliente }}
+    </p>
 </section>
 
 <section class="section-box">
-    <p><strong>Inmueble:</strong> {{ venta.inmueble }}</p>
-    <p><strong>Ubicación:</strong> {{ venta.ubicacion }}</p>
-    <p><strong>Valor total:</strong> ${{ "{:,.0f}".format(venta.valor_venta) }}</p>
-    <p><strong>Abonado:</strong> ${{ "{:,.0f}".format(venta.anticipo) }}</p>
-    <p><strong>Saldo:</strong> ${{ "{:,.0f}".format(venta.saldo) }}</p>
-    <p><strong>Estado:</strong> {{ venta.estado_pago }}</p>
+
+    <div class="factura-top">
+
+        <div>
+            <h2>Información del Cliente</h2>
+
+            <p><strong>Nombre:</strong> {{ venta.cliente }}</p>
+            <p><strong>Documento:</strong> {{ venta.documento }}</p>
+            <p><strong>Teléfono:</strong> {{ venta.telefono }}</p>
+            <p><strong>Correo:</strong> {{ venta.email }}</p>
+        </div>
+
+        <div>
+            <h2>Información de la Venta</h2>
+
+            <p><strong>Fecha:</strong> {{ venta.fecha }}</p>
+            <p><strong>Método de pago:</strong> {{ venta.metodo_pago }}</p>
+
+            <p>
+                <strong>Estado:</strong>
+
+                <span class="estado-badge {{ venta.estado_pago }}">
+                    {{ venta.estado_pago }}
+                </span>
+            </p>
+        </div>
+
+    </div>
+
 </section>
+
+<section class="section-box resumen-print">
+
+    <h2>Detalle del Inmueble</h2>
+
+    <table class="ventas-table">
+        <thead>
+            <tr>
+                <th>Inmueble</th>
+                <th>Ubicación</th>
+                <th>Valor Venta</th>
+                <th>Abonado</th>
+                <th>Saldo</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+                <td>{{ venta.inmueble }}</td>
+
+                <td>{{ venta.ubicacion }}</td>
+
+                <td class="valor">
+                    ${{ "{:,.0f}".format(venta.valor_venta) }}
+                </td>
+
+                <td>
+                    ${{ "{:,.0f}".format(venta.anticipo) }}
+                </td>
+
+                <td class="valor">
+                    ${{ "{:,.0f}".format(venta.saldo) }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</section>
+
+<section class="section-box">
+
+    <h2>Resumen Financiero</h2>
+
+    <table class="ventas-table">
+        <tbody>
+
+            <tr>
+                <td><strong>Valor Total</strong></td>
+                <td class="valor">
+                    ${{ "{:,.0f}".format(venta.valor_venta) }}
+                </td>
+            </tr>
+
+            <tr>
+                <td><strong>Anticipo</strong></td>
+                <td>
+                    ${{ "{:,.0f}".format(venta.anticipo) }}
+                </td>
+            </tr>
+
+            <tr>
+                <td><strong>Saldo Pendiente</strong></td>
+                <td class="valor">
+                    ${{ "{:,.0f}".format(venta.saldo) }}
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+
+</section>
+
+    <div class="factura-actions">
+
+ <button onclick="window.print()" class="btn-imprimir">
+        <i class="fas fa-print"></i>
+        Imprimir Factura
+    </button>
+
+</div>
 {% endblock %}
