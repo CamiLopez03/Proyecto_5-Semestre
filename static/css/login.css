@@ -2725,8 +2725,8 @@ IZQUIERDA
 /* LOGO */
 
 .register-container .left-side img{
-    width: 145px;
-    margin-bottom: 20px;
+    width: 240px;
+    margin-bottom: 30px;
 }
 
 /* TEXOS IZQUIERDA */
@@ -2928,9 +2928,18 @@ INPUTS
 /* CAJA INPUT */
 
 .register-container .input-icon{
-    position: relative;
+    display: flex;
+    align-items: center;
 
     width: 100%;
+    height: 54px;
+
+    border: 1px solid #e8e8e8;
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    background: white;
 }
 /* FOCUS */
 
@@ -2943,50 +2952,44 @@ INPUTS
 /* ICONOS */
 
 .register-container .input-icon i{
-    position: absolute;
+    width: 52px;
+    height: 100%;
 
-    left: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    top: 50%;
+    position: static;
 
-    transform: translateY(-50%);
+    transform: none;
 
     color: #c1121f;
 
-    font-size: 16px;
+    background: #fff5f5;
 
-    z-index: 2;
+    font-size: 15px;
 
-    background: transparent;
-
-    pointer-events: none;
+    flex-shrink: 0;
 }
 
 /* INPUT */
 
 .register-container .input-icon input,
 .register-container .input-icon select{
-    width: 100%;
+    flex: 1;
 
-    height: 54px;
+    height: 100%;
 
-    border: 1px solid #e8e8e8;
-
+    border: none;
     outline: none;
 
-    border-radius: 12px;
-
-    padding-left: 52px;
-
-    padding-right: 16px;
+    padding: 0 15px;
 
     font-size: 15px;
 
     background: white;
 
     color: #111;
-
-    box-sizing: border-box;
 }
 /* OJITO */
 
