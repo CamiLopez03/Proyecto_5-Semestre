@@ -151,26 +151,108 @@ def enviar_codigo_recuperacion(destinatario, codigo):
 
     
 
-# LOGIN
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+
     if request.method == 'POST':
+
         username = request.form['username']
         password = request.form['password']
+
         user = get_usuario_by_username_mysql(mysql, username)
+
         if user and check_password_hash(user['password_hash'], password):
+
+            if not user['activo']:
+                flash(
+                    'Su cuenta ha sido deshabilitada por un administrador.',
+                    'danger'
+                )
+                return render_template('login.html')
+
             if not es_contrasena_segura(password):
-                flash('La contraseña no es segura. Debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.', 'danger')
+                flash(
+                    'La contraseña no es segura. Debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.',
+                    'danger'
+                )
                 return render_template('login.html')
+
             if not user['email_confirmado']:
-                flash('Debes confirmar tu correo electrónico antes de acceder.', 'danger')
+                flash(
+                    'Debes confirmar tu correo electrónico antes de acceder.',
+                    'danger'
+                )
                 return render_template('login.html')
+
             session['usuario'] = username
             session['rol'] = user['rol']
+
             return redirect(url_for('dashboard'))
+
         else:
             flash('Usuario o contraseña incorrectos', 'danger')
+
     return render_template('login.html')
+
+@app.route('/desactivar_usuario/<int:id>')
+def desactivar_usuario(id):
+
+    if 'usuario' not in session:
+        return redirect(url_for('login'))
+
+    if session.get('rol') != 'admin':
+        flash('No tienes permisos para realizar esta acción.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    cur = mysql.connection.cursor()
+
+    # Evitar que el administrador se desactive a sí mismo
+    cur.execute(
+        "SELECT username FROM usuarios WHERE id = %s",
+        (id,)
+    )
+    usuario_db = cur.fetchone()
+
+    if usuario_db and usuario_db['username'] == session['usuario']:
+        flash('No puedes desactivar tu propia cuenta.', 'danger')
+        cur.close()
+        return redirect(url_for('usuarios'))
+
+    cur.execute(
+        "UPDATE usuarios SET activo = 0 WHERE id = %s",
+        (id,)
+    )
+
+    mysql.connection.commit()
+    cur.close()
+
+    flash('Usuario desactivado correctamente.', 'success')
+
+    return redirect(url_for('usuarios'))
+
+@app.route('/activar_usuario/<int:id>')
+def activar_usuario(id):
+
+    if 'usuario' not in session:
+        return redirect(url_for('login'))
+
+    if session.get('rol') != 'admin':
+        flash('No tienes permisos para realizar esta acción.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    cur = mysql.connection.cursor()
+
+    cur.execute(
+        "UPDATE usuarios SET activo = 1 WHERE id = %s",
+        (id,)
+    )
+
+    mysql.connection.commit()
+    cur.close()
+
+    flash('Usuario activado correctamente.', 'success')
+
+    return redirect(url_for('usuarios'))
 
 # REGISTRO
 @app.route('/register', methods=['GET', 'POST'])
@@ -401,7 +483,7 @@ def usuarios():
     offset = (pagina - 1) * por_pagina
 
     query = """
-        SELECT id, username, email, rol, email_confirmado
+        SELECT id, username, email, rol, email_confirmado, activo
         FROM usuarios
         WHERE 1=1
     """

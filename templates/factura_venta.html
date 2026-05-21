@@ -48,7 +48,7 @@
             <h2>Información de la Venta</h2>
 
             <p><strong>Fecha:</strong> {{ venta.fecha }}</p>
-            <p><strong>Método de pago:</strong> {{ venta.metodo_pago }}</p>
+            <p><strong>Método de pago:</strong> {{ venta.metodo_pago or 'No especificado' }}</p>
 
             <p>
                 <strong>Estado:</strong>
@@ -85,15 +85,15 @@
                 <td>{{ venta.ubicacion }}</td>
 
                 <td class="valor">
-                    ${{ "{:,.0f}".format(venta.valor_venta) }}
+                    ${{ "{:,.0f}".format(venta.valor_venta or 0) }}
                 </td>
 
                 <td>
-                    ${{ "{:,.0f}".format(venta.anticipo) }}
+                    ${{ "{:,.0f}".format(venta.anticipo or 0) }}
                 </td>
 
                 <td class="valor">
-                    ${{ "{:,.0f}".format(venta.saldo) }}
+                    ${{ "{:,.0f}".format(venta.saldo or 0) }}
                 </td>
             </tr>
         </tbody>
@@ -111,21 +111,21 @@
             <tr>
                 <td><strong>Valor Total</strong></td>
                 <td class="valor">
-                    ${{ "{:,.0f}".format(venta.valor_venta) }}
+                    ${{ "{:,.0f}".format(venta.valor_venta or 0) }}
                 </td>
             </tr>
 
             <tr>
                 <td><strong>Anticipo</strong></td>
                 <td>
-                    ${{ "{:,.0f}".format(venta.anticipo) }}
+                    format(venta.anticipo or 0)
                 </td>
             </tr>
 
             <tr>
                 <td><strong>Saldo Pendiente</strong></td>
                 <td class="valor">
-                    ${{ "{:,.0f}".format(venta.saldo) }}
+                    ${{ "{:,.0f}".format(venta.saldo or 0) }}
                 </td>
             </tr>
 

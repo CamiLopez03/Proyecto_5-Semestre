@@ -22,10 +22,10 @@
 
 {% block content %}
 
-    <section class="page-title">
-        <h1>Gestión de Usuarios</h1>
-        <p>Administra las cuentas, roles y accesos del sistema.</p>
-    </section>
+<section class="page-title">
+    <h1>Gestión de Usuarios</h1>
+    <p>Administra las cuentas, roles y accesos del sistema.</p>
+</section>
 
 <section class="filters">
 
@@ -41,13 +41,17 @@
         <div class="filter-group">
             <select name="rol">
                 <option value="">Todos los roles</option>
-                <option value="admin" {% if rol == 'admin' %}selected{% endif %}>
+
+                <option value="admin"
+                        {% if rol == 'admin' %}selected{% endif %}>
                     Administrador
                 </option>
 
-                <option value="usuario" {% if rol == 'usuario' %}selected{% endif %}>
+                <option value="usuario"
+                        {% if rol == 'usuario' %}selected{% endif %}>
                     Usuario
                 </option>
+
             </select>
         </div>
 
@@ -59,89 +63,161 @@
 
 </section>
 
-    <section class="table-card">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Usuario</th>
-                    <th>Correo</th>
-                    <th>Rol</th>
-                    <th>Confirmado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
+<section class="table-card">
 
-            <tbody>
-                {% for u in usuarios %}
-                <tr>
-                    <td>{{ u.id }}</td>
-                    <td><strong>{{ u.username }}</strong></td>
-                    <td>{{ u.email }}</td>
-                    <td>
-                        <span class="badge {{ 'admin' if u.rol == 'admin' else 'usuario' }}">
-                            {{ u.rol }}
+    <table class="usuarios-table">
+
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Correo</th>
+                <th>Rol</th>
+                <th>Confirmado</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for u in usuarios %}
+            <tr>
+
+                <td>{{ u.id }}</td>
+
+                <td>
+                    <strong>{{ u.username }}</strong>
+                </td>
+
+                <td>{{ u.email }}</td>
+
+                <td>
+                    <span class="badge {{ 'admin' if u.rol == 'admin' else 'usuario' }}">
+                        {{ u.rol }}
+                    </span>
+                </td>
+
+                <td>
+                    {% if u.email_confirmado %}
+                        <span class="badge confirmado">
+                            Sí
                         </span>
-                    </td>
-                    <td>
-                        {% if u.email_confirmado %}
-                            <span class="badge confirmado">Sí</span>
+                    {% else %}
+                        <span class="badge no-confirmado">
+                            No
+                        </span>
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if u.activo %}
+                        <span class="badge confirmado">
+                            Activo
+                        </span>
+                    {% else %}
+                        <span class="badge no-confirmado">
+                            Inactivo
+                        </span>
+                    {% endif %}
+                </td>
+
+                <td>
+
+
+                        {% if u.username != session['usuario'] %}
+
+                            {% if u.activo %}
+
+                                <a class="btn-warning"
+                                href="{{ url_for('desactivar_usuario', id=u.id) }}"
+                                onclick="return confirm('¿Desea desactivar este usuario?')">
+
+                                    <i class="fa fa-user-slash"></i>
+                                    Desactivar
+
+                                </a>
+
+                            {% else %}
+
+                                <a class="btn-success"
+                                href="{{ url_for('activar_usuario', id=u.id) }}"
+                                onclick="return confirm('¿Desea activar este usuario?')">
+
+                                    <i class="fa fa-user-check"></i>
+                                    Activar
+
+                                </a>
+
+                            {% endif %}
+
+                            <a class="btn-delete"
+                            href="{{ url_for('eliminar_usuario', id=u.id) }}"
+                            onclick="return confirm('¿Seguro que deseas eliminar este usuario?')">
+
+                                <i class="fa fa-trash"></i>
+                                Eliminar
+
+                            </a>
+
                         {% else %}
-                            <span class="badge no-confirmado">No</span>
+
+                            <span class="badge confirmado">
+                                Usuario actual
+                            </span>
+
                         {% endif %}
-                    </td>
-                    <td>
-                        <a class="btn-delete"
-                           href="{{ url_for('eliminar_usuario', id=u.id) }}"
-                           onclick="return confirm('¿Seguro que deseas eliminar este usuario?')">
-                           <i class="fa fa-trash"></i> Eliminar
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
 
-    <div class="pagination">
+                    </td>
+            </tr>
+            {% endfor %}
 
-        {% if pagina > 1 %}
-            <a href="{{ url_for(
+        </tbody>
+
+    </table>
+
+</section>
+
+<div class="pagination">
+
+    {% if pagina > 1 %}
+        <a href="{{ url_for(
+            'usuarios',
+            pagina=pagina-1,
+            buscar=buscar,
+            rol=rol
+        ) }}">
+            ←
+        </a>
+    {% endif %}
+
+    {% for p in range(1, total_paginas + 1) %}
+
+        <a
+            href="{{ url_for(
                 'usuarios',
-                pagina=pagina-1,
+                pagina=p,
                 buscar=buscar,
                 rol=rol
-            ) }}">
-                ←
-            </a>
-        {% endif %}
+            ) }}"
+            class="{% if p == pagina %}active{% endif %}"
+        >
+            {{ p }}
+        </a>
 
-        {% for p in range(1, total_paginas + 1) %}
+    {% endfor %}
 
-            <a
-                href="{{ url_for(
-                    'usuarios',
-                    pagina=p,
-                    buscar=buscar,
-                    rol=rol
-                ) }}"
+    {% if pagina < total_paginas %}
+        <a href="{{ url_for(
+            'usuarios',
+            pagina=pagina+1,
+            buscar=buscar,
+            rol=rol
+        ) }}">
+            →
+        </a>
+    {% endif %}
 
-                class="{% if p == pagina %}active{% endif %}"
-            >
-                {{ p }}
-            </a>
+</div>
 
-        {% endfor %}
-
-        {% if pagina < total_paginas %}
-            <a href="{{ url_for(
-                'usuarios',
-                pagina=pagina+1,
-                buscar=buscar,
-                rol=rol
-            ) }}">
-                →
-            </a>
-        {% endif %}
-
-    </div>
-    {% endblock %}
+{% endblock %}

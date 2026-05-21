@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 15-05-2026 a las 22:46:48
+-- Tiempo de generación: 21-05-2026 a las 22:26:13
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -94,6 +94,24 @@ CREATE TABLE `clientes_interesados` (
   `fecha_contacto` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `clientes_interesados`
+--
+
+INSERT INTO `clientes_interesados` (`id`, `nombre`, `telefono`, `correo`, `servicio`, `mensaje`, `fecha_envio`, `estado`, `fecha_contacto`) VALUES
+(1, 'Eileen', '3345204163', 'eileenandreap009@gmail.com', 'Diseño estructural', 'wgfhjoksjhgyugvbjnkm,dcygvhghf', '2026-05-19 08:51:36', 'Contactado', '2026-05-19 09:04:33'),
+(2, 'Eileen', '3345204163', 'eileenandreap009@gmail.com', 'Interventoría', 'fewfuogefiogbañogbo', '2026-05-19 08:53:05', 'Contactado', '2026-05-19 09:17:19'),
+(3, 'Eileen', '3345204163', 'eileenandreap009@gmail.com', 'Consultoría', 'dgiyfgiyvwefgogfwiuegfwiyefiyg', '2026-05-19 08:59:08', 'Pendiente', NULL),
+(4, 'Eileen', '3345204163', 'eileenandreap009@gmail.com', 'Construcción de obras', 'gdbuowagbfyie', '2026-05-19 09:04:23', 'Contactado', '2026-05-19 09:14:21'),
+(5, 'Camila', '3345204163', 'eileenandreap009@gmail.com', 'Construcción de obras', 'njrfuwufwbvwulfvlewbvrjl', '2026-05-19 09:14:02', 'Pendiente', NULL),
+(6, 'Camila', '3345204163', 'eileenandreap009@gmail.com', 'Diseño estructural', 'aqsetiyuoggdyurddtfiyliñ', '2026-05-19 09:17:00', 'Pendiente', NULL),
+(7, 'Camila', '3345204163', 'eileenandreap009@gmail.com', 'Interventoría', 'eiyeevsiulboevsboesebo', '2026-05-19 09:18:56', 'Pendiente', NULL),
+(8, 'Sarith', '3345204163', 'eileenandreap009@gmail.com', 'Consultoría', 'wgyhuyerfiuliobfwi', '2026-05-19 09:27:11', 'Pendiente', NULL),
+(9, 'Sarith', '3345204163', 'eileenandreap009@gmail.com', 'Construcción de obras', 'tdiyuiyg', '2026-05-19 09:30:01', 'Pendiente', NULL),
+(10, 'Sarith', '3345204163', 'eileenandreap009@gmail.com', 'Interventoría', 'bireeruñoerr', '2026-05-19 09:37:13', 'Pendiente', NULL),
+(11, 'Camila', '3005059348', 'eileenandreap009@gmail.com', 'Construcción de obras', 'biuoaricbiewuoebwj', '2026-05-19 09:40:27', 'Pendiente', NULL),
+(12, 'Camila', '3005059348', 'eileenandreap009@gmail.com', 'Diseño estructural', 'vusjnoeeburbieebih', '2026-05-19 09:41:35', 'Pendiente', NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -115,22 +133,6 @@ CREATE TABLE `cliente_proyecto` (
 INSERT INTO `cliente_proyecto` (`id`, `cliente_id`, `proyecto_id`, `fecha_asignacion`) VALUES
 (11, 1, 2, '2026-05-15 05:18:22'),
 (12, 3, 3, '2026-05-15 05:29:02');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `compras`
---
-
-DROP TABLE IF EXISTS `compras`;
-CREATE TABLE `compras` (
-  `id` int(11) NOT NULL,
-  `concepto` varchar(150) NOT NULL,
-  `proveedor` varchar(100) DEFAULT NULL,
-  `valor` decimal(15,2) NOT NULL,
-  `fecha` date NOT NULL,
-  `descripcion` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -216,6 +218,24 @@ INSERT INTO `proyectos_constructora` (`id`, `nombre`, `tipo_trabajo`, `ubicacion
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `reservas`
+--
+
+DROP TABLE IF EXISTS `reservas`;
+CREATE TABLE `reservas` (
+  `id` int(11) NOT NULL,
+  `inmueble_id` int(11) NOT NULL,
+  `cliente_id` int(11) NOT NULL,
+  `fecha_reserva` timestamp NOT NULL DEFAULT current_timestamp(),
+  `fecha_limite` date NOT NULL,
+  `valor_reserva` decimal(15,2) NOT NULL DEFAULT 0.00,
+  `estado` enum('Activa','Cancelada','Finalizada') NOT NULL DEFAULT 'Activa',
+  `observacion` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `usuarios`
 --
 
@@ -226,20 +246,21 @@ CREATE TABLE `usuarios` (
   `password_hash` varchar(255) NOT NULL,
   `email` varchar(100) NOT NULL,
   `rol` varchar(20) NOT NULL DEFAULT 'usuario',
-  `email_confirmado` tinyint(4) DEFAULT 0
+  `email_confirmado` tinyint(4) DEFAULT 0,
+  `activo` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `username`, `password_hash`, `email`, `rol`, `email_confirmado`) VALUES
-(6, 'Jpipe', 'scrypt:32768:8:1$c5QdQ50ldi7lv36U$e54dbde025e054f1b5f7018c34ec922158c3961375150c6ba274c1b2946793e2e97b103dc281d5382155f0672902ac7bdb9703dcb057771d8518777984598786', 'juanfelipearbu7@gmail.com', 'usuario', 1),
-(19, 'sarith.10', 'scrypt:32768:8:1$RkBzBzVi5ZWExUq8$4d7314f1d09da6cb3a89be3ed3a294eff3eaed596d46bb5ea31dab1fcf639130f747d40f36fa801eb8f8ff7683fdddbf271bfe3748db272221aa53eb7e12fbf4', 'callessarith@gmail.com', 'usuario', 1),
-(20, 'KarolinaGarcia', 'scrypt:32768:8:1$jAZBI6bRXlgtZ8l5$25c1a719ce5b5a27c50d599ba2bd5755bf7b0c3e256a19823cfad68141e5a33d1d373b3761f542567350fc1080db66a35abcbc310c4bfd8a58c2777231437ef3', 'karolinaospina0311@gmail.com', 'usuario', 1),
-(28, 'FabianMuñoz', 'scrypt:32768:8:1$d7AAkUykHvQ8TClK$49fb10c48a8edb40f5dc975a7e09d6b3a3726f948b18bdd7045704d5edfedb123fefc394fe180d8891fcddb7790dfee129df2b350faba2957adc56d33028a882', 'fabianmunozpadilla2006@gmail.com', 'usuario', 1),
-(29, 'CamiLopez', 'scrypt:32768:8:1$VrGhnb7yj7nmrhtR$37a5f27a144414262b2586cf65dc52f66bb60906cf265c68c50a139985da162c02f4851d2ce91e8ba6bb530f19d684ff51fbd51d0a184bde09038067473e92ca', 'camila2001super@gmail.com', 'admin', 1),
-(31, 'EileenPeña', 'scrypt:32768:8:1$rpjYlxTb1dsHOu42$c946c47afa29414ca660923570d40805933e08b5cbff23d48d4939b3b3b3faaaf32dd88ecc78318b068a08621b05a6fbdfcf6caa95c5eaca7e26ec54390fc154', 'eileenandreap009@gmail.com', 'admin', 1);
+INSERT INTO `usuarios` (`id`, `username`, `password_hash`, `email`, `rol`, `email_confirmado`, `activo`) VALUES
+(6, 'Jpipe', 'scrypt:32768:8:1$c5QdQ50ldi7lv36U$e54dbde025e054f1b5f7018c34ec922158c3961375150c6ba274c1b2946793e2e97b103dc281d5382155f0672902ac7bdb9703dcb057771d8518777984598786', 'juanfelipearbu7@gmail.com', 'usuario', 1, 1),
+(19, 'sarith.10', 'scrypt:32768:8:1$RkBzBzVi5ZWExUq8$4d7314f1d09da6cb3a89be3ed3a294eff3eaed596d46bb5ea31dab1fcf639130f747d40f36fa801eb8f8ff7683fdddbf271bfe3748db272221aa53eb7e12fbf4', 'callessarith@gmail.com', 'usuario', 1, 1),
+(20, 'KarolinaGarcia', 'scrypt:32768:8:1$jAZBI6bRXlgtZ8l5$25c1a719ce5b5a27c50d599ba2bd5755bf7b0c3e256a19823cfad68141e5a33d1d373b3761f542567350fc1080db66a35abcbc310c4bfd8a58c2777231437ef3', 'karolinaospina0311@gmail.com', 'usuario', 1, 1),
+(28, 'FabianMuñoz', 'scrypt:32768:8:1$d7AAkUykHvQ8TClK$49fb10c48a8edb40f5dc975a7e09d6b3a3726f948b18bdd7045704d5edfedb123fefc394fe180d8891fcddb7790dfee129df2b350faba2957adc56d33028a882', 'fabianmunozpadilla2006@gmail.com', 'usuario', 1, 1),
+(29, 'CamiLopez', 'scrypt:32768:8:1$VrGhnb7yj7nmrhtR$37a5f27a144414262b2586cf65dc52f66bb60906cf265c68c50a139985da162c02f4851d2ce91e8ba6bb530f19d684ff51fbd51d0a184bde09038067473e92ca', 'camila2001super@gmail.com', 'admin', 1, 1),
+(31, 'EileenPeña', 'scrypt:32768:8:1$rpjYlxTb1dsHOu42$c946c47afa29414ca660923570d40805933e08b5cbff23d48d4939b3b3b3faaaf32dd88ecc78318b068a08621b05a6fbdfcf6caa95c5eaca7e26ec54390fc154', 'eileenandreap009@gmail.com', 'admin', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -299,12 +320,6 @@ ALTER TABLE `cliente_proyecto`
   ADD KEY `proyecto_id` (`proyecto_id`);
 
 --
--- Indices de la tabla `compras`
---
-ALTER TABLE `compras`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indices de la tabla `inmuebles`
 --
 ALTER TABLE `inmuebles`
@@ -322,6 +337,14 @@ ALTER TABLE `inmueble_multimedia`
 --
 ALTER TABLE `proyectos_constructora`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `reservas`
+--
+ALTER TABLE `reservas`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `inmueble_id` (`inmueble_id`),
+  ADD KEY `cliente_id` (`cliente_id`);
 
 --
 -- Indices de la tabla `usuarios`
@@ -359,19 +382,13 @@ ALTER TABLE `clientes_inmobiliaria`
 -- AUTO_INCREMENT de la tabla `clientes_interesados`
 --
 ALTER TABLE `clientes_interesados`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `cliente_proyecto`
 --
 ALTER TABLE `cliente_proyecto`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
-
---
--- AUTO_INCREMENT de la tabla `compras`
---
-ALTER TABLE `compras`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `inmuebles`
@@ -390,6 +407,12 @@ ALTER TABLE `inmueble_multimedia`
 --
 ALTER TABLE `proyectos_constructora`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de la tabla `reservas`
+--
+ALTER TABLE `reservas`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
@@ -421,52 +444,18 @@ ALTER TABLE `inmueble_multimedia`
   ADD CONSTRAINT `inmueble_multimedia_ibfk_1` FOREIGN KEY (`inmueble_id`) REFERENCES `inmuebles` (`id`);
 
 --
--- Filtros para la tabla `ventas`
---
-ALTER TABLE `ventas`
-  ADD CONSTRAINT `ventas_ibfk_1` FOREIGN KEY (`inmueble_id`) REFERENCES `inmuebles` (`id`),
-  ADD CONSTRAINT `ventas_ibfk_2` FOREIGN KEY (`cliente_id`) REFERENCES `clientes_inmobiliaria` (`id`);
-<<<<<<< HEAD
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `reservas`
---
-
-DROP TABLE IF EXISTS `reservas`;
-CREATE TABLE `reservas` (
-  `id` int(11) NOT NULL,
-  `inmueble_id` int(11) NOT NULL,
-  `cliente_id` int(11) NOT NULL,
-  `fecha_reserva` timestamp NOT NULL DEFAULT current_timestamp(),
-  `fecha_limite` date NOT NULL,
-  `valor_reserva` decimal(15,2) NOT NULL DEFAULT 0.00,
-  `estado` enum('Activa','Cancelada','Finalizada') NOT NULL DEFAULT 'Activa',
-  `observacion` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Indices de la tabla `reservas`
---
-ALTER TABLE `reservas`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `inmueble_id` (`inmueble_id`),
-  ADD KEY `cliente_id` (`cliente_id`);
-
---
--- AUTO_INCREMENT de la tabla `reservas`
---
-ALTER TABLE `reservas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- Filtros para la tabla `reservas`
 --
 ALTER TABLE `reservas`
   ADD CONSTRAINT `reservas_ibfk_1` FOREIGN KEY (`inmueble_id`) REFERENCES `inmuebles` (`id`),
   ADD CONSTRAINT `reservas_ibfk_2` FOREIGN KEY (`cliente_id`) REFERENCES `clientes_inmobiliaria` (`id`);
 
+--
+-- Filtros para la tabla `ventas`
+--
+ALTER TABLE `ventas`
+  ADD CONSTRAINT `ventas_ibfk_1` FOREIGN KEY (`inmueble_id`) REFERENCES `inmuebles` (`id`),
+  ADD CONSTRAINT `ventas_ibfk_2` FOREIGN KEY (`cliente_id`) REFERENCES `clientes_inmobiliaria` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
