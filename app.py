@@ -5,13 +5,19 @@ from flask_mysqldb import MySQL
 import random
 from flask_mail import Mail, Message
 from werkzeug.security import generate_password_hash, check_password_hash
+from dotenv import load_dotenv
 import os
 from werkzeug.utils import secure_filename
 import re
 import uuid
 from datetime import datetime
-from dotenv import load_dotenv
 import pymysql
+from flask import make_response
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from reportlab.lib import colors
+from reportlab.lib.units import cm
+from io import BytesIO
 
 from db_utils_mysql import (
     add_usuario_mysql,
@@ -46,7 +52,6 @@ def no_cache(response):
 def index():
     return render_template ('index.html')
 
-# Configuración de MySQL (ajusta según tu XAMPP)
 app.config['MYSQL_HOST'] = os.getenv('MYSQL_HOST')
 app.config['MYSQL_USER'] = os.getenv('MYSQL_USER')
 app.config['MYSQL_PASSWORD'] = os.getenv('MYSQL_PASSWORD')
@@ -54,11 +59,11 @@ app.config['MYSQL_DB'] = os.getenv('MYSQL_DB')
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
 
-#Configuracion e-mail
+
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
 app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT'))
 app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS') == 'True'
-app.config['MAIL_USE_SSL'] = os.getenv('MAIL_USE_SSL') == 'False'
+app.config['MAIL_USE_SSL'] = os.getenv('MAIL_USE_SSL') == 'True'
 app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER')
@@ -67,9 +72,14 @@ mail = Mail(app)
 
 UPLOAD_FOLDER = os.path.join('static', 'imagenes')
 
+
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'mp4'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+print("Directorio actual:", os.getcwd())
+print("UPLOAD_FOLDER:", app.config['UPLOAD_FOLDER'])
+print("Ruta absoluta:", os.path.abspath(app.config['UPLOAD_FOLDER']))
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 def imagen_permitida(filename):
     return '.' in filename and \
@@ -206,7 +216,6 @@ def desactivar_usuario(id):
 
     cur = mysql.connection.cursor()
 
-    # Evitar que el administrador se desactive a sí mismo
     cur.execute(
         "SELECT username FROM usuarios WHERE id = %s",
         (id,)
@@ -254,7 +263,6 @@ def activar_usuario(id):
 
     return redirect(url_for('usuarios'))
 
-# REGISTRO
 @app.route('/register', methods=['GET', 'POST'])
 def register():
 
@@ -325,7 +333,6 @@ def confirmar_codigo():
     return render_template('confirmar_codigo.html')
 
 
-# RECUPERAR CONTRASEÑA (simulado)
 @app.route('/recover', methods=['GET', 'POST'])
 def recover():
     if request.method == 'POST':
@@ -361,7 +368,6 @@ def verificar_codigo_recuperacion():
 
     return render_template('verificar_codigo_recuperacion.html')
 
-# RESTABLECER CONTRASEÑA NO ES SIMULADO
 @app.route('/reset_password_codigo', methods=['GET', 'POST'])
 def reset_password_codigo():
     if 'usuario_recuperacion' not in session:
@@ -929,7 +935,7 @@ def ventas_admin():
         AND tipo_negocio = 'Venta'
         ORDER BY id DESC
     """)
-
+    
     inmuebles_disponibles = cur.fetchall()
 
     # =========================
@@ -1389,67 +1395,6 @@ def compras_admin():
         compras_grafico=compras_grafico
     )
 
-@app.route('/reportes_admin')
-def reportes_admin():
-    if 'usuario' not in session:
-        return redirect(url_for('login'))
-
-    cur = mysql.connection.cursor()
-
-    cur.execute("SELECT COALESCE(SUM(valor_venta), 0) AS total FROM ventas")
-    ingresos = cur.fetchone()['total']
-
-    cur.execute("SELECT COALESCE(SUM(valor), 0) AS total FROM compras")
-    egresos = cur.fetchone()['total']
-
-    utilidad = ingresos - egresos
-
-    cur.execute("SELECT COUNT(*) AS total FROM inmuebles WHERE estado = 'Disponible'")
-    inmuebles_disponibles = cur.fetchone()['total']
-
-    cur.execute("""
-        SELECT 
-            SUM(CASE WHEN estado = 'Disponible' THEN 1 ELSE 0 END) AS disponibles,
-            SUM(CASE WHEN estado = 'Reservado' THEN 1 ELSE 0 END) AS reservados,
-            SUM(CASE WHEN estado = 'Vendido' THEN 1 ELSE 0 END) AS vendidos
-        FROM inmuebles
-    """)
-    estado_inmuebles = cur.fetchone()
-
-    cur.execute("""
-        SELECT MONTH(fecha) AS mes, COALESCE(SUM(valor_venta), 0) AS ingresos
-        FROM ventas
-        WHERE YEAR(fecha) = YEAR(CURDATE())
-        GROUP BY MONTH(fecha)
-        ORDER BY MONTH(fecha)
-    """)
-    ingresos_grafico = cur.fetchall()
-
-    cur.execute("""
-        SELECT MONTH(fecha) AS mes, COALESCE(SUM(valor), 0) AS egresos
-        FROM compras
-        WHERE YEAR(fecha) = YEAR(CURDATE())
-        GROUP BY MONTH(fecha)
-        ORDER BY MONTH(fecha)
-    """)
-    egresos_grafico = cur.fetchall()
-
-    cur.execute("SELECT COUNT(*) AS total FROM ventas")
-    total_ventas = cur.fetchone()['total']
-    cur.close()
-
-    return render_template(
-        'reportes_admin.html',
-        ingresos=ingresos,
-        egresos=egresos,
-        utilidad=utilidad,
-        inmuebles_disponibles=inmuebles_disponibles,
-        estado_inmuebles=estado_inmuebles,
-        ingresos_grafico=ingresos_grafico,
-        egresos_grafico=egresos_grafico,
-        total_ventas=total_ventas
-    )
-
 @app.route('/proyectos')
 def proyectos_admin():
 
@@ -1552,7 +1497,6 @@ def proyectos_admin():
         pagina=pagina,
         total_paginas=total_paginas
         )
-
 
 
 @app.route('/crear_proyecto', methods=['POST'])
@@ -1668,27 +1612,32 @@ def eliminar_proyecto(id):
 
 @app.route('/inmobiliaria')
 def inmobiliaria_publica():
-        cur = mysql.connection.cursor()
-        
-        cur.execute("""
-        SELECT * FROM inmuebles
+
+    cur = mysql.connection.cursor()
+
+    cur.execute("""
+        SELECT *
+        FROM inmuebles
         WHERE estado IN ('Disponible', 'Reservado')
         ORDER BY id DESC
     """)
-        inmuebles_publicos = cur.fetchall()
-        
-        for inmueble in inmuebles_publicos:
-            cur.execute("""
-            SELECT * FROM inmueble_multimedia
+
+    inmuebles_publicos = cur.fetchall()
+
+    for inmueble in inmuebles_publicos:
+
+        cur.execute("""
+            SELECT *
+            FROM inmueble_multimedia
             WHERE inmueble_id = %s
             ORDER BY id ASC
         """, (inmueble['id'],))
 
         inmueble['galeria'] = cur.fetchall()
-        
-        cur.close()
-        
-        return render_template(
+
+    cur.close()
+
+    return render_template(
         'inmobiliaria_publica.html',
         inmuebles_publicos=inmuebles_publicos
     )
@@ -2289,5 +2238,228 @@ def servicios_constructivos():
         consultoria=consultoria,
         servicios=servicios
     )
+
+@app.route('/reporte_pdf')
+def reporte_pdf():
+    if 'usuario' not in session:
+        return redirect(url_for('login'))
+
+    if session.get('rol') != 'admin':
+        flash('No tienes permisos para generar reportes.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    cur = mysql.connection.cursor()
+
+    cur.execute("SELECT COALESCE(SUM(valor_venta), 0) AS ingresos FROM ventas")
+    ingresos = cur.fetchone()['ingresos']
+
+    cur.execute("SELECT COUNT(*) AS total FROM ventas")
+    total_ventas = cur.fetchone()['total']
+
+    cur.execute("SELECT COUNT(*) AS total FROM inmuebles WHERE estado = 'Disponible'")
+    inmuebles_disponibles = cur.fetchone()['total']
+
+    cur.execute("SELECT COUNT(*) AS total FROM inmuebles WHERE estado = 'Reservado'")
+    inmuebles_reservados = cur.fetchone()['total']
+
+    cur.execute("SELECT COUNT(*) AS total FROM inmuebles WHERE estado = 'Vendido'")
+    inmuebles_vendidos = cur.fetchone()['total']
+
+    cur.execute("SELECT COUNT(*) AS total FROM clientes_inmobiliaria")
+    total_clientes = cur.fetchone()['total']
+
+    cur.execute("""
+        SELECT 
+            v.fecha,
+            c.nombre AS cliente,
+            c.documento,
+            i.titulo AS inmueble,
+            i.ubicacion,
+            v.valor_venta,
+            v.anticipo,
+            v.saldo,
+            v.estado_pago,
+            v.metodo_pago
+        FROM ventas v
+        INNER JOIN clientes_inmobiliaria c ON v.cliente_id = c.id
+        INNER JOIN inmuebles i ON v.inmueble_id = i.id
+        ORDER BY v.fecha DESC
+        LIMIT 10
+    """)
+    ventas = cur.fetchall()
+
+    cur.close()
+
+    buffer = BytesIO()
+    pdf = canvas.Canvas(buffer, pagesize=letter)
+    ancho, alto = letter
+
+    # Encabezado
+    pdf.setFillColor(colors.HexColor("#111111"))
+    pdf.rect(0, alto - 90, ancho, 90, fill=True, stroke=False)
+
+    pdf.setFillColor(colors.white)
+    pdf.setFont("Helvetica-Bold", 20)
+    pdf.drawString(2 * cm, alto - 45, "CiviWeb Manager")
+
+    pdf.setFont("Helvetica", 10)
+    pdf.drawString(2 * cm, alto - 65, "Reporte general del sistema inmobiliario")
+
+    pdf.setFillColor(colors.HexColor("#981313"))
+    pdf.setFont("Helvetica-Bold", 18)
+    pdf.drawString(2 * cm, alto - 125, "Reportes Generales")
+
+    pdf.setFillColor(colors.black)
+    pdf.setFont("Helvetica", 10)
+    pdf.drawString(2 * cm, alto - 145, f"Fecha de generacion: {datetime.now().strftime('%d/%m/%Y %H:%M')}")
+
+    # Indicadores
+    y = alto - 190
+
+    indicadores = [
+        ("Ingresos por ventas", f"COP ${ingresos or 0:,.0f}"),
+        ("Ventas registradas", str(total_ventas or 0)),
+        ("Inmuebles disponibles", str(inmuebles_disponibles or 0)),
+        ("Inmuebles reservados", str(inmuebles_reservados or 0)),
+        ("Inmuebles vendidos", str(inmuebles_vendidos or 0)),
+        ("Clientes registrados", str(total_clientes or 0)),
+    ]
+
+    pdf.setFont("Helvetica-Bold", 13)
+    pdf.setFillColor(colors.HexColor("#981313"))
+    pdf.drawString(2 * cm, y, "Indicadores principales")
+
+    y -= 25
+
+    for titulo, valor in indicadores:
+        pdf.setFillColor(colors.HexColor("#f4f4f4"))
+        pdf.roundRect(2 * cm, y - 8, 17 * cm, 28, 8, fill=True, stroke=False)
+
+        pdf.setFillColor(colors.black)
+        pdf.setFont("Helvetica-Bold", 10)
+        pdf.drawString(2.4 * cm, y + 2, titulo)
+
+        pdf.setFillColor(colors.HexColor("#981313"))
+        pdf.setFont("Helvetica-Bold", 11)
+        pdf.drawRightString(18.5 * cm, y + 2, valor)
+
+        y -= 38
+
+    # Ultimas ventas
+    y -= 10
+    pdf.setFillColor(colors.HexColor("#981313"))
+    pdf.setFont("Helvetica-Bold", 13)
+    pdf.drawString(2 * cm, y, "Ultimas ventas registradas")
+
+    y -= 25
+
+    pdf.setFillColor(colors.HexColor("#981313"))
+    pdf.rect(2 * cm, y - 5, 17 * cm, 22, fill=True, stroke=False)
+
+    pdf.setFillColor(colors.white)
+    pdf.setFont("Helvetica-Bold", 8)
+    pdf.drawString(2.2 * cm, y + 2, "Fecha")
+    pdf.drawString(4.0 * cm, y + 2, "Cliente")
+    pdf.drawString(7.2 * cm, y + 2, "Inmueble")
+    pdf.drawString(11.0 * cm, y + 2, "Valor")
+    pdf.drawString(14.0 * cm, y + 2, "Estado")
+
+    y -= 24
+
+    pdf.setFont("Helvetica", 8)
+    pdf.setFillColor(colors.black)
+
+    for venta in ventas:
+        if y < 80:
+            pdf.showPage()
+            y = alto - 80
+
+        fecha = venta['fecha'].strftime('%d/%m/%Y') if venta['fecha'] else 'Sin fecha'
+        cliente = str(venta['cliente'])[:22]
+        inmueble = str(venta['inmueble'])[:24]
+        valor = f"${(venta['valor_venta'] or 0):,.0f}"
+        estado = str(venta['estado_pago'] or 'Sin estado')
+
+        pdf.drawString(2.2 * cm, y, fecha)
+        pdf.drawString(4.0 * cm, y, cliente)
+        pdf.drawString(7.2 * cm, y, inmueble)
+        pdf.drawString(11.0 * cm, y, valor)
+        pdf.drawString(14.0 * cm, y, estado)
+
+        y -= 18
+
+    # Pie
+    pdf.setFillColor(colors.gray)
+    pdf.setFont("Helvetica", 8)
+    pdf.drawString(2 * cm, 35, "Reporte generado automaticamente por CiviWeb Manager.")
+
+    pdf.save()
+
+    buffer.seek(0)
+
+    response = make_response(buffer.getvalue())
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = 'inline; filename=reporte_general.pdf'
+
+    return response
+
+@app.route('/reportes_admin')
+def reportes_admin():
+
+    if 'usuario' not in session:
+        return redirect(url_for('login'))
+
+    cur = mysql.connection.cursor()
+
+    # TOTAL INGRESOS
+    cur.execute("SELECT COALESCE(SUM(valor_venta), 0) AS total FROM ventas")
+    ingresos = cur.fetchone()['total']
+
+    # TOTAL VENTAS REGISTRADAS
+    cur.execute("SELECT COUNT(*) AS total FROM ventas")
+    total_ventas = cur.fetchone()['total']
+
+    # INMUEBLES DISPONIBLES
+    cur.execute("SELECT COUNT(*) AS total FROM inmuebles WHERE estado = 'Disponible'")
+    inmuebles_disponibles = cur.fetchone()['total']
+
+    # ESTADO DE INMUEBLES
+    cur.execute("""
+        SELECT 
+            COALESCE(SUM(CASE WHEN estado = 'Disponible' THEN 1 ELSE 0 END), 0) AS disponibles,
+            COALESCE(SUM(CASE WHEN estado = 'Reservado' THEN 1 ELSE 0 END), 0) AS reservados,
+            COALESCE(SUM(CASE WHEN estado = 'Vendido' THEN 1 ELSE 0 END), 0) AS vendidos
+        FROM inmuebles
+    """)
+    estado_inmuebles = cur.fetchone()
+
+    # INGRESOS MENSUALES
+    cur.execute("""
+        SELECT MONTH(fecha) AS mes,
+               COALESCE(SUM(valor_venta), 0) AS ingresos
+        FROM ventas
+        GROUP BY MONTH(fecha)
+        ORDER BY mes
+    """)
+    ingresos_mensuales = cur.fetchall()
+
+    cur.close()
+
+    # Como no vas a usar compras, egresos queda vacío
+    egresos_grafico = []
+
+    return render_template(
+        'reportes_admin.html',
+        ingresos=ingresos,
+        total_ventas=total_ventas,
+        inmuebles_disponibles=inmuebles_disponibles,
+        ingresos_mensuales=ingresos_mensuales,
+
+        # Estos nombres los dejo para que el HTML no dé error con tojson
+        estado_inmuebles=estado_inmuebles,
+        ingresos_grafico=ingresos_mensuales,
+        egresos_grafico=egresos_grafico
+    )
+
 if __name__ == '__main__':
     app.run(debug=True)

@@ -91,13 +91,52 @@
         </div>
 
         <div class="input-group">
-            <label>Tipo de trabajo</label>
+    <label>Tipo de trabajo</label>
 
-            <input type="text"
-                   name="tipo_trabajo"
-                   value="{{ proyecto.tipo_trabajo }}"
-                   required>
-        </div>
+    <select name="tipo_trabajo" required>
+        <option value="">Seleccione tipo de trabajo</option>
+
+        <option value="Obras civiles"
+            {% if proyecto.tipo_trabajo == 'Obras civiles' %}selected{% endif %}>
+            Obras civiles
+        </option>
+
+        <option value="Construcción residencial"
+            {% if proyecto.tipo_trabajo == 'Construcción residencial' %}selected{% endif %}>
+            Construcción residencial
+        </option>
+
+        <option value="Construcción comercial"
+            {% if proyecto.tipo_trabajo == 'Construcción comercial' %}selected{% endif %}>
+            Construcción comercial
+        </option>
+
+        <option value="Diseño estructural"
+            {% if proyecto.tipo_trabajo == 'Diseño estructural' %}selected{% endif %}>
+            Diseño estructural
+        </option>
+
+        <option value="Interventoría"
+            {% if proyecto.tipo_trabajo == 'Interventoría' %}selected{% endif %}>
+            Interventoría
+        </option>
+
+        <option value="Consultoría"
+            {% if proyecto.tipo_trabajo == 'Consultoría' %}selected{% endif %}>
+            Consultoría
+        </option>
+
+        <option value="Remodelación"
+            {% if proyecto.tipo_trabajo == 'Remodelación' %}selected{% endif %}>
+            Remodelación
+        </option>
+
+        <option value="Urbanismo"
+            {% if proyecto.tipo_trabajo == 'Urbanismo' %}selected{% endif %}>
+            Urbanismo
+        </option>
+    </select>
+</div>
 
         <div class="input-group full">
             <label>Descripción</label>

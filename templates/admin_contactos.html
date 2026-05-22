@@ -39,19 +39,24 @@
 
     <select name="estado">
 
-        <option value="">Todos los estados</option>
+    <option value="">Todos los estados</option>
 
-        <option value="Pendiente"
-            {% if estado == 'Pendiente' %}selected{% endif %}>
-            Pendiente
-        </option>
+    <option value="Prioridad Alta"
+        {% if estado == 'Prioridad Alta' %}selected{% endif %}>
+        Prioridad Alta
+    </option>
 
-        <option value="Contactado"
-            {% if estado == 'Contactado' %}selected{% endif %}>
-            Contactado
-        </option>
+    <option value="Pendiente"
+        {% if estado == 'Pendiente' %}selected{% endif %}>
+        Pendiente
+    </option>
 
-    </select>
+    <option value="Contactado"
+        {% if estado == 'Contactado' %}selected{% endif %}>
+        Contactado
+    </option>
+
+</select>
 
     <button type="submit">
         <i class="fa fa-search"></i>
