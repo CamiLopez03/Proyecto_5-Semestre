@@ -118,7 +118,7 @@
             <tr>
                 <td><strong>Anticipo</strong></td>
                 <td>
-                    format(venta.anticipo or 0)
+                    ${{ "{:,.0f}".format(venta.anticipo or 0) }}
                 </td>
             </tr>
 

@@ -82,11 +82,7 @@
         <div class="inmueble-card">
 
             <div class="image-box">
-                {% if i.imagen %}
-                    <img src="{{ url_for('static', filename='Imagenes/' ~ i.imagen) }}" alt="{{ i.titulo }}">
-                {% else %}
-                    <img src="{{ url_for('static', filename='Imagenes/LOGO.png') }}" alt="Sin imagen">
-                {% endif %}
+                <img src="{{ asset_url(i.imagen) }}" alt="{{ i.titulo }}">
 
                 <span class="estado {{ i.estado }}">{{ i.estado }}</span>
             </div>

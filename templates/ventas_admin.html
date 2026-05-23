@@ -285,15 +285,15 @@
             <thead>
 
                 <tr>
-                    <th>Fecha</th>
-                    <th>Cliente</th>
-                    <th>Documento</th>
                     <th>Inmueble</th>
                     <th>Ubicación</th>
                     <th>Valor inmueble</th>
                     <th>Abonado</th>
                     <th>Saldo</th>
                     <th>Estado pago</th>
+                    <th>Metodo</th>
+                    <th>Fecha</th>
+                    <th>Acciones</th>
                     <th>Observación</th>
                 </tr>
 
@@ -305,13 +305,10 @@
 
                 <tr>
 
-                    <td>{{ v.fecha or 'Sin fecha' }}</td>
-
-                    <td>{{ v.cliente }}</td>
-
-                    <td>{{ v.documento }}</td>
-
-                    <td>{{ v.inmueble }}</td>
+                    <td>
+                        <strong>{{ v.inmueble }}</strong><br>
+                        <small>{{ v.cliente }} - {{ v.documento }}</small>
+                    </td>
 
                     <td>{{ v.ubicacion }}</td>
 
@@ -335,7 +332,30 @@
 
                     </td>
 
-                    <td>{{ v.observacion }}</td>
+                    <td>{{ v.metodo_pago or 'Sin metodo' }}</td>
+
+                    <td>{{ v.fecha or 'Sin fecha' }}</td>
+
+                    <td>
+                        <div class="acciones">
+                            <a class="edit" href="{{ url_for('factura_venta', id=v.id) }}">
+                                <i class="fa fa-file-invoice"></i> Factura
+                            </a>
+
+                            {% if v.estado_pago != 'Pagado' or (v.saldo or 0) > 0 %}
+                            <a class="edit" href="{{ url_for('completar_pago', id=v.id) }}"
+                               onclick="return confirm('¿Marcar esta venta como pagada?')">
+                                <i class="fa fa-circle-check"></i> Marcar como pagado
+                            </a>
+                            {% else %}
+                            <span class="done">
+                                <i class="fa fa-circle-check"></i> Pagado
+                            </span>
+                            {% endif %}
+                        </div>
+                    </td>
+
+                    <td>{{ v.observacion or 'Sin observacion' }}</td>
 
                 </tr>
 
