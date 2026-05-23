@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inmobiliaria - CiviWeb Manager</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="shortcut icon" href="../static/imagenes/ICONO.png">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/inmobiliaria.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='imagenes/ICONO.png') }}">
 </head>
 
 <body>
@@ -152,9 +152,7 @@
 
                 <div class="image-box">
 
-                    {% if i.imagen %}
-                        <img src="{{ url_for('static', filename='imagenes/' ~ i.imagen) }}">
-                    {% endif %}
+                    <img src="{{ asset_url(i.imagen) }}" alt="{{ i.titulo }}">
 
                     <span class="tag-location">{{ i.ubicacion }}</span>
                     <span class="tag-status {{ i.estado }}">{{ i.estado }}</span>
@@ -221,17 +219,15 @@
         </p>
 
         <div class="galeria-detalle">
-            {% if i.imagen %}
-                <img src="{{ url_for('static', filename='imagenes/' ~ i.imagen) }}">
-            {% endif %}
+            <img src="{{ asset_url(i.imagen) }}" alt="{{ i.titulo }}">
 
             {% for item in i.galeria %}
                 {% if item.tipo == 'video' %}
                     <video controls>
-                        <source src="{{ url_for('static', filename='imagenes/' ~ item.archivo) }}" type="video/mp4">
+                        <source src="{{ asset_url(item.archivo) }}" type="video/mp4">
                     </video>
                 {% else %}
-                    <img src="{{ url_for('static', filename='imagenes/' ~ item.archivo) }}">
+                    <img src="{{ asset_url(item.archivo) }}" alt="{{ i.titulo }}">
                 {% endif %}
             {% endfor %}
         </div>
@@ -269,11 +265,7 @@
 
             <div class="image-box">
 
-                {% if i.imagen %}
-                    <img src="{{ url_for('static', filename='imagenes/' ~ i.imagen) }}" alt="{{ i.titulo }}">
-                {% else %}
-                    <img src="{{ url_for('static', filename='imagenes/LOGO.png') }}" alt="Inmueble">
-                {% endif %}
+                <img src="{{ asset_url(i.imagen) }}" alt="{{ i.titulo }}">
 
                 <span class="tag-location">{{ i.ubicacion }}</span>
                 <span class="tag-status {{ i.estado }}">{{ i.estado }}</span>
@@ -341,17 +333,15 @@
         </p>
 
         <div class="galeria-detalle">
-            {% if i.imagen %}
-                <img src="{{ url_for('static', filename='imagenes/' ~ i.imagen) }}">
-            {% endif %}
+            <img src="{{ asset_url(i.imagen) }}" alt="{{ i.titulo }}">
 
             {% for item in i.galeria %}
                 {% if item.tipo == 'video' %}
                     <video controls>
-                        <source src="{{ url_for('static', filename='imagenes/' ~ item.archivo) }}" type="video/mp4">
+                        <source src="{{ asset_url(item.archivo) }}" type="video/mp4">
                     </video>
                 {% else %}
-                    <img src="{{ url_for('static', filename='imagenes/' ~ item.archivo) }}">
+                    <img src="{{ asset_url(item.archivo) }}" alt="{{ i.titulo }}">
                 {% endif %}
             {% endfor %}
         </div>

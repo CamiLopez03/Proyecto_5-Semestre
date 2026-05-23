@@ -6,7 +6,7 @@
   <title>Construgonp's S.A.S</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="shortcut icon" href="../static/imagenes/ICONO.png">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='imagenes/ICONO.png') }}">
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
@@ -129,7 +129,7 @@
 
   <div class="servicios-slider">
     <div class="servicio-slide active">
-      <img src="{{ url_for('static', filename='Imagenes/Construccion_Obras.jpg') }}" alt="Construcción de obras">
+      <img src="{{ url_for('static', filename='imagenes/Construccion_Obras.jpg') }}" alt="Construcción de obras">
       <div class="servicio-overlay">
         <h3>Construcción de Obras</h3>
         <p>Desarrollo de proyectos residenciales, comerciales e institucionales.</p>
@@ -138,7 +138,7 @@
     </div>
 
     <div class="servicio-slide">
-      <img src="{{ url_for('static', filename='Imagenes/Diseño_Estructural.jpg') }}" alt="Diseño estructural">
+      <img src="{{ url_for('static', filename='imagenes/Diseño_Estructural.jpg') }}" alt="Diseño estructural">
       <div class="servicio-overlay">
         <h3>Diseño Estructural</h3>
         <p>Planeación y diseño de estructuras seguras y eficientes.</p>
@@ -147,7 +147,7 @@
     </div>
 
     <div class="servicio-slide">
-      <img src="{{ url_for('static', filename='Imagenes/Inventoria.jpg') }}" alt="Interventoría">
+      <img src="{{ url_for('static', filename='imagenes/Inventoria.jpg') }}" alt="Interventoría">
       <div class="servicio-overlay">
         <h3>Interventoría</h3>
         <p>Supervisión técnica, administrativa y financiera de proyectos.</p>
@@ -156,7 +156,7 @@
     </div>
 
     <div class="servicio-slide">
-      <img src="{{ url_for('static', filename='Imagenes/Consultoria.jpg') }}" alt="Consultoría">
+      <img src="{{ url_for('static', filename='imagenes/Consultoria.jpg') }}" alt="Consultoría">
       <div class="servicio-overlay">
         <h3>Consultoría</h3>
         <p>Asesoría profesional en procesos de ingeniería civil.</p>
@@ -201,7 +201,7 @@
 
     <div class="project-card" id="montelibano" data-aos="fade-up">
       <div class="project-img">
-        <img src="{{ url_for('static', filename='Imagenes/Montelibano.jpeg') }}" alt="Proyecto Montelíbano">
+        <img src="{{ url_for('static', filename='imagenes/Montelibano.jpeg') }}" alt="Proyecto Montelíbano">
         <span>Montelíbano, Córdoba</span>
       </div>
 
@@ -217,7 +217,7 @@
 
     <div class="project-card" id="monitos" data-aos="fade-up">
       <div class="project-img">
-        <img src="{{ url_for('static', filename='Imagenes/moñitos.jpeg') }}" alt="Proyecto Moñitos">
+        <img src="{{ url_for('static', filename='imagenes/Moñitos.jpeg') }}" alt="Proyecto Moñitos">
         <span>Moñitos, Córdoba</span>
       </div>
 
@@ -233,7 +233,7 @@
 
     <div class="project-card" id="majagual" data-aos="fade-up">
       <div class="project-img">
-        <img src="{{ url_for('static', filename='Imagenes/Majuagal.jpeg') }}" alt="Proyecto Majagual">
+        <img src="{{ url_for('static', filename='imagenes/Majuagal.jpeg') }}" alt="Proyecto Majagual">
         <span>Majagual, Sucre</span>
       </div>
 

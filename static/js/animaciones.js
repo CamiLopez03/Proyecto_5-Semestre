@@ -1,55 +1,44 @@
-document.addEventListener("DOMContentLoaded", function () {
-
-  // Animaciones
+// ======================
+// ANIMACIONES AOS
+// ======================
+if (typeof AOS !== "undefined") {
   AOS.init({
     duration: 1000,
     once: true
   });
+}
 
-  // ======================
-  // MAPA
-  // ======================
+// ======================
+// MAPA
+// ======================
+const mapElement = document.getElementById("map");
+
+if (mapElement && typeof L !== "undefined") {
   const map = L.map("map").setView([4.5709, -74.2973], 6);
 
   const iconoSede = L.divIcon({
     className: "",
     html: `
       <div style="
-        position: relative;
         width: 18px;
         height: 18px;
-        background: white;
+        background: #981313;
+        border: 3px solid white;
         border-radius: 50%;
-        border: 3px solid #C62828;
         box-shadow: 0 0 10px rgba(0,0,0,0.4);
-      ">
-        <div style="
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          width: 40px;
-          height: 40px;
-          background: rgba(198, 40, 40, 0.3);
-          border-radius: 50%;
-          transform: translate(-50%, -50%);
-          animation: pulse 1.5s infinite;
-        "></div>
-      </div>
+      "></div>
     `,
     iconSize: [20, 20]
   });
 
-  // Marcador principal
   L.marker([8.74798, -75.88143], { icon: iconoSede })
     .addTo(map)
-    .bindPopup("<strong>Montería</strong><br>Sede de la empresa")
+    .bindPopup("Montería<br>Sede de la empresa")
     .openPopup();
 
-  // Cargar mapa Colombia
   fetch("/static/js/colombia.geojson")
     .then(res => res.json())
     .then(data => {
-
       const colombiaLayer = L.geoJSON(data, {
         style: {
           color: "#8B0000",
@@ -58,19 +47,19 @@ document.addEventListener("DOMContentLoaded", function () {
           fillOpacity: 0.6
         },
 
-        onEachFeature: function (feature, layer) {
+        onEachFeature: function(feature, layer) {
           const nombre = feature.properties.NOMBRE_DPT || "Departamento";
 
-          layer.bindPopup(`<strong>${nombre}</strong>`);
+          layer.bindPopup(`${nombre}`);
 
           layer.on({
-            mouseover: function () {
+            mouseover: function() {
               layer.setStyle({
                 fillColor: "#FF5252",
                 fillOpacity: 0.9
               });
             },
-            mouseout: function () {
+            mouseout: function() {
               layer.setStyle({
                 fillColor: "#C62828",
                 fillOpacity: 0.6
@@ -78,10 +67,12 @@ document.addEventListener("DOMContentLoaded", function () {
             }
           });
         }
-
       }).addTo(map);
 
       map.fitBounds(colombiaLayer.getBounds());
+    })
+    .catch(error => {
+      console.error("Error cargando colombia.geojson:", error);
     });
 
   map.setMaxBounds([
@@ -89,9 +80,6 @@ document.addEventListener("DOMContentLoaded", function () {
     [13.5, -66.8]
   ]);
 
-  // ======================
-  // ZONAS (ARREGLADO)
-  // ======================
   const zonasTrabajo = [
     {
       nombre: "La Unión (Sucre)",
@@ -129,7 +117,6 @@ document.addEventListener("DOMContentLoaded", function () {
   ];
 
   zonasTrabajo.forEach(zona => {
-
     const marker = L.marker(zona.coords).addTo(map);
 
     if (zona.scroll) {
@@ -151,255 +138,256 @@ document.addEventListener("DOMContentLoaded", function () {
         ${zona.descripcion}
       `);
     }
+  });
+}
 
+// ======================
+// FUNCIÓN SCROLL PROYECTOS
+// ======================
+window.irAProyecto = function(id) {
+  const elemento = document.getElementById(id);
+
+  if (elemento) {
+    elemento.scrollIntoView({
+      behavior: "smooth"
+    });
+
+    elemento.style.boxShadow = "0 0 25px rgba(198,40,40,0.7)";
+
+    setTimeout(() => {
+      elemento.style.boxShadow = "";
+    }, 1500);
+
+  } else {
+    console.log("No se encontró:", id);
+  }
+};
+
+// ======================
+// FORMULARIO CONTACTO
+// ======================
+const form = document.querySelector(".contact-form");
+const popup = document.getElementById("custom-popup");
+const popupBtn = document.getElementById("popup-btn");
+
+if (form && popup && popupBtn) {
+  form.addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const nombre = form.querySelector('[name="nombre"]').value.trim();
+    const telefono = form.querySelector('[name="telefono"]').value.trim();
+    const correo = form.querySelector('[name="correo"]').value.trim();
+    const servicio = form.querySelector('[name="servicio"]').value.trim();
+    const mensaje = form.querySelector('[name="mensaje"]').value.trim();
+
+    if (!nombre || !telefono || !correo || !servicio || !mensaje) {
+      alert("Por favor completa todos los campos.");
+      return;
+    }
+
+    popup.classList.add("active");
   });
 
-  // ======================
-  // FUNCIÓN SCROLL (ARREGLADA)
-  // ======================
-  window.irAProyecto = function(id) {
-    const elemento = document.getElementById(id);
+  popupBtn.addEventListener("click", () => {
+    popup.classList.remove("active");
 
-    if (elemento) {
-      elemento.scrollIntoView({ behavior: "smooth" });
+    setTimeout(() => {
+      form.submit();
+    }, 500);
+  });
+}
 
-      elemento.style.boxShadow = "0 0 25px rgba(198,40,40,0.7)";
-      setTimeout(() => {
-        elemento.style.boxShadow = "";
-      }, 1500);
-
-    } else {
-      console.log("No se encontró:", id);
-    }
-  };
-
-  // ======================
-  // FORMULARIO
-  // ======================
-    const form = document.querySelector(".contact-form");
-    const popup = document.getElementById("custom-popup");
-    const popupBtn = document.getElementById("popup-btn");
-
-          if (form) {
-
-          form.addEventListener("submit", function(e) {
-
-          e.preventDefault();
-
-          const nombre = form.querySelector('[name="nombre"]').value.trim();
-          const telefono = form.querySelector('[name="telefono"]').value.trim();
-          const correo = form.querySelector('[name="correo"]').value.trim();
-          const servicio = form.querySelector('[name="servicio"]').value.trim();
-          const mensaje = form.querySelector('[name="mensaje"]').value.trim();
-
-          if (!nombre || !telefono || !correo || !servicio || !mensaje) {
-
-            alert("Por favor completa todos los campos.");
-
-            return;
-          }
-          popup.classList.add("active");
-        });
-      }
-        popupBtn.addEventListener("click", () => {
-        popup.classList.remove("active");
-        setTimeout(() => {
-          form.submit();
-        }, 500);
-
-});
-
-  // ======================
-  // CARRUSEL SERVICIOS
-  // ======================
-  const track = document.querySelector(".slider-track");
-  const slides = document.querySelectorAll(".service");
-  const nextBtn = document.querySelector(".next");
-  const prevBtn = document.querySelector(".prev");
-
-  let index = 0;
-
-  function updateSlider() {
-    track.style.transform = `translateX(-${index * 100}%)`;
-  }
-
-  if (track && slides.length > 0 && nextBtn && prevBtn) {
-    nextBtn.addEventListener("click", function () {
-      index++;
-
-      if (index >= slides.length) {
-        index = 0;
-      }
-
-      updateSlider();
-    });
-
-    prevBtn.addEventListener("click", function () {
-      index--;
-
-      if (index < 0) {
-        index = slides.length - 1;
-      }
-
-      updateSlider();
-    });
-  }
-
-  
-
-});
-
+// ======================
+// CARRUSEL SERVICIOS PRINCIPAL
+// ======================
 let servicioActual = 0;
 
-function mostrarSlideServicio(index) {
+function mostrarServicio(index) {
   const slides = document.querySelectorAll(".servicio-slide");
   const dots = document.querySelectorAll(".servicio-dots .dot");
 
-  if (!slides.length) return;
+  if (!slides.length) {
+    return;
+  }
 
-  slides.forEach(slide => slide.classList.remove("active"));
-  dots.forEach(dot => dot.classList.remove("active"));
+  if (index >= slides.length) {
+    servicioActual = 0;
+  } else if (index < 0) {
+    servicioActual = slides.length - 1;
+  } else {
+    servicioActual = index;
+  }
 
-  slides[index].classList.add("active");
-  dots[index].classList.add("active");
+  slides.forEach(slide => {
+    slide.classList.remove("active");
+  });
+
+  dots.forEach(dot => {
+    dot.classList.remove("active");
+  });
+
+  slides[servicioActual].classList.add("active");
+
+  if (dots[servicioActual]) {
+    dots[servicioActual].classList.add("active");
+  }
 }
 
 function cambiarServicio(direccion) {
-  const slides = document.querySelectorAll(".servicio-slide");
-
-  servicioActual += direccion;
-
-  if (servicioActual >= slides.length) {
-    servicioActual = 0;
-  }
-
-  if (servicioActual < 0) {
-    servicioActual = slides.length - 1;
-  }
-
-  mostrarSlideServicio(servicioActual);
+  mostrarServicio(servicioActual + direccion);
 }
 
 function irServicio(index) {
-  servicioActual = index;
-  mostrarSlideServicio(servicioActual);
+  mostrarServicio(index);
+}
+
+// ======================
+// CARRUSEL ANTIGUO, SI EXISTE
+// ======================
+const track = document.querySelector(".slider-track");
+const slides = document.querySelectorAll(".service");
+const nextBtn = document.querySelector(".next");
+const prevBtn = document.querySelector(".prev");
+
+let index = 0;
+
+function updateSlider() {
+  if (track) {
+    track.style.transform = `translateX(-${index * 100}%)`;
+  }
+}
+
+if (track && slides.length > 0 && nextBtn && prevBtn) {
+  nextBtn.addEventListener("click", () => {
+    index++;
+
+    if (index >= slides.length) {
+      index = 0;
+    }
+
+    updateSlider();
+  });
+
+  prevBtn.addEventListener("click", () => {
+    index--;
+
+    if (index < 0) {
+      index = slides.length - 1;
+    }
+
+    updateSlider();
+  });
 }
 
 // ======================
 // MODAL CLIENTES CONSTRUCTORA
 // ======================
+const modal = document.getElementById("client-modal");
+const openBtn = document.getElementById("open-client-modal");
+const closeBtn = document.getElementById("close-client-modal");
 
-document.addEventListener("DOMContentLoaded", () => {
+if (openBtn && modal) {
+  openBtn.addEventListener("click", () => {
+    modal.classList.add("active");
+  });
+}
 
-    const clientModal = document.getElementById("client-modal");
-    const openClientModal = document.getElementById("open-client-modal");
-    const closeClientModal = document.getElementById("close-client-modal");
+if (closeBtn && modal) {
+  closeBtn.addEventListener("click", () => {
+    modal.classList.remove("active");
+  });
+}
 
-    // ABRIR
-    if(openClientModal){
-        openClientModal.addEventListener("click", () => {
-            clientModal.classList.add("active");
-
-        });
-
+if (modal) {
+  window.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.classList.remove("active");
     }
+  });
+}
 
-    // CERRAR X
-
-    if(closeClientModal){
-        closeClientModal.addEventListener("click", () => {
-            clientModal.classList.remove("active");
-        });
-
-    }
-
-    // CERRAR AFUERA
-
-    if(clientModal){
-        clientModal.addEventListener("click", (e) => {
-            if(e.target === clientModal){
-                clientModal.classList.remove("active");
-
-            }
-
-        });
-
-    }
-
-});
-
+// ======================
+// POPUP ELIMINAR PROYECTO
+// ======================
 let proyectoEliminar = null;
 
-function abrirPopupEliminar(id){
-    proyectoEliminar = id;
-    document.getElementById('popupEliminar')
-        .classList.add('active');
+function abrirPopupEliminar(id) {
+  proyectoEliminar = id;
+
+  const popupEliminar = document.getElementById("popupEliminar");
+
+  if (popupEliminar) {
+    popupEliminar.classList.add("active");
+  }
 }
 
-function cerrarPopupEliminar(){
-    document.getElementById('popupEliminar')
-        .classList.remove('active');
+function cerrarPopupEliminar() {
+  const popupEliminar = document.getElementById("popupEliminar");
+
+  if (popupEliminar) {
+    popupEliminar.classList.remove("active");
+  }
 }
 
-document.getElementById('btnConfirmarEliminar')
-.addEventListener('click', function(){
-    window.location.href =
-        "/eliminar_proyecto/" + proyectoEliminar;
-});
+const btnConfirmarEliminar = document.getElementById("btnConfirmarEliminar");
 
-const modal = document.getElementById('client-modal');
-const openBtn = document.getElementById('open-client-modal');
-const closeBtn = document.getElementById('close-client-modal');
-
-openBtn.addEventListener('click', () => {
-    modal.classList.add('active');
-});
-
-closeBtn.addEventListener('click', () => {
-    modal.classList.remove('active');
-});
-
-window.addEventListener('click', (e) => {
-    if(e.target === modal){
-        modal.classList.remove('active');
+if (btnConfirmarEliminar) {
+  btnConfirmarEliminar.addEventListener("click", function() {
+    if (proyectoEliminar) {
+      window.location.href = "/eliminar_proyecto/" + proyectoEliminar;
     }
-});
+  });
+}
 
+// ======================
+// VENTAS: ANTICIPO Y SALDO
+// ======================
 const inmuebleSelect = document.getElementById("inmuebleSelect");
 const valorVenta = document.getElementById("valorVenta");
 const slider = document.getElementById("anticipoSlider");
-
 const porcentajeTexto = document.getElementById("porcentajeTexto");
 const valorAnticipo = document.getElementById("valorAnticipo");
 const saldoPendiente = document.getElementById("saldoPendiente");
-
 const anticipoInput = document.getElementById("anticipoInput");
 const saldoInput = document.getElementById("saldoInput");
 
 function formatoMoneda(valor) {
-    return new Intl.NumberFormat("es-CO", {
-        style: "currency",
-        currency: "COP",
-        minimumFractionDigits: 0
-    }).format(valor);
+  return new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+    minimumFractionDigits: 0
+  }).format(valor);
 }
 
 function calcularAnticipo() {
-    const precio = Number(valorVenta.value || 0);
-    const porcentaje = Number(slider.value || 0);
+  if (
+    !valorVenta ||
+    !slider ||
+    !porcentajeTexto ||
+    !valorAnticipo ||
+    !saldoPendiente ||
+    !anticipoInput ||
+    !saldoInput
+  ) {
+    return;
+  }
 
-    const anticipo = precio * porcentaje / 100;
-    const saldo = precio - anticipo;
+  const precio = Number(valorVenta.value || 0);
+  const porcentaje = Number(slider.value || 0);
 
-    porcentajeTexto.textContent = porcentaje + "%";
-    valorAnticipo.textContent = formatoMoneda(anticipo);
-    saldoPendiente.textContent = formatoMoneda(saldo);
+  const anticipo = precio * porcentaje / 100;
+  const saldo = precio - anticipo;
 
-    anticipoInput.value = anticipo;
-    saldoInput.value = saldo;
+  porcentajeTexto.textContent = porcentaje + "%";
+  valorAnticipo.textContent = formatoMoneda(anticipo);
+  saldoPendiente.textContent = formatoMoneda(saldo);
+
+  anticipoInput.value = anticipo;
+  saldoInput.value = saldo;
 }
 
-inmuebleSelect.addEventListener("change", function () {
+if (inmuebleSelect && valorVenta && slider) {
+  inmuebleSelect.addEventListener("change", function () {
     const opcion = this.options[this.selectedIndex];
     const precio = opcion.dataset.precio || 0;
 
@@ -407,6 +395,8 @@ inmuebleSelect.addEventListener("change", function () {
     slider.value = 0;
 
     calcularAnticipo();
-});
+  });
 
-slider.addEventListener("input", calcularAnticipo);
+  slider.addEventListener("input", calcularAnticipo);
+  slider.addEventListener("input", calcularAnticipo);
+}
