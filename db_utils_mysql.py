@@ -22,10 +22,20 @@ def init_mysql_db(mysql):
 
 def add_usuario_mysql(mysql, username, password_hash, email, rol='usuario'):
     cur = mysql.connection.cursor()
-    cur.execute(
-        'INSERT INTO usuarios (username, password_hash, email, rol, activo) VALUES (%s, %s, %s, %s, %s)',
-        (username, password_hash, email, rol, 1)
-    )
+    cur.execute("SHOW COLUMNS FROM usuarios LIKE 'activo'")
+    tiene_activo = cur.fetchone() is not None
+
+    if tiene_activo:
+        cur.execute(
+            'INSERT INTO usuarios (username, password_hash, email, rol, activo) VALUES (%s, %s, %s, %s, %s)',
+            (username, password_hash, email, rol, 1)
+        )
+    else:
+        cur.execute(
+            'INSERT INTO usuarios (username, password_hash, email, rol) VALUES (%s, %s, %s, %s)',
+            (username, password_hash, email, rol)
+        )
+
     mysql.connection.commit()
     cur.close()
 
@@ -43,8 +53,10 @@ def set_email_confirmado_mysql(mysql, email):
 
 def get_usuario_by_username_mysql(mysql, username):
     cur = mysql.connection.cursor()
+    cur.execute("SHOW COLUMNS FROM usuarios LIKE 'activo'")
+    activo_select = 'activo' if cur.fetchone() else '1 AS activo'
     cur.execute(
-        'SELECT id, username, password_hash, email, rol, email_confirmado, activo FROM usuarios WHERE username = %s',
+        f'SELECT id, username, password_hash, email, rol, email_confirmado, {activo_select} FROM usuarios WHERE username = %s',
         (username,)
     )
     user = cur.fetchone()
@@ -53,8 +65,10 @@ def get_usuario_by_username_mysql(mysql, username):
 
 def get_usuario_by_email_mysql(mysql, email):
     cur = mysql.connection.cursor()
+    cur.execute("SHOW COLUMNS FROM usuarios LIKE 'activo'")
+    activo_select = 'activo' if cur.fetchone() else '1 AS activo'
     cur.execute(
-        'SELECT id, username, password_hash, email, rol, email_confirmado, activo FROM usuarios WHERE email = %s',
+        f'SELECT id, username, password_hash, email, rol, email_confirmado, {activo_select} FROM usuarios WHERE email = %s',
         (email,)
     )
     user = cur.fetchone()
@@ -172,9 +186,11 @@ def marcar_contactado_mysql(mysql, contacto_id):
 
 def get_proyectos_mysql(mysql):
     cur = mysql.connection.cursor()
+    cur.execute("SHOW COLUMNS FROM proyectos_constructora LIKE 'tipo_trabajo'")
+    tipo_select = "tipo_trabajo" if cur.fetchone() else "'Sin clasificar' AS tipo_trabajo"
 
-    cur.execute("""
-        SELECT id, nombre, tipo_trabajo, descripcion, estado
+    cur.execute(f"""
+        SELECT id, nombre, {tipo_select}, descripcion, estado
         FROM proyectos_constructora
         ORDER BY id DESC
     """)

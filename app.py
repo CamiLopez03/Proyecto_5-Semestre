@@ -1,4 +1,3 @@
-import email
 from flask import Flask, render_template, request, redirect, url_for, session, flash, current_app
 from flask_mysqldb import MySQL
 import random
@@ -6,11 +5,8 @@ from flask_mail import Mail, Message
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 import os
-from werkzeug.utils import secure_filename
 import re
-import uuid
 from datetime import datetime
-import pymysql
 import cloudinary
 import cloudinary.uploader
 from flask import make_response
@@ -88,6 +84,56 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def imagen_permitida(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def es_url_externa(valor):
+    return bool(valor) and str(valor).startswith(('http://', 'https://', '//'))
+
+
+def url_archivo_estatico(valor, predeterminado='imagenes/LOGO.png'):
+    if not valor:
+        return url_for('static', filename=predeterminado)
+
+    valor = str(valor).strip()
+
+    if es_url_externa(valor):
+        return valor
+
+    if valor.startswith('/static/'):
+        return valor
+
+    if valor.startswith('static/'):
+        return '/' + valor
+
+    if valor.startswith(('imagenes/', 'css/', 'js/')):
+        return url_for('static', filename=valor)
+
+    return url_for('static', filename=f'imagenes/{valor}')
+
+
+@app.context_processor
+def utilidades_templates():
+    return {
+        'asset_url': url_archivo_estatico,
+        'is_external_url': es_url_externa
+    }
+
+
+def tabla_tiene_columna(cur, tabla, columna):
+    cur.execute(f"SHOW COLUMNS FROM {tabla} LIKE %s", (columna,))
+    return cur.fetchone() is not None
+
+
+def parse_float_form(valor, nombre_campo):
+    try:
+        numero = float(valor)
+    except (TypeError, ValueError):
+        raise ValueError(f'{nombre_campo} debe ser un número válido.')
+
+    if numero < 0:
+        raise ValueError(f'{nombre_campo} no puede ser negativo.')
+
+    return numero
 
 
 def subir_a_cloudinary(archivo, carpeta="civiweb/inmuebles"):
@@ -288,10 +334,14 @@ def register():
         return redirect(url_for('dashboard'))
 
     if request.method == 'POST':
-        username = request.form['username']
-        email = request.form['email']
-        password = request.form['password']
-        rol = request.form['rol']
+        username = request.form.get('username', '').strip()
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '')
+        rol = request.form.get('rol', 'usuario')
+
+        if not username or not email or not password or not rol:
+            flash('Todos los campos son obligatorios.', 'danger')
+            return render_template('register.html', form=request.form)
 
         if not es_contrasena_segura(password):
             flash('La contraseña no es segura. Debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.', 'danger')
@@ -308,17 +358,21 @@ def register():
             return render_template('register.html', form=request.form, 
                                    limpiar_email=True)
         
-        password_hash = generate_password_hash(password)
-        add_usuario_mysql(mysql, username, password_hash, email, rol)
-
-        #  envío de correo de confirmación por codigo
-
-        import random
         codigo = str(random.randint(100000, 999999))
-        session['codigo_confirmacion'] = codigo
-        session['correo_confirmacion'] = email
-        
-        enviar_codigo_correo(email, codigo)
+
+        try:
+            enviar_codigo_correo(email, codigo)
+
+            password_hash = generate_password_hash(password)
+            add_usuario_mysql(mysql, username, password_hash, email, rol)
+
+            session['codigo_confirmacion'] = codigo
+            session['correo_confirmacion'] = email
+
+        except Exception as e:
+            current_app.logger.exception("Error al crear usuario o enviar confirmacion")
+            flash(f'No se pudo crear el usuario o enviar el correo: {str(e)}', 'danger')
+            return render_template('register.html', form=request.form)
 
 
         flash('Registro exitoso. Hemos enviado un código a tu correo.', 'success')
@@ -350,8 +404,18 @@ def confirmar_codigo():
 @app.route('/recover', methods=['GET', 'POST'])
 def recover():
     if request.method == 'POST':
-        email = request.form['email']
-        user = get_usuario_by_email_mysql(mysql, email)
+        email = request.form.get('email', '').strip()
+
+        if not email:
+            flash('Ingresa un correo válido.', 'danger')
+            return render_template('recover.html')
+
+        try:
+            user = get_usuario_by_email_mysql(mysql, email)
+        except Exception as e:
+            current_app.logger.exception("Error consultando usuario para recuperacion")
+            flash(f'No se pudo consultar el correo: {str(e)}', 'danger')
+            return render_template('recover.html')
 
         if user:
             codigo = str(random.randint(100000, 999999))
@@ -360,7 +424,15 @@ def recover():
             session['correo_recuperacion'] = email
             session['usuario_recuperacion'] = user['username']
 
-            enviar_codigo_recuperacion(email, codigo)
+            try:
+                enviar_codigo_recuperacion(email, codigo)
+            except Exception as e:
+                current_app.logger.exception("Error enviando correo de recuperacion")
+                session.pop('codigo_recuperacion', None)
+                session.pop('correo_recuperacion', None)
+                session.pop('usuario_recuperacion', None)
+                flash(f'No se pudo enviar el correo de recuperación: {str(e)}', 'danger')
+                return render_template('recover.html')
 
             flash('Hemos enviado un código de recuperación a tu correo.', 'success')
             return redirect(url_for('verificar_codigo_recuperacion'))
@@ -831,12 +903,15 @@ def editar_inmueble(id):
                 flash('Formato de imagen no permitido.', 'danger')
                 return redirect(url_for('editar_inmueble', id=id))
 
-            nombre_original = secure_filename(archivo_imagen.filename)
-            extension = nombre_original.rsplit('.', 1)[1].lower()
-            nombre_imagen = f"inmueble_{uuid.uuid4().hex}.{extension}"
-
-            ruta_imagen = os.path.join(app.config['UPLOAD_FOLDER'], nombre_imagen)
-            archivo_imagen.save(ruta_imagen)
+            try:
+                nombre_imagen = subir_a_cloudinary(
+                    archivo_imagen,
+                    carpeta="civiweb/inmuebles/principal"
+                )
+            except Exception as e:
+                current_app.logger.exception("Error subiendo imagen principal al editar")
+                flash(f'Error al subir la imagen principal: {str(e)}', 'danger')
+                return redirect(url_for('editar_inmueble', id=id))
 
         cur.execute("""
                     UPDATE inmuebles
@@ -849,12 +924,18 @@ def editar_inmueble(id):
         for archivo in archivos_galeria:
             if archivo and archivo.filename != '':
                 if imagen_permitida(archivo.filename):
-                    nombre_original = secure_filename(archivo.filename)
-                    extension = nombre_original.rsplit('.', 1)[1].lower()
-                    nombre_archivo = f"inmueble_{uuid.uuid4().hex}.{extension}"
+                    extension = archivo.filename.rsplit('.', 1)[1].lower()
 
-                    ruta_archivo = os.path.join(app.config['UPLOAD_FOLDER'], nombre_archivo)
-                    archivo.save(ruta_archivo)
+                    try:
+                        nombre_archivo = subir_a_cloudinary(
+                            archivo,
+                            carpeta="civiweb/inmuebles/galeria"
+                        )
+                    except Exception as e:
+                        mysql.connection.rollback()
+                        current_app.logger.exception("Error subiendo galeria al editar")
+                        flash(f'Error al subir archivo de galería: {str(e)}', 'danger')
+                        return redirect(url_for('editar_inmueble', id=id))
 
                     tipo_archivo = 'video' if extension == 'mp4' else 'imagen'
 
@@ -932,81 +1013,90 @@ def ventas_admin():
     por_pagina = 10
     offset = (pagina - 1) * por_pagina
 
-    # Compatibilidad: si la BD no tiene porcentaje_anticipo, no rompemos el INSERT.
-    cur.execute("SHOW COLUMNS FROM ventas LIKE 'porcentaje_anticipo'")
-    tiene_porcentaje_anticipo = cur.fetchone() is not None
-
-    cur.execute("SHOW COLUMNS FROM ventas LIKE 'fecha'")
-    tiene_fecha = cur.fetchone() is not None
+    tiene_porcentaje_anticipo = tabla_tiene_columna(cur, 'ventas', 'porcentaje_anticipo')
+    tiene_fecha = tabla_tiene_columna(cur, 'ventas', 'fecha')
+    tiene_tipo_negocio = tabla_tiene_columna(cur, 'inmuebles', 'tipo_negocio')
 
     # =========================
     # REGISTRAR VENTA
     # =========================
     if request.method == 'POST':
 
-        inmueble_id = request.form['inmueble_id']
-        cliente_id = request.form['cliente_id']
-        valor_venta = float(request.form['valor_venta'])
-        observacion = request.form.get('observacion', '')
-        metodo_pago = request.form['metodo_pago']
-        porcentaje_anticipo = int(request.form.get('porcentaje_anticipo') or 0)
-        anticipo = float(request.form.get('anticipo') or 0)
+        try:
+            inmueble_id = request.form.get('inmueble_id', '').strip()
+            cliente_id = request.form.get('cliente_id', '').strip()
+            valor_venta = parse_float_form(request.form.get('valor_venta'), 'El valor de venta')
+            observacion = request.form.get('observacion', '').strip()
+            metodo_pago = request.form.get('metodo_pago', '').strip()
+            porcentaje_anticipo = int(request.form.get('porcentaje_anticipo') or 0)
+            anticipo = parse_float_form(request.form.get('anticipo') or 0, 'El anticipo')
 
-        saldo_form = request.form.get('saldo')
-        if saldo_form not in (None, ''):
-            saldo = float(saldo_form)
-        else:
-            saldo = valor_venta - anticipo
+            if not inmueble_id or not cliente_id or not metodo_pago:
+                flash('Inmueble, cliente y método de pago son obligatorios.', 'danger')
+                return redirect(url_for('ventas_admin'))
 
-        fecha = request.form.get('fecha') or datetime.now().strftime('%Y-%m-%d')
+            saldo_form = request.form.get('saldo')
+            if saldo_form not in (None, ''):
+                saldo = parse_float_form(saldo_form, 'El saldo')
+            else:
+                saldo = max(valor_venta - anticipo, 0)
 
-        if saldo <= 0:
-            estado_pago = 'Pagado'
-        elif anticipo > 0:
-            estado_pago = 'Pendiente'
-        else:
-            estado_pago = 'Sin anticipo'
+            fecha = request.form.get('fecha') or datetime.now().strftime('%Y-%m-%d')
 
-        columnas = ['inmueble_id', 'cliente_id', 'valor_venta', 'metodo_pago']
-        valores_insert = [inmueble_id, cliente_id, valor_venta, metodo_pago]
+            if saldo <= 0:
+                estado_pago = 'Pagado'
+            elif anticipo > 0:
+                estado_pago = 'Pendiente'
+            else:
+                estado_pago = 'Sin anticipo'
 
-        if tiene_porcentaje_anticipo:
-            columnas.append('porcentaje_anticipo')
-            valores_insert.append(porcentaje_anticipo)
+            columnas = ['inmueble_id', 'cliente_id', 'valor_venta', 'metodo_pago']
+            valores_insert = [inmueble_id, cliente_id, valor_venta, metodo_pago]
 
-        columnas.extend(['anticipo', 'saldo', 'estado_pago', 'observacion'])
-        valores_insert.extend([anticipo, saldo, estado_pago, observacion])
+            if tiene_porcentaje_anticipo:
+                columnas.append('porcentaje_anticipo')
+                valores_insert.append(porcentaje_anticipo)
 
-        if tiene_fecha:
-            columnas.append('fecha')
-            valores_insert.append(fecha)
+            columnas.extend(['anticipo', 'saldo', 'estado_pago', 'observacion'])
+            valores_insert.extend([anticipo, saldo, estado_pago, observacion])
 
-        columnas_sql = ', '.join(columnas)
-        placeholders = ', '.join(['%s'] * len(columnas))
+            if tiene_fecha:
+                columnas.append('fecha')
+                valores_insert.append(fecha)
 
-        cur.execute(
-            f"INSERT INTO ventas ({columnas_sql}) VALUES ({placeholders})",
-            tuple(valores_insert)
-        )
+            columnas_sql = ', '.join(columnas)
+            placeholders = ', '.join(['%s'] * len(columnas))
 
-        cur.execute("""
-            UPDATE inmuebles
-            SET estado = 'Vendido'
-            WHERE id = %s
-        """, (inmueble_id,))
+            cur.execute(
+                f"INSERT INTO ventas ({columnas_sql}) VALUES ({placeholders})",
+                tuple(valores_insert)
+            )
 
-        conexion.commit()
-        flash('Venta registrada correctamente.', 'success')
+            cur.execute("""
+                UPDATE inmuebles
+                SET estado = 'Vendido'
+                WHERE id = %s
+            """, (inmueble_id,))
+
+            conexion.commit()
+            flash('Venta registrada correctamente.', 'success')
+
+        except Exception as e:
+            conexion.rollback()
+            current_app.logger.exception("Error registrando venta")
+            flash(f'No se pudo registrar la venta: {str(e)}', 'danger')
+
         return redirect(url_for('ventas_admin'))
 
     # =========================
     # INMUEBLES DISPONIBLES
     # =========================
-    cur.execute("""
+    filtro_tipo_negocio = "AND tipo_negocio = 'Venta'" if tiene_tipo_negocio else ""
+    cur.execute(f"""
         SELECT *
         FROM inmuebles
         WHERE estado = 'Disponible'
-        AND tipo_negocio = 'Venta'
+        {filtro_tipo_negocio}
         ORDER BY id DESC
     """)
     inmuebles_disponibles = cur.fetchall()
@@ -1025,11 +1115,13 @@ def ventas_admin():
     """)
     clientes = cur.fetchall()
 
-    query = """
+    fecha_select = "v.fecha" if tiene_fecha else "NULL AS fecha"
+
+    query = f"""
         SELECT
             v.id,
             v.valor_venta,
-            v.fecha,
+            {fecha_select},
             v.observacion,
             v.metodo_pago,
             v.anticipo,
@@ -1094,7 +1186,8 @@ def ventas_admin():
     total_registros = cur.fetchone()['total']
     total_paginas = (total_registros + por_pagina - 1) // por_pagina
 
-    query += " ORDER BY v.fecha DESC LIMIT %s OFFSET %s "
+    orden_ventas = "v.fecha DESC" if tiene_fecha else "v.id DESC"
+    query += f" ORDER BY {orden_ventas} LIMIT %s OFFSET %s "
     valores.extend([por_pagina, offset])
     cur.execute(query, valores)
     ventas = cur.fetchall()
@@ -1111,13 +1204,16 @@ def ventas_admin():
     """)
     total_ventas = cur.fetchone()['total']
 
-    cur.execute("""
-        SELECT COUNT(*) AS total
-        FROM ventas
-        WHERE MONTH(fecha) = MONTH(CURDATE())
-        AND YEAR(fecha) = YEAR(CURDATE())
-    """)
-    ventas_mes = cur.fetchone()['total']
+    if tiene_fecha:
+        cur.execute("""
+            SELECT COUNT(*) AS total
+            FROM ventas
+            WHERE MONTH(fecha) = MONTH(CURDATE())
+            AND YEAR(fecha) = YEAR(CURDATE())
+        """)
+        ventas_mes = cur.fetchone()['total']
+    else:
+        ventas_mes = 0
 
     cur.execute("""
         SELECT COUNT(*) AS total
@@ -1126,32 +1222,35 @@ def ventas_admin():
     """)
     inmuebles_vendidos = cur.fetchone()['total']
 
-    cur.execute("""
+    cur.execute(f"""
         SELECT
             v.id,
             c.nombre AS cliente,
             v.valor_venta,
-            v.fecha,
+            {fecha_select},
             i.titulo
         FROM ventas v
         INNER JOIN inmuebles i
             ON v.inmueble_id = i.id
         INNER JOIN clientes_inmobiliaria c
             ON v.cliente_id = c.id
-        ORDER BY v.fecha DESC
+        ORDER BY {orden_ventas}
         LIMIT 5
     """)
     ultimas_ventas = cur.fetchall()
 
-    cur.execute("""
-        SELECT MONTH(fecha) AS mes,
-               COUNT(*) AS total
-        FROM ventas
-        WHERE YEAR(fecha) = YEAR(CURDATE())
-        GROUP BY MONTH(fecha)
-        ORDER BY MONTH(fecha)
-    """)
-    ventas_grafico = cur.fetchall()
+    if tiene_fecha:
+        cur.execute("""
+            SELECT MONTH(fecha) AS mes,
+                   COUNT(*) AS total
+            FROM ventas
+            WHERE YEAR(fecha) = YEAR(CURDATE())
+            GROUP BY MONTH(fecha)
+            ORDER BY MONTH(fecha)
+        """)
+        ventas_grafico = cur.fetchall()
+    else:
+        ventas_grafico = []
 
     cur.close()
 
@@ -1179,18 +1278,29 @@ def completar_pago(id):
 
     cur = mysql.connection.cursor()
 
-    cur.execute("""
-        UPDATE ventas
-        SET anticipo = valor_venta,
-            saldo = 0,
-            estado_pago = 'Pagado'
-        WHERE id = %s
-    """, (id,))
+    try:
+        cur.execute("""
+            UPDATE ventas
+            SET anticipo = valor_venta,
+                saldo = 0,
+                estado_pago = 'Pagado'
+            WHERE id = %s
+        """, (id,))
 
-    mysql.connection.commit()
-    cur.close()
+        if cur.rowcount == 0:
+            flash('La venta no existe.', 'danger')
+        else:
+            mysql.connection.commit()
+            flash('Pago completado correctamente.', 'success')
 
-    flash('Pago completado correctamente.', 'success')
+    except Exception as e:
+        mysql.connection.rollback()
+        current_app.logger.exception("Error completando pago")
+        flash(f'No se pudo completar el pago: {str(e)}', 'danger')
+
+    finally:
+        cur.close()
+
     return redirect(url_for('ventas_admin'))
 
 @app.route('/factura_venta/<int:id>')
@@ -1200,10 +1310,13 @@ def factura_venta(id):
 
     cur = mysql.connection.cursor()
 
-    cur.execute("""
+    tiene_fecha = tabla_tiene_columna(cur, 'ventas', 'fecha')
+    fecha_select = "v.fecha" if tiene_fecha else "NULL AS fecha"
+
+    cur.execute(f"""
         SELECT 
             v.id,
-            v.fecha,
+            {fecha_select},
             v.valor_venta,
             v.metodo_pago,
             v.anticipo,
@@ -1445,94 +1558,78 @@ def compras_admin():
 def proyectos_admin():
 
     cur = mysql.connection.cursor()
-    cur.execute("""
-        SELECT *
-        FROM clientes_constructora
-        ORDER BY nombre ASC
-    """)
+    try:
+        cur.execute("""
+            SELECT *
+            FROM clientes_constructora
+            ORDER BY nombre ASC
+        """)
 
-    clientes = cur.fetchall()
-    buscar = request.args.get('buscar', '')
-    estado = request.args.get('estado', '')
-    pagina = request.args.get('pagina', 1, type=int)
-    por_pagina = 10
-    offset = (pagina - 1) * por_pagina
+        clientes = cur.fetchall()
+        tiene_tipo_trabajo = tabla_tiene_columna(cur, 'proyectos_constructora', 'tipo_trabajo')
+        buscar = request.args.get('buscar', '')
+        estado = request.args.get('estado', '')
+        pagina = request.args.get('pagina', 1, type=int)
+        por_pagina = 10
+        offset = (pagina - 1) * por_pagina
 
-    query = """
-        SELECT *
-        FROM proyectos_constructora
-        WHERE 1=1
-    """
-
-    valores = []
-
-    if buscar:
-
-        query += """
-            AND (
-                nombre LIKE %s
-                OR descripcion LIKE %s
-                OR tipo_trabajo LIKE %s
-            )
+        tipo_select = "tipo_trabajo" if tiene_tipo_trabajo else "'Sin clasificar' AS tipo_trabajo"
+        query = f"""
+            SELECT id, nombre, descripcion, estado, {tipo_select}
+            FROM proyectos_constructora
+            WHERE 1=1
         """
-
-        busqueda = f"%{buscar}%"
-
-        valores.extend([
-            busqueda,
-            busqueda,
-            busqueda
-        ])
-
-    if estado:
-        query += " AND estado = %s "
-        valores.append(estado)
-
-    query += " ORDER BY id DESC "
-    count_query = """
-        SELECT COUNT(*) AS total
-        FROM proyectos_constructora
-        WHERE 1=1
-    """
-
-    count_valores = []
-
-    if buscar:
-        count_query += """
-            AND (
-                nombre LIKE %s
-                OR descripcion LIKE %s
-                OR tipo_trabajo LIKE %s
-            )
+        count_query = """
+            SELECT COUNT(*) AS total
+            FROM proyectos_constructora
+            WHERE 1=1
         """
+        valores = []
+        count_valores = []
 
-        busqueda = f"%{buscar}%"
-        count_valores.extend([
-            busqueda,
-            busqueda,
-            busqueda
-        ])
+        if buscar:
+            busqueda = f"%{buscar}%"
+            filtro = " AND (nombre LIKE %s OR descripcion LIKE %s"
+            valores.extend([busqueda, busqueda])
+            count_valores.extend([busqueda, busqueda])
 
-    if estado:
+            if tiene_tipo_trabajo:
+                filtro += " OR tipo_trabajo LIKE %s"
+                valores.append(busqueda)
+                count_valores.append(busqueda)
 
-        count_query += " AND estado = %s "
-        count_valores.append(estado)
+            filtro += ")"
+            query += filtro
+            count_query += filtro
 
-    cur.execute(count_query, count_valores)
-    total_registros = cur.fetchone()['total']
+        if estado:
+            query += " AND estado = %s "
+            count_query += " AND estado = %s "
+            valores.append(estado)
+            count_valores.append(estado)
 
-    total_paginas = (
-        total_registros + por_pagina - 1
-    ) // por_pagina
-    query += " LIMIT %s OFFSET %s "
+        cur.execute(count_query, count_valores)
+        total_registros = cur.fetchone()['total']
+        total_paginas = (total_registros + por_pagina - 1) // por_pagina
 
-    valores.extend([
-        por_pagina,
-        offset
-    ])
+        query += " ORDER BY id DESC LIMIT %s OFFSET %s "
+        valores.extend([por_pagina, offset])
 
-    cur.execute(query, valores)
-    proyectos = cur.fetchall()
+        cur.execute(query, valores)
+        proyectos = cur.fetchall()
+
+    except Exception as e:
+        current_app.logger.exception("Error cargando proyectos")
+        flash(f'No se pudieron cargar los proyectos: {str(e)}', 'danger')
+        clientes = []
+        proyectos = []
+        buscar = request.args.get('buscar', '')
+        estado = request.args.get('estado', '')
+        pagina = 1
+        total_paginas = 0
+
+    finally:
+        cur.close()
 
     return render_template(
         'Proyectos_confi.html',
@@ -1542,36 +1639,56 @@ def proyectos_admin():
         estado=estado,
         pagina=pagina,
         total_paginas=total_paginas
-        )
+    )
 
 
 @app.route('/crear_proyecto', methods=['POST'])
 def crear_proyecto():
-    nombre = request.form['nombre']
-    tipo_trabajo = request.form['tipo_trabajo']
-    descripcion = request.form['descripcion']
-    estado = request.form['estado']
-    cliente_id = request.form['cliente_id']
-
     cur = mysql.connection.cursor()
 
-    # Crear proyecto con tipo de trabajo
-    cur.execute("""
-        INSERT INTO proyectos_constructora (nombre, tipo_trabajo, descripcion, estado)
-        VALUES (%s, %s, %s, %s)
-    """, (nombre, tipo_trabajo, descripcion, estado))
+    try:
+        nombre = request.form.get('nombre', '').strip()
+        tipo_trabajo = request.form.get('tipo_trabajo', '').strip()
+        descripcion = request.form.get('descripcion', '').strip()
+        estado = request.form.get('estado', '').strip()
+        cliente_id = request.form.get('cliente_id', '').strip()
 
-    proyecto_id = cur.lastrowid
+        if not nombre or not tipo_trabajo or not descripcion or not estado or not cliente_id:
+            flash('Todos los campos obligatorios del proyecto deben estar completos.', 'danger')
+            return redirect(url_for('proyectos_admin'))
 
-    cur.execute("""
-        INSERT INTO cliente_proyecto (cliente_id, proyecto_id)
-        VALUES (%s, %s)
-    """, (cliente_id, proyecto_id))
+        if not tabla_tiene_columna(cur, 'proyectos_constructora', 'tipo_trabajo'):
+            flash('La base de datos no tiene la columna proyectos_constructora.tipo_trabajo.', 'danger')
+            return redirect(url_for('proyectos_admin'))
 
-    mysql.connection.commit()
-    cur.close()
+        cur.execute("SELECT id FROM clientes_constructora WHERE id = %s", (cliente_id,))
+        if not cur.fetchone():
+            flash('Selecciona un cliente válido para el proyecto.', 'danger')
+            return redirect(url_for('proyectos_admin'))
 
-    flash('Proyecto creado y vinculado al cliente correctamente.', 'success')
+        cur.execute("""
+            INSERT INTO proyectos_constructora (nombre, tipo_trabajo, descripcion, estado)
+            VALUES (%s, %s, %s, %s)
+        """, (nombre, tipo_trabajo, descripcion, estado))
+
+        proyecto_id = cur.lastrowid
+
+        cur.execute("""
+            INSERT INTO cliente_proyecto (cliente_id, proyecto_id)
+            VALUES (%s, %s)
+        """, (cliente_id, proyecto_id))
+
+        mysql.connection.commit()
+        flash('Proyecto creado y vinculado al cliente correctamente.', 'success')
+
+    except Exception as e:
+        mysql.connection.rollback()
+        current_app.logger.exception("Error creando proyecto")
+        flash(f'No se pudo crear el proyecto: {str(e)}', 'danger')
+
+    finally:
+        cur.close()
+
     return redirect(url_for('proyectos_admin'))
 
 
@@ -1697,38 +1814,58 @@ def reservas_admin():
     cur = mysql.connection.cursor()
     if request.method == 'POST':
 
-        inmueble_id = request.form['inmueble_id']
-        cliente_id = request.form['cliente_id']
-        fecha_limite = request.form['fecha_limite']
-        valor_reserva = request.form['valor_reserva']
-        observacion = request.form['observacion']
-
-        cur.execute("""
-            INSERT INTO reservas (
-                inmueble_id,
-                cliente_id,
-                fecha_limite,
-                valor_reserva,
-                observacion
+        try:
+            inmueble_id = request.form.get('inmueble_id', '').strip()
+            cliente_id = request.form.get('cliente_id', '').strip()
+            fecha_limite = request.form.get('fecha_limite', '').strip()
+            observacion = request.form.get('observacion', '').strip()
+            valor_reserva = parse_float_form(
+                request.form.get('valor_reserva'),
+                'El valor de reserva'
             )
-            VALUES (%s,%s,%s,%s,%s)
-        """, (
-            inmueble_id,
-            cliente_id,
-            fecha_limite,
-            valor_reserva,
-            observacion
-        ))
 
-        cur.execute("""
-            UPDATE inmuebles
-            SET estado = 'Reservado'
-            WHERE id = %s
-        """, (inmueble_id,))
+            if not inmueble_id or not cliente_id or not fecha_limite:
+                flash('Inmueble, cliente y fecha límite son obligatorios.', 'danger')
+                return redirect(url_for('reservas_admin'))
 
-        mysql.connection.commit()
+            cur.execute("SELECT id FROM inmuebles WHERE id = %s AND estado = 'Disponible'", (inmueble_id,))
+            if not cur.fetchone():
+                flash('Selecciona un inmueble disponible válido.', 'danger')
+                return redirect(url_for('reservas_admin'))
 
-        flash('Reserva registrada correctamente.', 'success')
+            cur.execute("SELECT id FROM clientes_inmobiliaria WHERE id = %s", (cliente_id,))
+            if not cur.fetchone():
+                flash('Selecciona un cliente válido.', 'danger')
+                return redirect(url_for('reservas_admin'))
+
+            columnas = ['inmueble_id', 'cliente_id', 'fecha_limite', 'valor_reserva', 'observacion']
+            valores_insert = [inmueble_id, cliente_id, fecha_limite, valor_reserva, observacion]
+
+            if tabla_tiene_columna(cur, 'reservas', 'estado'):
+                columnas.append('estado')
+                valores_insert.append('Activa')
+
+            columnas_sql = ', '.join(columnas)
+            placeholders = ', '.join(['%s'] * len(columnas))
+
+            cur.execute(
+                f"INSERT INTO reservas ({columnas_sql}) VALUES ({placeholders})",
+                tuple(valores_insert)
+            )
+
+            cur.execute("""
+                UPDATE inmuebles
+                SET estado = 'Reservado'
+                WHERE id = %s
+            """, (inmueble_id,))
+
+            mysql.connection.commit()
+            flash('Reserva registrada correctamente.', 'success')
+
+        except Exception as e:
+            mysql.connection.rollback()
+            current_app.logger.exception("Error registrando reserva")
+            flash(f'No se pudo registrar la reserva: {str(e)}', 'danger')
 
         return redirect(url_for('reservas_admin'))
 
@@ -1752,6 +1889,8 @@ def reservas_admin():
     """)
 
     clientes = cur.fetchall()
+
+    tiene_estado_reserva = tabla_tiene_columna(cur, 'reservas', 'estado')
 
     # =========================
     # FILTROS
@@ -1807,7 +1946,7 @@ def reservas_admin():
             busqueda
         ])
 
-    if estado:
+    if estado and tiene_estado_reserva:
 
         query += " AND r.estado = %s "
 
@@ -1851,7 +1990,7 @@ def reservas_admin():
             busqueda
         ])
 
-    if estado:
+    if estado and tiene_estado_reserva:
 
         count_query += " AND r.estado = %s "
 
@@ -1879,6 +2018,10 @@ def reservas_admin():
     cur.execute(query, valores)
 
     reservas = cur.fetchall()
+
+    if not tiene_estado_reserva:
+        for reserva in reservas:
+            reserva['estado'] = 'Activa'
 
     cur.close()
 
@@ -2215,30 +2358,53 @@ def servicios_constructivos():
 
     cur = mysql.connection.cursor()
 
-    cur.execute("SELECT COUNT(*) AS total FROM proyectos_constructora")
-    total_proyectos = cur.fetchone()['total']
+    try:
+        tiene_tipo_trabajo = tabla_tiene_columna(cur, 'proyectos_constructora', 'tipo_trabajo')
 
-    cur.execute("SELECT COUNT(*) AS total FROM proyectos_constructora WHERE tipo_trabajo = 'Obras civiles'")
-    obras_civiles = cur.fetchone()['total']
+        cur.execute("SELECT COUNT(*) AS total FROM proyectos_constructora")
+        total_proyectos = cur.fetchone()['total']
 
-    cur.execute("SELECT COUNT(*) AS total FROM proyectos_constructora WHERE tipo_trabajo = 'Diseño estructural'")
-    diseño_estructural = cur.fetchone()['total']
+        if not tiene_tipo_trabajo:
+            flash('La base de datos no tiene la columna proyectos_constructora.tipo_trabajo.', 'danger')
+            resultados = []
+            obras_civiles = 0
+            diseño_estructural = 0
+            consultoria = 0
+            interventoria = 0
+        else:
+            cur.execute("SELECT COUNT(*) AS total FROM proyectos_constructora WHERE tipo_trabajo = 'Obras civiles'")
+            obras_civiles = cur.fetchone()['total']
 
-    cur.execute("SELECT COUNT(*) AS total FROM proyectos_constructora WHERE tipo_trabajo = 'Consultoría'")
-    consultoria = cur.fetchone()['total']
+            cur.execute("SELECT COUNT(*) AS total FROM proyectos_constructora WHERE tipo_trabajo = 'Diseño estructural'")
+            diseño_estructural = cur.fetchone()['total']
 
-    cur.execute("SELECT COUNT(*) AS total FROM proyectos_constructora WHERE tipo_trabajo = 'Interventoría'")
-    interventoria = cur.fetchone()['total']
+            cur.execute("SELECT COUNT(*) AS total FROM proyectos_constructora WHERE tipo_trabajo = 'Consultoría'")
+            consultoria = cur.fetchone()['total']
 
-    cur.execute("""
-        SELECT tipo_trabajo, COUNT(*) AS total
-        FROM proyectos_constructora
-        GROUP BY tipo_trabajo
-        ORDER BY total DESC
-    """)
+            cur.execute("SELECT COUNT(*) AS total FROM proyectos_constructora WHERE tipo_trabajo = 'Interventoría'")
+            interventoria = cur.fetchone()['total']
 
-    resultados = cur.fetchall()
-    cur.close()
+            cur.execute("""
+                SELECT COALESCE(tipo_trabajo, 'Sin clasificar') AS tipo_trabajo, COUNT(*) AS total
+                FROM proyectos_constructora
+                GROUP BY COALESCE(tipo_trabajo, 'Sin clasificar')
+                ORDER BY total DESC
+            """)
+
+            resultados = cur.fetchall()
+
+    except Exception as e:
+        current_app.logger.exception("Error cargando servicios constructivos")
+        flash(f'No se pudieron cargar los servicios constructivos: {str(e)}', 'danger')
+        total_proyectos = 0
+        obras_civiles = 0
+        diseño_estructural = 0
+        consultoria = 0
+        interventoria = 0
+        resultados = []
+
+    finally:
+        cur.close()
 
     # ICONOS Y DESCRIPCIONES
     iconos = {
