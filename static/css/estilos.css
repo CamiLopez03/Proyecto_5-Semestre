@@ -208,7 +208,7 @@ body {
 
 .cards {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 👈 4 columnas fijas */
+  grid-template-columns: repeat(2, 1fr); 
   gap: 25px;
 }
 
@@ -293,7 +293,7 @@ body {
 }
 
 .project-card p:first-of-type {
-  text-align: center; /* el subtítulo (ubicación) */
+  text-align: center; 
   font-weight: 500;
 }
 
@@ -516,8 +516,8 @@ body {
 }
 
 @media (max-width: 900px) {
-  .nav-links {
-    display: none;
+  .nav-links li {
+    width: 100%;
   }
 
   .hero-content h1 {
@@ -1241,11 +1241,6 @@ body {
     font-weight: bold;
 }
 
-/* =========================================
-INICIO RESPONSIVE GLOBAL + MENU HAMBURGUESA
-NO BORRAR TU CSS ANTERIOR
-PEGAR AL FINAL
-========================================= */
 
 /* Ocultar checkbox */
 #menu-toggle {
@@ -1344,9 +1339,17 @@ PEGAR AL FINAL
 
   .nav-links a {
     display: block;
-    width: 100%;
     font-size: 17px;
     padding: 8px 0;
+  }
+
+  .nav-links .login-btn{
+    display:inline-block !important;
+    width:auto !important;
+
+    padding:10px 18px;
+
+    border-radius:20px;
   }
 
   .hero {
@@ -1496,15 +1499,6 @@ PEGAR AL FINAL
   }
 }
 
-
-/* =========================================
-FIN RESPONSIVE GLOBAL + MENU HAMBURGUESA
-========================================= */
-
-/* =========================================
-INICIO AJUSTES INDEX BOTONES HERO
-========================================= */
-
 @media (max-width: 768px) {
   .hero-content {
     display: flex;
@@ -1525,14 +1519,6 @@ INICIO AJUSTES INDEX BOTONES HERO
   }
 }
 
-
-/* =========================================
-FIN AJUSTES INDEX BOTONES HERO
-========================================= */
-
-/* =========================
-   POPUP MODERNO
-========================= */
 
 .custom-popup{
     position: fixed;
@@ -1624,9 +1610,7 @@ FIN AJUSTES INDEX BOTONES HERO
         opacity: 1;
     }
 }
-/* =========================
-   CAMPOS OBLIGATORIOS
-========================= */
+
 
 label{
     display:flex;
@@ -1669,9 +1653,6 @@ label{
 
 }
 
-/* =========================================
-ULTIMO FIX MOBILE
-========================================= */
 
 html,
 body{

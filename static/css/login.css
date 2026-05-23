@@ -323,10 +323,6 @@
             border: 1px solid #ef4444;
         }
 
-        /* =========================================
-        INICIO RESPONSIVE LOGIN
-        PEGAR AL FINAL
-        ========================================= */
 
         /* Mejor control */
         * {
@@ -505,9 +501,6 @@
             }
         }
 
-        /* =========================================
-        FIN RESPONSIVE LOGIN
-        ========================================= */
    /*Fin de estilo de login.html*/
 
    /* Inicio de estilo de confirmar_codigo.html */
@@ -649,11 +642,6 @@
           padding: 35px 25px;
         }
       }
-
-      /* =========================================
-      INICIO RESPONSIVE CONFIRMAR CODIGO
-      PEGAR AL FINAL
-      ========================================= */
 
       /* Mejor control general */
       * {
@@ -841,9 +829,6 @@
         }
       }
 
-      /* =========================================
-      FIN RESPONSIVE CONFIRMAR CODIGO
-      ========================================= */
 
       /*Fin de estilo de confirmar_codigo.html*/
 
@@ -935,10 +920,6 @@
             margin-top: 10px;
         }
 
-        /* =========================================
-        INICIO RESPONSIVE RECUPERAR CONTRASEÑA
-        PEGAR AL FINAL
-        ========================================= */
 
         /* Mejor control */
         * {
@@ -1122,9 +1103,6 @@
             }
         }
 
-        /* =========================================
-        FIN RESPONSIVE RECUPERAR CONTRASEÑA
-        ========================================= */
         /*Fin de estilo de mostrar_recuperacion.html*/
 
         /* Inicio de estilo de modificar_correo.html */
@@ -1275,11 +1253,6 @@
             padding: 10px;
             text-align: center;
         }
-
-        /* =========================================
-        INICIO RESPONSIVE MODIFICAR CORREO
-        PEGAR AL FINAL
-        ========================================= */
 
         /* Mejor control general */
         * {
@@ -1470,14 +1443,7 @@
             }
         }
 
-        /* =========================================
-        FIN RESPONSIVE MODIFICAR CORREO
-        ========================================= */
-
     /*Fin de estilo de modificar_correo.html*/
-
-   
-
 
     /*Inicio de estilo de recover.html*/
         body {
@@ -1618,10 +1584,7 @@
             line-height: 1.5;
         }
 
-        /* =========================================
-        INICIO RESPONSIVE RECOVER
-        PEGAR AL FINAL
-        ========================================= */
+    
 
         /* Mejor control */
         * {
@@ -1816,10 +1779,6 @@
                 font-size: 13px;
             }
         }
-
-        /* =========================================
-        FIN RESPONSIVE RECOVER
-        ========================================= */
     
     /*Fin de estilo de recover.html*/
 
@@ -1962,10 +1921,7 @@
             text-decoration: underline;
         }
 
-        /* =========================================
-        INICIO RESPONSIVE RESET PASSWORD
-        PEGAR AL FINAL
-        ========================================= */
+
 
         /* Mejor control */
         * {
@@ -2166,9 +2122,6 @@
             }
         }
 
-        /* =========================================
-        FIN RESPONSIVE RESET PASSWORD
-        ========================================= */
     /*Fin de estilo de reset_password.html*/
 
     /*Inicio de estilo de verificar_codigo_recuperacion.html*/
@@ -2321,10 +2274,7 @@
             text-decoration: underline;
         }
 
-        /* =========================================
-        INICIO RESPONSIVE VERIFICAR CODIGO
-        PEGAR AL FINAL
-        ========================================= */
+      
 
         /* Mejor control */
         * {
@@ -2522,9 +2472,6 @@
             }
         }
 
-        /* =========================================
-        FIN RESPONSIVE VERIFICAR CODIGO
-        ========================================= */
     /*Fin de estilo de verificar_codigo_recuperacion.html*/
 
     /* ARREGLO FINAL PARA LOGIN Y REGISTRO */
@@ -2657,9 +2604,7 @@
     font-size: 16px;
 }
 
-/* =========================================
-REGISTER PREMIUM
-========================================= */
+
 
 body{
     margin: 0;
@@ -2674,9 +2619,7 @@ body{
     font-family: 'Poppins', sans-serif;
 }
 
-/* =========================================
-CONTENEDOR
-========================================= */
+
 
 .register-container{
     display: flex;
@@ -2693,9 +2636,7 @@ CONTENEDOR
     box-shadow: 0 30px 70px rgba(0,0,0,.45);
 }
 
-/* =========================================
-IZQUIERDA
-========================================= */
+
 
 .register-container .left-side{
     width: 40%;
@@ -2814,9 +2755,7 @@ IZQUIERDA
     backdrop-filter: blur(5px);
 }
 
-/* =========================================
-DERECHA
-========================================= */
+
 
 .register-container .right-side{
     width: 60%;
@@ -2848,9 +2787,7 @@ DERECHA
 
     margin-left: 15px;
 }
-/* =========================================
-ICONO SUPERIOR
-========================================= */
+
 
 .register-container .register-icon{
     width: 58px;
@@ -2873,9 +2810,6 @@ ICONO SUPERIOR
     font-size: 15px;
 }
 
-/* =========================================
-TITULO
-========================================= */
 
 .register-container h2{
     font-size: 36px;
@@ -2904,9 +2838,7 @@ TITULO
     line-height: 1.5;
 }
 
-/* =========================================
-INPUTS
-========================================= */
+
 
 .register-container .input-group{
     margin-bottom: 14px;
@@ -2972,7 +2904,7 @@ INPUTS
     flex-shrink: 0;
 }
 
-/* INPUT */
+
 
 .register-container .input-icon input,
 .register-container .input-icon select{
@@ -2991,7 +2923,7 @@ INPUTS
 
     color: #111;
 }
-/* OJITO */
+
 
 .register-container .toggle-password{
     width: 48px !important;
@@ -3009,7 +2941,7 @@ INPUTS
     cursor: pointer;
 }
 
-/* SELECT */
+
 
 .register-container select{
     appearance: none;
@@ -3029,9 +2961,6 @@ INPUTS
     justify-content: center;
 }
 
-/* =========================================
-BOTON
-========================================= */
 
 .register-container button{
     width: 100%;
@@ -3063,9 +2992,6 @@ BOTON
     0 15px 30px rgba(185,28,28,.22);
 }
 
-/* =========================================
-LINKS
-========================================= */
 
 .register-container .links{
     margin-top: 22px;
@@ -3081,9 +3007,6 @@ LINKS
     font-weight: 600;
 }
 
-/* =========================================
-RESPONSIVE
-========================================= */
 
 @media(max-width:992px){
 
@@ -3111,9 +3034,7 @@ RESPONSIVE
     }
 }
 
-/* =========================================
-FIX RESPONSIVE GLOBAL
-========================================= */
+
 
 img,
 video{
@@ -3237,10 +3158,6 @@ body{
     }
 }
 
-/* =========================================
-ULTIMO FIX GLOBAL AUTH
-PEGAR AL FINAL
-========================================= */
 
 html,
 body{
