@@ -68,6 +68,7 @@ app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
 app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT'))
 app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS') == 'True'
 app.config['MAIL_USE_SSL'] = os.getenv('MAIL_USE_SSL') == 'True'
+app.config['MAIL_TIMEOUT'] = 10
 app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER')
@@ -188,7 +189,13 @@ Atentamente,
 Equipo Constructora CiviWeb Manager
 """
 
-    mail.send(msg)
+    try:
+        mail.send(msg)
+        return True
+    except Exception as e:
+        current_app.logger.exception("Error enviando correo de confirmación")
+        print("ERROR ENVIANDO CORREO DE CONFIRMACIÓN:", e)
+        return False
 
 
 def enviar_codigo_recuperacion(destinatario, codigo):
@@ -214,10 +221,15 @@ def enviar_codigo_recuperacion(destinatario, codigo):
     Atentamente,
     
     Equipo CiviWeb Manager
-    
     """
 
-    mail.send(msg)
+    try:
+        mail.send(msg)
+        return True
+    except Exception as e:
+        current_app.logger.exception("Error enviando correo de recuperación")
+        print("ERROR ENVIANDO CORREO DE RECUPERACIÓN:", e)
+        return False
 
     
 
@@ -344,39 +356,58 @@ def register():
             return render_template('register.html', form=request.form)
 
         if not es_contrasena_segura(password):
-            flash('La contraseña no es segura. Debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.', 'danger')
-            return render_template('register.html', form=request.form, 
-                                   limpiar_password=True)
+            flash(
+                'La contraseña no es segura. Debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.',
+                'danger'
+            )
+            return render_template(
+                'register.html',
+                form=request.form,
+                limpiar_password=True
+            )
 
         if get_usuario_by_username_mysql(mysql, username):
             flash('El usuario ya existe.', 'danger')
-            return render_template('register.html', form=request.form, 
-                                   limpiar_username=True)
-        
+            return render_template(
+                'register.html',
+                form=request.form,
+                limpiar_username=True
+            )
+
         if get_usuario_by_email_mysql(mysql, email):
             flash('El correo ya está registrado.', 'danger')
-            return render_template('register.html', form=request.form, 
-                                   limpiar_email=True)
-        
-        codigo = str(random.randint(100000, 999999))
+            return render_template(
+                'register.html',
+                form=request.form,
+                limpiar_email=True
+            )
 
         try:
-            enviar_codigo_correo(email, codigo)
-
             password_hash = generate_password_hash(password)
             add_usuario_mysql(mysql, username, password_hash, email, rol)
 
-            session['codigo_confirmacion'] = codigo
-            session['correo_confirmacion'] = email
-
         except Exception as e:
-            current_app.logger.exception("Error al crear usuario o enviar confirmacion")
-            flash(f'No se pudo crear el usuario o enviar el correo: {str(e)}', 'danger')
+            current_app.logger.exception("Error al crear usuario")
+            flash(f'No se pudo crear el usuario: {str(e)}', 'danger')
             return render_template('register.html', form=request.form)
 
+        codigo = str(random.randint(100000, 999999))
+
+        session['codigo_confirmacion'] = codigo
+        session['correo_confirmacion'] = email
+
+        correo_enviado = enviar_codigo_correo(email, codigo)
+
+        if not correo_enviado:
+            flash(
+                'Usuario creado, pero no se pudo enviar el correo de confirmación. Revisa la configuración SMTP en Render.',
+                'danger'
+            )
+            return redirect(url_for('login'))
 
         flash('Registro exitoso. Hemos enviado un código a tu correo.', 'success')
         return redirect(url_for('confirmar_codigo'))
+
     return render_template('register.html')
 
 # CONFIRMAR CORREO
@@ -412,32 +443,37 @@ def recover():
 
         try:
             user = get_usuario_by_email_mysql(mysql, email)
+
         except Exception as e:
-            current_app.logger.exception("Error consultando usuario para recuperacion")
+            current_app.logger.exception("Error consultando usuario para recuperación")
             flash(f'No se pudo consultar el correo: {str(e)}', 'danger')
             return render_template('recover.html')
 
-        if user:
-            codigo = str(random.randint(100000, 999999))
-
-            session['codigo_recuperacion'] = codigo
-            session['correo_recuperacion'] = email
-            session['usuario_recuperacion'] = user['username']
-
-            try:
-                enviar_codigo_recuperacion(email, codigo)
-            except Exception as e:
-                current_app.logger.exception("Error enviando correo de recuperacion")
-                session.pop('codigo_recuperacion', None)
-                session.pop('correo_recuperacion', None)
-                session.pop('usuario_recuperacion', None)
-                flash(f'No se pudo enviar el correo de recuperación: {str(e)}', 'danger')
-                return render_template('recover.html')
-
-            flash('Hemos enviado un código de recuperación a tu correo.', 'success')
-            return redirect(url_for('verificar_codigo_recuperacion'))
-        else:
+        if not user:
             flash('Correo no encontrado.', 'danger')
+            return render_template('recover.html')
+
+        codigo = str(random.randint(100000, 999999))
+
+        session['codigo_recuperacion'] = codigo
+        session['correo_recuperacion'] = email
+        session['usuario_recuperacion'] = user['username']
+
+        correo_enviado = enviar_codigo_recuperacion(email, codigo)
+
+        if not correo_enviado:
+            session.pop('codigo_recuperacion', None)
+            session.pop('correo_recuperacion', None)
+            session.pop('usuario_recuperacion', None)
+
+            flash(
+                'No se pudo enviar el correo de recuperación. Revisa la configuración SMTP en Render.',
+                'danger'
+            )
+            return render_template('recover.html')
+
+        flash('Hemos enviado un código de recuperación a tu correo.', 'success')
+        return redirect(url_for('verificar_codigo_recuperacion'))
 
     return render_template('recover.html')
 
