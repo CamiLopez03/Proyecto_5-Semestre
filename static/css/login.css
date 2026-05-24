@@ -3242,3 +3242,928 @@ img{
 
 }
 
+/* ===========================
+   CONTENEDOR GENERAL
+=========================== */
+
+.correo-page{
+    min-height:100vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    padding:40px 20px;
+}
+
+/* ===========================
+   TARJETA
+=========================== */
+
+.correo-card{
+    width:100%;
+    max-width:600px;
+
+    background:#ffffff;
+
+    border-radius:28px;
+
+    padding:50px;
+
+    box-shadow:
+        0 25px 50px rgba(0,0,0,.25);
+
+    animation:fadeIn .4s ease;
+}
+
+/* ===========================
+   ICONO
+=========================== */
+
+.correo-icono{
+    width:90px;
+    height:90px;
+
+    margin:0 auto 25px;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:
+    linear-gradient(
+        135deg,
+        #d10000,
+        #850000
+    );
+
+    color:white;
+
+    font-size:38px;
+}
+
+/* ===========================
+   TITULOS
+=========================== */
+
+.correo-titulo{
+    text-align:center;
+
+    font-size:3rem;
+    font-weight:700;
+
+    color:#111;
+
+    margin-bottom:12px;
+}
+
+.correo-descripcion{
+    text-align:center;
+
+    color:#666;
+
+    font-size:1rem;
+
+    margin-bottom:35px;
+}
+
+/* ===========================
+   ALERTAS
+=========================== */
+
+.correo-alerta{
+    padding:14px 18px;
+
+    border-radius:12px;
+
+    margin-bottom:20px;
+
+    font-weight:500;
+}
+
+.correo-alerta.success{
+    background:#d4edda;
+    color:#155724;
+}
+
+.correo-alerta.error{
+    background:#f8d7da;
+    color:#721c24;
+}
+
+/* ===========================
+   FORMULARIO
+=========================== */
+
+.correo-campo{
+    margin-bottom:25px;
+}
+
+.correo-label{
+    display:block;
+
+    margin-bottom:10px;
+
+    font-weight:600;
+
+    color:#111;
+}
+
+.correo-label span{
+    color:#d10000;
+}
+
+.correo-input-wrapper{
+    position:relative;
+}
+
+.correo-input-icon{
+    position:absolute;
+
+    left:18px;
+    top:50%;
+
+    transform:translateY(-50%);
+
+    color:#999;
+
+    font-size:18px;
+}
+
+.correo-input{
+    width:100%;
+
+    height:58px;
+
+    border:none;
+
+    background:#f3f4f6;
+
+    border-radius:15px;
+
+    padding-left:55px;
+    padding-right:15px;
+
+    font-size:15px;
+
+    transition:.3s;
+}
+
+.correo-input:focus{
+    background:white;
+
+    outline:none;
+
+    box-shadow:
+        0 0 0 3px rgba(209,0,0,.15);
+}
+
+/* ===========================
+   BOTON
+=========================== */
+
+.correo-boton{
+    width:100%;
+
+    height:58px;
+
+    border:none;
+
+    border-radius:15px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #d10000,
+        #8a0000
+    );
+
+    color:white;
+
+    font-size:17px;
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:.3s;
+}
+
+.correo-boton:hover{
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 10px 25px rgba(177,0,0,.25);
+}
+
+/* ===========================
+   LINK VOLVER
+=========================== */
+
+.correo-volver{
+    display:block;
+
+    margin-top:25px;
+
+    text-align:center;
+
+    text-decoration:none;
+
+    color:#c00000;
+
+    font-weight:600;
+}
+
+.correo-volver:hover{
+    text-decoration:underline;
+}
+
+/* ===========================
+   ANIMACION
+=========================== */
+
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media (max-width:768px){
+
+    .correo-card{
+        padding:35px 25px;
+    }
+
+    .correo-titulo{
+        font-size:2.2rem;
+    }
+
+    .correo-icono{
+        width:75px;
+        height:75px;
+
+        font-size:30px;
+    }
+}
+
+/* ==================================
+   CONTENEDOR PRINCIPAL recover
+================================== */
+
+.recover-page{
+    width:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+/* ==================================
+   TARJETA
+================================== */
+
+.recover-card{
+    width:95%;
+    max-width:900px;
+
+    min-height:420px;
+
+    display:flex;
+
+    background:#ffffff;
+
+    border-radius:25px;
+
+    overflow:hidden;
+
+    box-shadow:
+        0 20px 50px rgba(0,0,0,.30);
+}
+
+/* ==================================
+   PANEL IZQUIERDO
+================================== */
+
+.recover-brand-panel{
+    width:40%;
+
+    background:
+        linear-gradient(
+            180deg,
+            #111111,
+            #000000
+        );
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    padding:40px;
+}
+
+.recover-logo{
+    width:240px;
+    max-width:100%;
+}
+
+/* ==================================
+   PANEL DERECHO
+================================== */
+
+.recover-form-panel{
+    width:60%;
+
+    padding:60px;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+/* ==================================
+   TITULOS
+================================== */
+
+.recover-title{
+    text-align:center;
+
+    font-size:2.3rem;
+    font-weight:700;
+
+    color:#111111;
+
+    margin-bottom:10px;
+}
+
+.recover-description{
+    text-align:center;
+
+    color:#666666;
+
+    margin-bottom:35px;
+}
+
+/* ==================================
+   ALERTAS
+================================== */
+
+.recover-alert{
+    padding:12px 15px;
+
+    border-radius:10px;
+
+    margin-bottom:20px;
+}
+
+.recover-alert.success{
+    background:#d4edda;
+    color:#155724;
+}
+
+.recover-alert.error{
+    background:#f8d7da;
+    color:#721c24;
+}
+
+/* ==================================
+   FORMULARIO
+================================== */
+
+.recover-field{
+    margin-bottom:25px;
+}
+
+.recover-label{
+    display:block;
+
+    margin-bottom:10px;
+
+    font-weight:600;
+
+    color:#111111;
+}
+
+.recover-label span{
+    color:#c00000;
+}
+
+.recover-input-wrapper{
+    position:relative;
+}
+
+.recover-input-icon{
+    position:absolute;
+
+    left:18px;
+    top:50%;
+
+    transform:translateY(-50%);
+
+    color:#999999;
+}
+
+.recover-input{
+    width:100%;
+
+    height:55px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:#f3f4f6;
+
+    padding-left:50px;
+    padding-right:15px;
+
+    font-size:15px;
+
+    transition:.3s;
+}
+
+.recover-input:focus{
+    outline:none;
+
+    background:#ffffff;
+
+    box-shadow:
+        0 0 0 3px rgba(209,0,0,.15);
+}
+
+/* ==================================
+   BOTON
+================================== */
+
+.recover-button{
+    width:100%;
+
+    height:55px;
+
+    border:none;
+
+    border-radius:14px;
+
+    cursor:pointer;
+
+    color:white;
+
+    font-size:16px;
+    font-weight:700;
+
+    background:
+        linear-gradient(
+            135deg,
+            #d10000,
+            #8a0000
+        );
+
+    transition:.3s;
+}
+
+.recover-button:hover{
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 10px 20px rgba(177,0,0,.25);
+}
+
+/* ==================================
+   TEXTO INFORMATIVO
+================================== */
+
+.recover-info{
+    text-align:center;
+
+    color:#666666;
+
+    margin-top:25px;
+
+    line-height:1.6;
+}
+
+/* ==================================
+   VOLVER
+================================== */
+
+.recover-back-link{
+    text-align:center;
+
+    margin-top:25px;
+
+    text-decoration:none;
+
+    color:#c00000;
+
+    font-weight:600;
+}
+
+.recover-back-link:hover{
+    text-decoration:underline;
+}
+
+/* ==================================
+   RESPONSIVE
+================================== */
+
+@media(max-width:768px){
+
+    .recover-card{
+        flex-direction:column;
+    }
+
+    .recover-brand-panel,
+    .recover-form-panel{
+        width:100%;
+    }
+
+    .recover-form-panel{
+        padding:35px;
+    }
+
+    .recover-logo{
+        width:180px;
+    }
+
+    .recover-title{
+        font-size:2rem;
+    }
+}
+
+/* CONTENEDOR PRINCIPAL */
+.reset-container{
+    width: 100%;
+    max-width: 930px;
+    min-height: 500px;
+    display: flex;
+    border-radius: 30px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 25px 60px rgba(0,0,0,.25);
+}
+
+/* PANEL IZQUIERDO */
+.left-side{
+    flex: 1;
+    background: #050505;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+}
+
+.left-side img{
+    width: 180px;
+    max-width: 100%;
+}
+
+/* PANEL DERECHO */
+.right-side{
+    flex: 1.2;
+    background: #fff;
+    padding: 45px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.right-side h2{
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #111;
+}
+
+.right-side h2 i{
+    margin-right: 8px;
+}
+
+.subtitle{
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+    font-size: .95rem;
+}
+
+/* ALERTAS */
+.alert{
+    background: #fff4d8;
+    color: #7a5c00;
+    border: 1px solid #f3d67a;
+    padding: 14px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* INPUTS */
+.input-group{
+    margin-bottom: 20px;
+}
+
+.input-group label{
+    display: block;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #222;
+}
+
+.required{
+    color: #c20d0d;
+}
+
+.input-icon{
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #fff;
+    height: 58px;
+}
+
+.left-icon{
+    width: 60px;
+    text-align: center;
+    color: #999;
+    font-size: 18px;
+}
+
+.input-icon input{
+    flex: 1;
+    border: none;
+    outline: none;
+    height: 100%;
+    font-size: 16px;
+    padding: 0 15px;
+}
+
+.right-icon{
+    width: 60px;
+    text-align: center;
+    cursor: pointer;
+    color: #999;
+    transition: .3s;
+}
+
+.right-icon:hover{
+    color: #b10d0d;
+}
+
+/* BOTÓN */
+button[type="submit"]{
+    width: 100%;
+    height: 58px;
+    border: none;
+    border-radius: 18px;
+    background: linear-gradient(90deg,#9e0d0d,#d31515);
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: .3s;
+    box-shadow: 0 10px 25px rgba(177,13,13,.25);
+}
+
+button[type="submit"]:hover{
+    transform: translateY(-2px);
+}
+
+/* LINKS */
+.links{
+    text-align: center;
+    margin-top: 22px;
+}
+
+.links a{
+    text-decoration: none;
+    color: #c20d0d;
+    font-weight: 600;
+}
+
+.links a:hover{
+    text-decoration: underline;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px){
+
+    .reset-container{
+        flex-direction: column;
+        max-width: 95%;
+    }
+
+    .left-side{
+        min-height: 220px;
+    }
+
+    .right-side{
+        padding: 30px;
+    }
+}
+
+/* ==========================
+   CONTENEDOR PRINCIPAL
+========================== */
+
+.verify-code-container{
+    width:100%;
+    max-width:930px;
+    min-height:500px;
+    display:flex;
+    border-radius:30px;
+    overflow:hidden;
+    background:#fff;
+    box-shadow:0 25px 60px rgba(0,0,0,.25);
+}
+
+/* ==========================
+   PANEL IZQUIERDO
+========================== */
+
+.verify-left-side{
+    flex:1;
+    background:#050505;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:40px;
+}
+
+.verify-left-side img{
+    width:180px;
+    max-width:100%;
+}
+
+/* ==========================
+   PANEL DERECHO
+========================== */
+
+.verify-right-side{
+    flex:1.2;
+    background:#fff;
+    padding:45px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+.verify-right-side h2{
+    text-align:center;
+    font-size:2rem;
+    color:#111;
+    margin-bottom:10px;
+}
+
+.verify-subtitle{
+    text-align:center;
+    color:#666;
+    margin-bottom:30px;
+}
+
+/* ==========================
+   ALERTAS
+========================== */
+
+.verify-alert{
+    padding:14px;
+    border-radius:12px;
+    margin-bottom:20px;
+    text-align:center;
+    background:#fff4d8;
+    color:#7a5c00;
+    border:1px solid #f3d67a;
+}
+
+/* ==========================
+   INPUTS
+========================== */
+
+.verify-input-group{
+    margin-bottom:22px;
+}
+
+.verify-input-group label{
+    display:block;
+    margin-bottom:10px;
+    font-weight:600;
+    color:#222;
+}
+
+.verify-required{
+    color:#c20d0d;
+}
+
+.verify-input-icon{
+    display:flex;
+    align-items:center;
+    height:64px;
+    border:1px solid #e2e2e2;
+    border-radius:18px;
+    overflow:hidden;
+    background:#fff;
+    transition:.3s;
+}
+
+.verify-input-icon:focus-within{
+    border-color:#b30d0d;
+    box-shadow:0 0 0 3px rgba(179,13,13,.12);
+}
+
+.verify-input-icon i{
+    width:62px;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#faf4f4;
+    color:#999;
+    font-size:18px;
+}
+
+.verify-input-icon input{
+    flex:1;
+    height:100%;
+    border:none;
+    outline:none;
+    background:transparent;
+    text-align:center;
+    font-size:28px;
+    letter-spacing:6px;
+    color:#444;
+}
+
+.verify-input-icon input::placeholder{
+    color:#b5b5b5;
+}
+
+/* ==========================
+   BOTÓN
+========================== */
+
+.verify-btn{
+    width:100%;
+    height:62px;
+    border:none;
+    border-radius:18px;
+    background:linear-gradient(90deg,#b10d0d,#e01111);
+    color:#fff;
+    font-size:18px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.3s;
+    box-shadow:0 12px 25px rgba(177,13,13,.25);
+}
+
+.verify-btn:hover{
+    transform:translateY(-2px);
+}
+
+/* ==========================
+   LINKS
+========================== */
+
+.verify-links{
+    text-align:center;
+    margin-top:24px;
+}
+
+.verify-links a{
+    color:#c20d0d;
+    text-decoration:none;
+    font-weight:600;
+}
+
+.verify-links a:hover{
+    text-decoration:underline;
+}
+
+/* ==========================
+   RESPONSIVE
+========================== */
+
+@media (max-width:900px){
+
+    .verify-code-container{
+        flex-direction:column;
+        max-width:95%;
+    }
+
+    .verify-left-side{
+        min-height:220px;
+    }
+
+    .verify-right-side{
+        padding:30px;
+    }
+}

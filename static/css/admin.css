@@ -757,15 +757,54 @@
             font-weight: 900;
         }
 
+        /* Botón eliminar proyecto */
+        .actions form {
+            display: inline-block;
+            margin: 0;
+        }
+
+        .actions .delete {
+            background: #1f1f1f;
+            color: #fff;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+
+            transition: all 0.25s ease;
+        }
+
+        .actions .delete:hover {
+            background: #000;
+            transform: translateY(-2px);
+        }
+
+        .actions .delete i {
+            font-size: 14px;
+        }
+        
         .filters {
             background: white;
             border-radius: 22px;
             padding: 24px;
             display: grid;
-            grid-template-columns: 1.5fr 1fr 1fr auto;
+            grid-template-columns:1fr 1fr auto auto;
             gap: 15px;
             margin-bottom: 34px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .filters-form{
+            display:grid;
+            grid-template-columns:1.5fr 1fr auto;
+            gap:15px;
+            align-items:end;
         }
 
         .filters input,
@@ -792,6 +831,23 @@
             border-radius: 14px;
             font-weight: 900;
             cursor: pointer;
+        }
+
+        .add-btn{
+            background:#c40808 !important;
+            color:#fff !important;
+            text-decoration:none !important;
+
+            padding:14px 22px !important;
+            border-radius:14px !important;
+
+            display:flex !important;
+            align-items:center !important;
+            justify-content:center !important;
+            gap:8px !important;
+
+            font-weight:700 !important;
+            min-height:52px;
         }
 
         .section-title {
@@ -4419,11 +4475,11 @@
         }
 
 
-        .filters{
-            display:flex;
+        .filters-form{
+            display:grid;
+            grid-template-columns:1.5fr 1fr auto;
             gap:15px;
-            margin-bottom:25px;
-            flex-wrap:wrap;
+            align-items:end;
         }
 
         @media(max-width:480px){
@@ -5367,7 +5423,6 @@ body{
     form,
     .form-admin,
     .ventas-layout,
-    .filters,
     .panel-grid{
         grid-template-columns:1fr !important;
     }
@@ -5488,10 +5543,9 @@ body{
         grid-template-columns:1fr !important;
     }
 
-    .filters{
-    display:flex !important;
-    flex-direction:column !important;
-    width:100% !important;
+    .filters-form{
+        display:grid !important;
+        grid-template-columns:1fr !important;
     }
 
     input,
@@ -5841,6 +5895,38 @@ body{
     transform:translateY(-2px);
 }
 
+.delete-btn{
+    background:#b80d12;
+    color:#fff;
+
+    border:none;
+
+    padding:10px 16px;
+
+    border-radius:25px;
+
+    font-size:14px;
+    font-weight:700;
+
+    cursor:pointer;
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+
+    transition:.3s ease;
+}
+
+.delete-btn:hover{
+    background:#8f0909;
+    transform:translateY(-2px);
+}
+
+.delete-btn i{
+    font-size:13px;
+}
+
 @media(max-width:768px){
 
     .resumen-factura .stat-card p{
@@ -5993,6 +6079,11 @@ td{
 
 .hamburger{
     display:none;
+}
+
+td form{
+    display:inline-block !important;
+    margin:0;
 }
 
 /* Móvil */

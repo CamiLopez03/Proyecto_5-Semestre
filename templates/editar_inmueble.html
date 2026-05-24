@@ -45,12 +45,12 @@
     <form method="POST" enctype="multipart/form-data" class="form-admin">
 
         <div class="input-group">
-            <label>Título</label>
+            <label>Título<span class="required">*</span> </label>
             <input type="text" name="titulo" value="{{ inmueble.titulo }}" required>
         </div>
 
         <div class="input-group">
-            <label>Tipo</label>
+            <label>Tipo<span class="required">*</span> </label>
             <select name="tipo" required>
                 <option value="Casa" {% if inmueble.tipo == 'Casa' %}selected{% endif %}>Casa</option>
                 <option value="Apartamento" {% if inmueble.tipo == 'Apartamento' %}selected{% endif %}>Apartamento</option>
@@ -59,7 +59,7 @@
         </div>
 
         <div class="input-group">
-            <label>Tipo de negocio</label>
+            <label>Tipo de negocio<span class="required">*</span> </label>
             <select name="tipo_negocio" required>
                 <option value="Venta" {% if inmueble.tipo_negocio == 'Venta' %}selected{% endif %}>Venta</option>
                 <option value="Arriendo" {% if inmueble.tipo_negocio == 'Arriendo' %}selected{% endif %}>Arriendo</option>
@@ -67,17 +67,17 @@
         </div>
 
         <div class="input-group">
-            <label>Ubicación</label>
+            <label>Ubicación<span class="required">*</span> </label>
             <input type="text" name="ubicacion" value="{{ inmueble.ubicacion }}" required>
         </div>
 
         <div class="input-group">
-            <label>Precio</label>
+            <label>Precio<span class="required">*</span> </label>
             <input type="number" name="precio" value="{{ inmueble.precio }}" required>
         </div>
 
         <div class="input-group">
-            <label>Estado</label>
+            <label>Estado<span class="required">*</span> </label>
             <select name="estado" required>
                 <option value="Disponible" {% if inmueble.estado == 'Disponible' %}selected{% endif %}>Disponible</option>
                 <option value="Reservado" {% if inmueble.estado == 'Reservado' %}selected{% endif %}>Reservado</option>
@@ -86,24 +86,24 @@
         </div>
 
         <div class="input-group">
-            <label>Imagen principal</label>
+            <label>Imagen principal<span class="required">*</span> </label>
             <input type="text" name="imagen" value="{{ inmueble.imagen }}" placeholder="Ej: casa1.jpg">
         </div>
 
         <div class="input-group full">
-            <label>Agregar nuevas fotos o video</label>
+            <label>Agregar nuevas fotos o video<span class="required">*</span> </label>
             <input type="file" name="galeria" accept="image/*,video/mp4" multiple>
             <small>Puedes agregar más fotos o un video MP4 corto.</small>
         </div>
 
         <div class="input-group full">
-            <label>Descripción</label>
+            <label>Descripción<span class="required">*</span> </label>
             <textarea name="descripcion">{{ inmueble.descripcion }}</textarea>
         </div>
 
         {% if galeria %}
         <div class="input-group full">
-            <label>Galería actual</label>
+            <label>Galería actual<span class="required">*</span> </label>
 
             <div class="galeria-grid">
                 {% for item in galeria %}

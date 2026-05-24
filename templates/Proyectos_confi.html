@@ -34,12 +34,12 @@
         <form action="{{ url_for('crear_proyecto') }}" method="POST">
 
             <div class="input-group">
-                <label>Nombre del proyecto</label>
+                <label>Nombre del proyecto <span class="required">*</span> </label>
                 <input type="text" name="nombre" placeholder="Ej: Pavimentación vía principal" required>
             </div>
 
             <div class="input-group">
-                <label>Estado</label>
+                <label>Estado<span class="required">*</span> </label>
                 <select name="estado" required>
                     <option value="">Seleccione estado</option>
                     <option value="Activo">Activo</option>
@@ -50,7 +50,7 @@
             </div>
 
             <div class="input-group">
-                <label>Cliente / Empresa contratante</label>
+                <label>Cliente / Empresa contratante<span class="required">*</span> </label>
                 <select name="cliente_id" required>
                     <option value="">Seleccione cliente o empresa</option>
 
@@ -63,12 +63,12 @@
             </div>
 
             <div class="input-group">
-                <label>Teléfono de contacto</label>
+                <label>Teléfono de contacto<span class="required">*</span> </label>
                 <input type="text" name="telefono" placeholder="Teléfono del cliente o empresa">
             </div>
 
             <div class="input-group">
-                <label>Tipo de trabajo</label>
+                <label>Tipo de trabajo<span class="required">*</span> </label>
                 <select name="tipo_trabajo" required>
                     <option value="">Seleccione tipo de trabajo</option>
                     <option value="Obras civiles">Obras civiles</option>
@@ -83,7 +83,7 @@
             </div>
 
             <div class="input-group full">
-                <label>Descripción del proyecto</label>
+                <label>Descripción del proyecto<span class="required">*</span> </label>
                 <textarea name="descripcion" placeholder="Describe el alcance, ubicación o detalles técnicos del proyecto" required></textarea>
             </div>
 
@@ -161,9 +161,23 @@
                         <i class="fa fa-pen"></i> Editar
                     </a>
 
-                    <a href="#" class="delete" onclick="abrirPopupEliminar({{ p.id }}); return false;">
-                        <i class="fa fa-trash"></i> Eliminar
-                    </a>
+                    <form action="{{ url_for('eliminar_proyecto', id=p.id) }}" method="POST">
+
+                        <button
+                            type="button"
+                            class="delete"
+                            onclick="abrirPopupEliminar(
+                                this.closest('form'),
+                                '¿Eliminar proyecto?',
+                                'Esta acción eliminarará el proyecto permanentemente.'
+                            )">
+
+                            <i class="fa fa-trash"></i>
+                            Eliminar
+
+                        </button>
+
+                    </form>
                 </div>
             </div>
             {% endfor %}

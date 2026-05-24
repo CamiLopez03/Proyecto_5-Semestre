@@ -59,6 +59,12 @@
             <i class="fa fa-filter"></i> Filtrar
         </button>
 
+        <a href="{{ url_for('register') }}"
+           class="add-btn">
+            <i class="fa fa-plus"></i>
+            Crear usuario
+        </a>
+
     </form>
 
 </section>
@@ -151,14 +157,23 @@
 
                             {% endif %}
 
-                            <a class="btn-delete"
-                            href="{{ url_for('eliminar_usuario', id=u.id) }}"
-                            onclick="return confirm('¿Seguro que deseas eliminar este usuario?')">
+                            <form action="{{ url_for('eliminar_usuario', id=u.id) }}" method="POST">
 
-                                <i class="fa fa-trash"></i>
-                                Eliminar
+                                <button
+                                    type="button"
+                                    class="delete-btn"
+                                    onclick="abrirPopupEliminar(
+                                        this.closest('form'),
+                                        '¿Eliminar usuario?',
+                                        'Esta acción eliminará el usuario permanentemente.'
+                                    )">
 
-                            </a>
+                                    <i class="fa fa-trash"></i>
+                                    <span>Eliminar</span>
+
+                                </button>
+
+                            </form>
 
                         {% else %}
 

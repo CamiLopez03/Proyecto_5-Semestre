@@ -92,9 +92,6 @@ UPLOAD_FOLDER = os.path.join('static', 'imagenes')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'mp4'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-print("Directorio actual:", os.getcwd())
-print("UPLOAD_FOLDER:", app.config['UPLOAD_FOLDER'])
-print("Ruta absoluta:", os.path.abspath(app.config['UPLOAD_FOLDER']))
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 def imagen_permitida(filename):
@@ -741,7 +738,7 @@ def usuarios():
     )
 
 
-@app.route('/eliminar_usuario/<int:id>')
+@app.route('/eliminar_usuario/<int:id>', methods=['POST'])
 def eliminar_usuario(id):
     if 'usuario' not in session:
         return redirect(url_for('login'))
@@ -1598,14 +1595,17 @@ def clientes_admin():
     )
 
 
-@app.route('/eliminar_cliente/<int:id>')
+@app.route('/eliminar_cliente/<int:id>', methods=['POST'])
 def eliminar_cliente(id):
     if 'usuario' not in session:
         return redirect(url_for('login'))
 
     cur = mysql.connection.cursor()
 
-    cur.execute("DELETE FROM clientes_inmobiliaria WHERE id = %s", (id,))
+    cur.execute(
+        "DELETE FROM clientes_inmobiliaria WHERE id = %s",
+        (id,)
+    )
 
     mysql.connection.commit()
     cur.close()
@@ -1851,20 +1851,19 @@ def editar_proyecto(id):
         proyecto=proyecto
     )
 
-@app.route('/eliminar_proyecto/<int:id>')
+@app.route('/eliminar_proyecto/<int:id>', methods=['POST'])
 def eliminar_proyecto(id):
 
     if 'usuario' not in session:
         return redirect(url_for('login'))
+
     cur = mysql.connection.cursor()
 
-    # Primero eliminar relación cliente-proyecto
     cur.execute("""
         DELETE FROM cliente_proyecto
         WHERE proyecto_id = %s
     """, (id,))
 
-    # Luego eliminar proyecto
     cur.execute("""
         DELETE FROM proyectos_constructora
         WHERE id = %s
@@ -1872,6 +1871,7 @@ def eliminar_proyecto(id):
 
     mysql.connection.commit()
     cur.close()
+
     flash('Proyecto eliminado correctamente.', 'success')
     return redirect(url_for('proyectos_admin'))
 
@@ -2399,6 +2399,7 @@ def clientes_constructora():
         if cliente_id not in clientes_dict:
 
             clientes_dict[cliente_id] = {
+                "id": fila['id'],
                 "nombre": fila['nombre'],
                 "tipo": fila['tipo'],
                 "telefono": fila['telefono'],
@@ -2775,6 +2776,26 @@ def reportes_admin():
         ingresos_grafico=ingresos_mensuales,
         egresos_grafico=egresos_grafico
     )
+
+@app.route('/eliminar_cliente_constructora/<int:id>', methods=['POST'])
+def eliminar_cliente_constructora(id):
+
+    if 'usuario' not in session:
+        return redirect(url_for('login'))
+
+    cur = mysql.connection.cursor()
+
+    cur.execute(
+        "DELETE FROM clientes_constructora WHERE id = %s",
+        (id,)
+    )
+
+    mysql.connection.commit()
+    cur.close()
+
+    flash('Cliente eliminado correctamente.', 'success')
+
+    return redirect(url_for('clientes_constructora'))
 
 if __name__ == '__main__':
     app.run(debug=True)

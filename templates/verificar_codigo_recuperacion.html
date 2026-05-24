@@ -1,48 +1,74 @@
 {% extends "base_login.html" %}
 
-{% block title %} Verificar código - Constructora{% endblock %}
+{% block title %}Verificar código - Constructora{% endblock %}
 
 {% block content %}
 
-<div class="reset-container">
+<div class="verify-code-container">
 
-    <div class="left-side">
+    <!-- PANEL IZQUIERDO -->
+    <div class="verify-left-side">
         <img src="{{ url_for('static', filename='imagenes/LOGO.png') }}" alt="LOGO">
     </div>
 
-    <div class="right-side">
+    <!-- PANEL DERECHO -->
+    <div class="verify-right-side">
 
-        <h2><i class="fa fa-shield-halved"></i> Verificar código</h2>
-        <p class="subtitle">Ingresa el código enviado a tu correo</p>
+        <h2>
+            <i class="fa fa-shield-halved"></i>
+            Verificar código
+        </h2>
+
+        <p class="verify-subtitle">
+            Ingresa el código enviado a tu correo
+        </p>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            {% for category, message in messages %}
-              <div class="alert">{{ message }}</div>
-            {% endfor %}
-          {% endif %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="verify-alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
         {% endwith %}
 
         <form method="POST">
 
-            <div class="input-group">
-                <label>Código de recuperación</label>
-                <div class="input-icon">
+            <div class="verify-input-group">
+
+                <label>
+                    Código de recuperación
+                    <span class="verify-required">*</span>
+                </label>
+
+                <div class="verify-input-icon">
                     <i class="fa fa-key"></i>
-                    <input type="text" name="codigo" maxlength="6" placeholder="000000" required>
+
+                    <input
+                        type="text"
+                        name="codigo"
+                        maxlength="6"
+                        placeholder="000000"
+                        required>
                 </div>
+
             </div>
 
-            <button type="submit">
-                <i class="fa fa-check"></i> Verificar código
+            <button class="verify-btn" type="submit">
+                <i class="fa fa-check"></i>
+                Verificar código
             </button>
 
         </form>
 
-        <div class="links">
+        <div class="verify-links">
+
             <a href="{{ url_for('recover') }}">
-                <i class="fa fa-arrow-left"></i> Enviar otro código
+                <i class="fa fa-arrow-left"></i>
+                Enviar otro código
             </a>
+
         </div>
 
     </div>

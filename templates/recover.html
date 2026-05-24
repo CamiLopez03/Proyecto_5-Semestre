@@ -4,51 +4,90 @@
 
 {% block content %}
 
-    <div class="recover-container">
+<div class="recover-page">
 
-        <div class="left-side">
-            <img src="{{ url_for('static', filename='imagenes/LOGO.png') }}" alt="LOGO">
+    <div class="recover-card">
+
+        <!-- PANEL IZQUIERDO -->
+        <div class="recover-brand-panel">
+
+            <img
+                src="{{ url_for('static', filename='imagenes/LOGO.png') }}"
+                alt="Logo Constructora"
+                class="recover-logo">
+
         </div>
 
-        <div class="right-side">
-            <h2>Recuperar contraseña</h2>
-            <p class="subtitle">Ingresa tu correo para recibir el enlace de recuperación</p>
+        <!-- PANEL DERECHO -->
+        <div class="recover-form-panel">
+
+            <h2 class="recover-title">
+                Recuperar contraseña
+            </h2>
+
+            <p class="recover-description">
+                Ingresa tu correo para recibir el enlace de recuperación.
+            </p>
 
             {% with messages = get_flashed_messages(with_categories=true) %}
-              {% if messages %}
-                {% for category, message in messages %}
-                  <div class="alert {{ category }}">{{ message }}</div>
-                {% endfor %}
-              {% endif %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="recover-alert {{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
             {% endwith %}
 
-            <form method="POST">
+            <form method="POST" class="recover-form">
 
-                <div class="input-group">
-                    <label>Correo electrónico</label>
-                    <div class="input-icon">
-                        <i class="fa fa-envelope left-icon"></i>
-                        <input type="email" id="email" name="email" placeholder="Ingresa tu correo" required>
+                <div class="recover-field">
+
+                    <label class="recover-label">
+                        Correo electrónico
+                        <span>*</span>
+                    </label>
+
+                    <div class="recover-input-wrapper">
+
+                        <i class="fa-solid fa-envelope recover-input-icon"></i>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="recover-input"
+                            placeholder="Ingresa tu correo"
+                            required>
+
                     </div>
+
                 </div>
 
-                <button type="submit">
-                    <i class="fa fa-paper-plane"></i> Enviar enlace
+                <button type="submit" class="recover-button">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    Enviar enlace
                 </button>
 
             </form>
 
-            <p class="info-text">
-                Te enviaremos las instrucciones para restablecer tu contraseña si el correo está registrado.
+            <p class="recover-info">
+                Te enviaremos las instrucciones para restablecer tu contraseña
+                si el correo está registrado.
             </p>
 
-            <div class="links">
-                <a href="{{ url_for('login') }}">
-                    <i class="fa fa-arrow-left"></i> Volver al login
-                </a>
-            </div>
+            <a href="{{ url_for('login') }}"
+               class="recover-back-link">
+
+                <i class="fa-solid fa-arrow-left"></i>
+                Volver al login
+
+            </a>
+
         </div>
 
     </div>
+
+</div>
 
 {% endblock %}

@@ -98,6 +98,7 @@
                 <th>Teléfono</th>
                 <th>Correo</th>
                 <th>Proyectos realizados</th>
+                <th>Acciones</th>
             </tr>
 
         </thead>
@@ -129,22 +130,36 @@
                 <td>
 
                     <div class="project-list">
-
                         {% for proyecto in cliente.proyectos %}
-
                         <div class="project-item">
-
                             {{ proyecto }}
-
                         </div>
-
                         {% endfor %}
-
                     </div>
 
                 </td>
 
-            </tr>
+                <td>
+                   <form action="{{ url_for('eliminar_cliente_constructora', id=cliente.id) }}" method="POST">
+
+                        <button
+                            type="button"
+                            class="delete-btn"
+                            onclick="abrirPopupEliminar(
+                                this.closest('form'),
+                                '¿Eliminar cliente?',
+                                'Esta acción eliminará el cliente permanentemente.'
+                            )">
+
+                            <i class="fa fa-trash"></i>
+                            Eliminar
+
+                        </button>
+
+                    </form>
+                </td>
+
+                </tr>
 
             {% endfor %}
 
@@ -218,7 +233,7 @@
 
                 <div class="input-group">
 
-                    <label>Nombre cliente</label>
+                    <label>Nombre cliente<span class="required">*</span> </label>
 
                     <input
                         type="text"
@@ -229,7 +244,7 @@
 
                 <div class="input-group">
 
-                    <label>Tipo</label>
+                    <label>Tipo<span class="required">*</span> </label>
 
                     <select name="tipo" required>
 
@@ -247,7 +262,7 @@
 
                 <div class="input-group">
 
-                    <label>Teléfono</label>
+                    <label>Teléfono<span class="required">*</span> </label>
 
                     <input
                         type="text"
@@ -258,7 +273,7 @@
 
                 <div class="input-group">
 
-                    <label>Correo</label>
+                    <label>Correo<span class="required">*</span> </label>
 
                     <input
                         type="email"

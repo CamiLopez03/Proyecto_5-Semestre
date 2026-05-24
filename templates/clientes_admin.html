@@ -129,13 +129,23 @@
                         </td>
                         <td>{{ c.observacion }}</td>
                         <td>
-                            <a href="#"
-                            class="btn-delete btn-delete-cliente"
-                            onclick="abrirModalEliminarCliente
-                            (''{{ url_for('eliminar_cliente', id=c.id) }}''')">
-                            <i class="fa fa-trash"></i>
-                            <span>Eliminar</span>
-                        </a>
+                            <form action="{{ url_for('eliminar_cliente', id=c.id) }}" method="POST">
+
+                                <button
+                                    type="button"
+                                    class="delete-btn"
+                                    onclick="abrirPopupEliminar(
+                                        this.closest('form'),
+                                        '¿Eliminar cliente?',
+                                        'Esta acción eliminará el cliente del sistema permanentemente.'
+                                    )">
+
+                                    <i class="fa fa-trash"></i>
+                                    <span>Eliminar</span>
+
+                                </button>
+
+                            </form>
                     </td>
                     </tr>
                     {% endfor %}
@@ -193,7 +203,7 @@
 
                 <div class="modal-grid">
                     <div class="input-group">
-                        <label>Nombre completo</label>
+                        <label>Nombre completo<span class="required">*</span> </label>
 
                         <input
                             type="text"
@@ -204,7 +214,7 @@
 
                     <div class="input-group">
 
-                        <label>Documento</label>
+                        <label>Documento<span class="required">*</span> </label>
 
                         <input
                             type="text"
@@ -215,7 +225,7 @@
 
                     <div class="input-group">
 
-                        <label>Teléfono</label>
+                        <label>Teléfono<span class="required">*</span> </label>
 
                         <input
                             type="text"
@@ -225,7 +235,7 @@
                     </div>
 
                     <div class="input-group">
-                        <label>Correo</label>
+                        <label>Correo<span class="required">*</span> </label>
                         <input
                             type="email"
                             name="email"
@@ -235,7 +245,7 @@
 
                     <div class="input-group">
 
-                        <label>Dirección</label>
+                        <label>Dirección<span class="required">*</span> </label>
 
                         <input
                             type="text"
@@ -246,7 +256,7 @@
 
                     <div class="input-group">
 
-                        <label>Tipo interés</label>
+                        <label>Tipo interés<span class="required">*</span> </label>
                         <select name="tipo_interes" required>
                             <option value="" disabled selected> Seleccione un tipo de interés </option>
                             <option value="Compra">Compra</option>
@@ -258,7 +268,7 @@
                     </div>
 
                     <div class="input-group full">
-                        <label>Observación</label>
+                        <label>Observación<span class="required">*</span> </label>
                         <textarea
                             name="observacion"
                             required></textarea>
@@ -276,82 +286,4 @@
     </div>
 </div>
 
-<div class="modal-eliminar" id="modalEliminarCliente">
-
-    <div class="modal-card">
-
-        <div class="modal-icon">
-            <i class="fa fa-trash"></i>
-        </div>
-
-        <h2>¿Eliminar cliente?</h2>
-
-        <p>
-            Esta acción eliminará el cliente del sistema.
-            No podrás recuperarlo después.
-        </p>
-
-        <div class="modal-actions">
-
-            <button
-                type="button"
-                class="btn-cancelar"
-                onclick="cerrarModalEliminarCliente()">
-
-                Cancelar
-
-            </button>
-
-            <a href="#"
-               id="btnConfirmarEliminarCliente"
-               class="btn-eliminar">
-
-                Sí, eliminar
-
-            </a>
-
-        </div>
-
-    </div>
-
-</div>
-
-<div class="modal-eliminar" id="modalEliminarCliente">
-    <div class="modal-card">
-        <div class="modal-icon">
-            <i class="fa fa-trash"></i>
-        </div>
-
-        <h2>¿Eliminar cliente?</h2>
-
-        <p>
-            Esta acción eliminará el cliente del sistema.
-        </p>
-
-        <div class="modal-actions">
-            <button type="button"
-                    class="btn-cancelar"
-                    onclick="cerrarModalEliminarCliente()">
-                Cancelar
-            </button>
-
-            <a href="#"
-               id="btnConfirmarEliminarCliente"
-               class="btn-eliminar">
-                Sí, eliminar
-            </a>
-        </div>
-    </div>
-</div>
-
-<script>
-function abrirModalEliminarCliente(url) {
-    document.getElementById('btnConfirmarEliminarCliente').href = url;
-    document.getElementById('modalEliminarCliente').classList.add('active');
-}
-
-function cerrarModalEliminarCliente() {
-    document.getElementById('modalEliminarCliente').classList.remove('active');
-}
-</script>
 {% endblock %}

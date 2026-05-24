@@ -34,12 +34,12 @@
     <form method="POST" enctype="multipart/form-data" class="form-admin">
 
         <div class="input-group">
-            <label>Título</label>
+            <label>Título<span class="required">*</span> </label>
             <input type="text" name="titulo" placeholder="Ej: Apartamento moderno" required>
         </div>
 
         <div class="input-group">
-            <label>Tipo</label>
+            <label>Tipo<span class="required">*</span> </label>
             <select name="tipo" required>
                 <option value="Casa">Casa</option>
                 <option value="Apartamento">Apartamento</option>
@@ -47,7 +47,7 @@
         </div>
 
         <div class="input-group">
-            <label>Tipo de negocio</label>
+            <label>Tipo de negocio<span class="required">*</span> </label>
             <select name="tipo_negocio" required>
                 <option value="Venta">Venta</option>
                 <option value="Arriendo">Arriendo</option>
@@ -55,17 +55,17 @@
         </div>
 
         <div class="input-group">
-            <label>Ubicación</label>
+            <label>Ubicación<span class="required">*</span> </label>
             <input type="text" name="ubicacion" placeholder="Ej: Montería, Córdoba" required>
         </div>
 
         <div class="input-group">
-            <label>Precio</label>
+            <label>Precio<span class="required">*</span> </label>
             <input type="number" name="precio" placeholder="Ej: 320000000" required>
         </div>
 
         <div class="input-group">
-            <label>Estado</label>
+            <label>Estado<span class="required">*</span> </label>
             <select name="estado" required>
                 <option value="Disponible">Disponible</option>
                 <option value="Reservado">Reservado</option>
@@ -74,18 +74,18 @@
         </div>
 
         <div class="input-group">
-            <label>Imagen principal</label>
+            <label>Imagen principal<span class="required">*</span> </label>
             <input type="file" name="imagen" accept="image/*" required>
         </div>
 
         <div class="input-group full">
-            <label>Galería del inmueble</label>
+            <label>Galería del inmueble<span class="required">*</span> </label>
             <input type="file" name="galeria" accept="image/*,video/mp4" multiple>
             <small>Puedes subir varias fotos y un video MP4 corto del inmueble.</small>
         </div>
 
         <div class="input-group full">
-            <label>Descripción</label>
+            <label>Descripción<span class="required">*</span> </label>
             <textarea name="descripcion" placeholder="Describe las características del inmueble"></textarea>
         </div>
 

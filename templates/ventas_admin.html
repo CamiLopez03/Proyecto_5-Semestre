@@ -33,6 +33,192 @@
     </p>
 </section>
 
+<!-- ESTADÍSTICAS -->
+
+<section class="stats">
+
+    <div class="stat-card">
+        <h3>Total vendido</h3>
+        <p>${{ "{:,.0f}".format(total_vendido or 0) }}</p>
+    </div>
+
+    <div class="stat-card">
+        <h3>Ventas registradas</h3>
+        <p>{{ total_ventas }}</p>
+    </div>
+
+    <div class="stat-card">
+        <h3>Ventas del mes</h3>
+        <p>{{ ventas_mes }}</p>
+    </div>
+
+    <div class="stat-card">
+        <h3>Inmuebles vendidos</h3>
+        <p>{{ inmuebles_vendidos }}</p>
+    </div>
+
+</section>
+
+<!-- FORMULARIO -->
+
+<section class="section-box">
+
+    <h2>
+        <i class="fa fa-plus-circle"></i>
+        Registrar nueva venta
+    </h2>
+
+    <form method="POST">
+
+        <div class="input-group">
+
+            <label>Inmueble disponible<span class="required">*</span> </label>
+
+            <select name="inmueble_id" id="inmuebleSelect" required>
+
+                <option value="">Seleccione un inmueble</option>
+
+                {% for i in inmuebles_disponibles %}
+
+                <option
+                    value="{{ i.id }}"
+                    data-precio="{{ i.precio }}">
+
+                    {{ i.titulo }}
+                    -
+                    {{ i.ubicacion }}
+                    -
+                    ${{ "{:,.0f}".format(i.precio) }}
+
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+        <div class="input-group">
+
+            <label>Cliente<span class="required">*</span> </label>
+
+            <select name="cliente_id" required>
+
+                <option value="">Seleccione un cliente</option>
+
+                {% for c in clientes %}
+
+                <option value="{{ c.id }}">
+
+                    {{ c.nombre }}
+                    -
+                    {{ c.documento }}
+
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+        <div class="input-group">
+
+            <label>Valor de venta<span class="required">*</span> </label>
+
+            <input
+                type="number"
+                name="valor_venta"
+                id="valorVenta"
+                placeholder="Seleccione un inmueble"
+                readonly
+                required>
+
+        </div>
+
+        <div class="input-group">
+
+            <label>Fecha de venta<span class="required">*</span> </label>
+
+            <input
+                type="date"
+                name="fecha"
+                required>
+
+        </div>
+
+        <div class="input-group full">
+
+            <label>Observación<span class="required">*</span> </label>
+
+            <textarea
+                name="observacion"
+                placeholder="Ej: Venta registrada con pago inicial y documentación pendiente."></textarea>
+
+        </div>
+
+        <div class="input-group full">
+
+            <label>Método de pago<span class="required">*</span> </label>
+
+            <div style="display:flex; gap:18px; flex-wrap:wrap;">
+
+                <label>
+                    <input type="radio" name="metodo_pago" value="Efectivo" required>
+                    Efectivo
+                <span class="required">*</span> </label>
+
+                <label>
+                    <input type="radio" name="metodo_pago" value="Transferencia">
+                    Transferencia
+                <span class="required">*</span> </label>
+
+            </div>
+
+        </div>
+
+        <div class="input-group full">
+
+            <label>Porcentaje de anticipo<span class="required">*</span> </label>
+
+            <input
+                type="range"
+                id="anticipoSlider"
+                name="porcentaje_anticipo"
+                min="0"
+                max="100"
+                value="0">
+
+            <p>
+                Anticipo:
+                <strong id="porcentajeTexto">0%</strong>
+                -
+                <strong id="valorAnticipo">$0</strong>
+            </p>
+
+            <p>
+                Saldo pendiente:
+                <strong id="saldoPendiente">$0</strong>
+            </p>
+
+        </div>
+
+        <input type="hidden" name="anticipo" id="anticipoInput" value="0">
+
+        <input type="hidden" name="saldo" id="saldoInput" value="0">
+
+        <button type="submit" class="btn-submit">
+
+            <i class="fa fa-save"></i>
+
+            Registrar venta
+
+        </button>
+
+    </form>
+
+</section>
+
 <!-- FILTROS -->
 
 <section class="filters">
@@ -74,192 +260,6 @@
             <i class="fa fa-filter"></i>
 
             Filtrar
-
-        </button>
-
-    </form>
-
-</section>
-
-<!-- ESTADÍSTICAS -->
-
-<section class="stats">
-
-    <div class="stat-card">
-        <h3>Total vendido</h3>
-        <p>${{ "{:,.0f}".format(total_vendido or 0) }}</p>
-    </div>
-
-    <div class="stat-card">
-        <h3>Ventas registradas</h3>
-        <p>{{ total_ventas }}</p>
-    </div>
-
-    <div class="stat-card">
-        <h3>Ventas del mes</h3>
-        <p>{{ ventas_mes }}</p>
-    </div>
-
-    <div class="stat-card">
-        <h3>Inmuebles vendidos</h3>
-        <p>{{ inmuebles_vendidos }}</p>
-    </div>
-
-</section>
-
-<!-- FORMULARIO -->
-
-<section class="section-box">
-
-    <h2>
-        <i class="fa fa-plus-circle"></i>
-        Registrar nueva venta
-    </h2>
-
-    <form method="POST">
-
-        <div class="input-group">
-
-            <label>Inmueble disponible</label>
-
-            <select name="inmueble_id" id="inmuebleSelect" required>
-
-                <option value="">Seleccione un inmueble</option>
-
-                {% for i in inmuebles_disponibles %}
-
-                <option
-                    value="{{ i.id }}"
-                    data-precio="{{ i.precio }}">
-
-                    {{ i.titulo }}
-                    -
-                    {{ i.ubicacion }}
-                    -
-                    ${{ "{:,.0f}".format(i.precio) }}
-
-                </option>
-
-                {% endfor %}
-
-            </select>
-
-        </div>
-
-        <div class="input-group">
-
-            <label>Cliente</label>
-
-            <select name="cliente_id" required>
-
-                <option value="">Seleccione un cliente</option>
-
-                {% for c in clientes %}
-
-                <option value="{{ c.id }}">
-
-                    {{ c.nombre }}
-                    -
-                    {{ c.documento }}
-
-                </option>
-
-                {% endfor %}
-
-            </select>
-
-        </div>
-
-        <div class="input-group">
-
-            <label>Valor de venta</label>
-
-            <input
-                type="number"
-                name="valor_venta"
-                id="valorVenta"
-                placeholder="Seleccione un inmueble"
-                readonly
-                required>
-
-        </div>
-
-        <div class="input-group">
-
-            <label>Fecha de venta</label>
-
-            <input
-                type="date"
-                name="fecha"
-                required>
-
-        </div>
-
-        <div class="input-group full">
-
-            <label>Observación</label>
-
-            <textarea
-                name="observacion"
-                placeholder="Ej: Venta registrada con pago inicial y documentación pendiente."></textarea>
-
-        </div>
-
-        <div class="input-group full">
-
-            <label>Método de pago</label>
-
-            <div style="display:flex; gap:18px; flex-wrap:wrap;">
-
-                <label>
-                    <input type="radio" name="metodo_pago" value="Efectivo" required>
-                    Efectivo
-                </label>
-
-                <label>
-                    <input type="radio" name="metodo_pago" value="Transferencia">
-                    Transferencia
-                </label>
-
-            </div>
-
-        </div>
-
-        <div class="input-group full">
-
-            <label>Porcentaje de anticipo</label>
-
-            <input
-                type="range"
-                id="anticipoSlider"
-                name="porcentaje_anticipo"
-                min="0"
-                max="100"
-                value="0">
-
-            <p>
-                Anticipo:
-                <strong id="porcentajeTexto">0%</strong>
-                -
-                <strong id="valorAnticipo">$0</strong>
-            </p>
-
-            <p>
-                Saldo pendiente:
-                <strong id="saldoPendiente">$0</strong>
-            </p>
-
-        </div>
-
-        <input type="hidden" name="anticipo" id="anticipoInput" value="0">
-
-        <input type="hidden" name="saldo" id="saldoInput" value="0">
-
-        <button type="submit" class="btn-submit">
-
-            <i class="fa fa-save"></i>
-
-            Registrar venta
 
         </button>
 

@@ -27,8 +27,7 @@
     <input type="checkbox" id="menu-toggle">
 
     <label for="menu-toggle" class="hamburger">
-        <i class="fa fa-bars"></i>
-    </label>
+        <i class="fa fa-bars"></i> </label>
 
     <div class="admin-actions">
         {% block admin_actions %}{% endblock %}
@@ -54,8 +53,42 @@
         {% endif %}
     {% endwith %}
 
-    {% block content %}{% endblock %}
+   <!-- POPUP GLOBAL DE ELIMINACIÓN -->
+        <div class="custom-popup" id="popupEliminar">
+            <div class="popup-box">
+                <i class="fa fa-trash"></i>
 
+                <h3 id="popupTitulo">
+                    ¿Eliminar registro?
+                </h3>
+
+                <p id="popupMensaje">
+                    Esta acción no se puede deshacer.
+                </p>
+
+                <div class="popup-actions">
+
+                    <button
+                        type="button"
+                        class="cancel-btn"
+                        onclick="cerrarPopupEliminar()">
+                        Cancelar
+                    </button>
+
+                    <button
+                        type="button"
+                        id="btnConfirmarEliminar">
+                        Confirmar
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% block content %}{% endblock %}
+    
 </main>
 
 {% block extra_js %}{% endblock %}

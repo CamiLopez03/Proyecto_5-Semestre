@@ -54,7 +54,7 @@
     <form method="POST">
 
         <div class="input-group">
-            <label>Nombre</label>
+            <label>Nombre<span class="required">*</span> </label>
 
             <input type="text"
                    name="nombre"
@@ -63,7 +63,7 @@
         </div>
 
         <div class="input-group">
-            <label>Estado</label>
+            <label>Estado<span class="required">*</span> </label>
 
             <select name="estado" required>
 
@@ -91,7 +91,7 @@
         </div>
 
         <div class="input-group">
-    <label>Tipo de trabajo</label>
+    <label>Tipo de trabajo<span class="required">*</span> </label>
 
     <select name="tipo_trabajo" required>
         <option value="">Seleccione tipo de trabajo</option>
@@ -139,7 +139,7 @@
 </div>
 
         <div class="input-group full">
-            <label>Descripción</label>
+            <label>Descripción<span class="required">*</span> </label>
 
             <textarea name="descripcion" required>{{ proyecto.descripcion }}</textarea>
         </div>

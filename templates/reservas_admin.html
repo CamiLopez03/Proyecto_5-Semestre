@@ -35,7 +35,7 @@
     <form method="POST" class="form-admin">
 
         <div class="input-group">
-            <label>Inmueble disponible</label>
+            <label>Inmueble disponible<span class="required">*</span> </label>
             <select name="inmueble_id" required>
                 <option value="">Seleccione un inmueble</option>
                 {% for i in inmuebles %}
@@ -47,7 +47,7 @@
         </div>
 
         <div class="input-group">
-            <label>Cliente</label>
+            <label>Cliente<span class="required">*</span> </label>
             <select name="cliente_id" required>
                 <option value="">Seleccione un cliente</option>
                 {% for c in clientes %}
@@ -59,17 +59,17 @@
         </div>
 
         <div class="input-group">
-            <label>Fecha límite</label>
+            <label>Fecha límite<span class="required">*</span> </label>
             <input type="date" name="fecha_limite" required>
         </div>
 
         <div class="input-group">
-            <label>Valor de reserva</label>
+            <label>Valor de reserva<span class="required">*</span> </label>
             <input type="number" name="valor_reserva" placeholder="Ej: 500000" required>
         </div>
 
         <div class="input-group full">
-            <label>Observación</label>
+            <label>Observación<span class="required">*</span> </label>
             <textarea name="observacion" placeholder="Ej: Cliente separa el inmueble mientras completa documentos."></textarea>
         </div>
 
@@ -176,11 +176,23 @@
 
                     <td>
                         {% if r.estado == 'Activa' %}
-                        <a href="{{ url_for('cancelar_reserva', id=r.id, inmueble_id=r.inmueble_id) }}"
-                           class="btn-delete"
-                           onclick="return confirm('¿Cancelar esta reserva? El inmueble volverá a Disponible.')">
-                            <i class="fa fa-ban"></i> Cancelar
-                        </a>
+                        <form action="{{ url_for('cancelar_reserva', id=r.id, inmueble_id=r.inmueble_id) }}"method="GET">
+
+                            <button
+                                type="button"
+                                class="delete-btn"
+                                onclick="abrirPopupEliminar(
+                                    this.closest('form'),
+                                    '¿Cancelar reserva?',
+                                    'El inmueble volverá a estar disponible.'
+                                )">
+
+                                <i class="fa fa-ban"></i>
+                                Cancelar
+
+                            </button>
+
+                        </form>
                         {% else %}
                         <span class="done">
                             <i class="fa fa-circle-check"></i> Finalizada

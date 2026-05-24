@@ -1,53 +1,74 @@
 {% extends "base_login.html" %}
 
-{% block title %}Modificacion de Correo - Constructora{% endblock %}
+{% block title %}Modificar Correo - CiviWeb Manager{% endblock %}
 
 {% block content %}
 
-    <div class="modificar-container">
+<div class="correo-page">
 
-        <div class="left-side">
+    <div class="correo-card">
 
-
-            <img src="{{ url_for('static', filename='imagenes/LOGO.png') }}"alt="Logo Construgonp's S.A.S">
-
+        <div class="correo-icono">
+            <i class="fa-solid fa-envelope-circle-check"></i>
         </div>
 
-        <div class="right-side">
-            <h2>Modificar correo</h2>
-            <p class="subtitle">Actualiza el correo electrónico asociado a tu cuenta</p>
+        <h2 class="correo-titulo">
+            Modificar correo
+        </h2>
 
-            {% with messages = get_flashed_messages(with_categories=true) %}
-              {% if messages %}
+        <p class="correo-descripcion">
+            Actualiza el correo electrónico asociado a tu cuenta administrativa.
+        </p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
                 {% for category, message in messages %}
-                  <div class="alert {{ category }}">{{ message }}</div>
-                {% endfor %}
-              {% endif %}
-            {% endwith %}
-
-            <form method="POST">
-
-                <div class="input-group">
-                    <label>Nuevo correo electrónico</label>
-                    <div class="input-icon">
-                        <i class="fa fa-envelope left-icon"></i>
-                        <input type="email" id="nuevo_email" name="nuevo_email" placeholder="Ingresa tu nuevo correo" required>
+                    <div class="correo-alerta {{ category }}">
+                        {{ message }}
                     </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" class="correo-formulario">
+
+            <div class="correo-campo">
+
+                <label class="correo-label">
+                    Nuevo correo electrónico
+                    <span>*</span>
+                </label>
+
+                <div class="correo-input-wrapper">
+
+                    <i class="fa-solid fa-envelope correo-input-icon"></i>
+
+                    <input
+                        type="email"
+                        id="nuevo_email"
+                        name="nuevo_email"
+                        class="correo-input"
+                        placeholder="Ingresa tu nuevo correo electrónico"
+                        required>
+
                 </div>
 
-                <button type="submit">
-                    <i class="fa fa-pen-to-square"></i> Actualizar correo
-                </button>
-
-            </form>
-
-            <div class="links">
-                <a href="{{ url_for('dashboard') }}">
-                    <i class="fa fa-arrow-left"></i> Volver al dashboard
-                </a>
             </div>
-        </div>
+
+            <button type="submit" class="correo-boton">
+                <i class="fa-solid fa-pen-to-square"></i>
+                Actualizar correo
+            </button>
+
+        </form>
+
+        <a href="{{ url_for('dashboard') }}" class="correo-volver">
+            <i class="fa-solid fa-arrow-left"></i>
+            Volver al Dashboard
+        </a>
 
     </div>
+
+</div>
 
 {% endblock %}

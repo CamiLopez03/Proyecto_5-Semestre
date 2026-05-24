@@ -307,37 +307,51 @@ if (modal) {
 }
 
 // ======================
-// POPUP ELIMINAR PROYECTO
+// POPUP ELIMINAR
 // ======================
-let proyectoEliminar = null;
+    let formularioEliminar = null;
 
-function abrirPopupEliminar(id) {
-  proyectoEliminar = id;
+    function abrirPopupEliminar(formulario,
+                                titulo = "¿Eliminar registro?",
+                                mensaje = "Esta acción no se puede deshacer.") {
 
-  const popupEliminar = document.getElementById("popupEliminar");
+        formularioEliminar = formulario;
 
-  if (popupEliminar) {
-    popupEliminar.classList.add("active");
-  }
-}
+        document.getElementById("popupTitulo").textContent = titulo;
+        document.getElementById("popupMensaje").textContent = mensaje;
 
-function cerrarPopupEliminar() {
-  const popupEliminar = document.getElementById("popupEliminar");
-
-  if (popupEliminar) {
-    popupEliminar.classList.remove("active");
-  }
-}
-
-const btnConfirmarEliminar = document.getElementById("btnConfirmarEliminar");
-
-if (btnConfirmarEliminar) {
-  btnConfirmarEliminar.addEventListener("click", function() {
-    if (proyectoEliminar) {
-      window.location.href = "/eliminar_proyecto/" + proyectoEliminar;
+        document
+            .getElementById("popupEliminar")
+            .classList.add("active");
     }
-  });
-}
+
+    function cerrarPopupEliminar() {
+
+        document
+            .getElementById("popupEliminar")
+            .classList.remove("active");
+
+        formularioEliminar = null;
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const btnConfirmar =
+            document.getElementById("btnConfirmarEliminar");
+
+        if (btnConfirmar) {
+
+            btnConfirmar.addEventListener("click", function () {
+
+                if (formularioEliminar) {
+                    formularioEliminar.submit();
+                }
+
+            });
+
+        }
+
+    });
 
 // ======================
 // VENTAS: ANTICIPO Y SALDO
