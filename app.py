@@ -79,9 +79,7 @@ app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER')
 
-# Brevo API (recomendado en Render Free porque usa HTTPS/443, no SMTP)
-# Variables necesarias en Render:
-# BREVO_API_KEY, BREVO_SENDER_EMAIL, BREVO_SENDER_NAME
+
 app.config['BREVO_API_KEY'] = os.getenv('BREVO_API_KEY')
 app.config['BREVO_SENDER_EMAIL'] = os.getenv('BREVO_SENDER_EMAIL')
 app.config['BREVO_SENDER_NAME'] = os.getenv('BREVO_SENDER_NAME') or 'CiviWeb Manager'
@@ -165,7 +163,6 @@ with app.app_context():
 
 
 def es_contrasena_segura(password):
-    # Al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial
     if (len(password) < 8 or
         not re.search(r"[A-Z]", password) or
         not re.search(r"[a-z]", password) or
@@ -174,8 +171,6 @@ def es_contrasena_segura(password):
         return False
     return True
 
-# def enviar_correo_simulado(destino, asunto, cuerpo):
-#     print(f"\n--- Simulación de envío de correo ---\nPara: {destino}\nAsunto: {asunto}\nCuerpo: {cuerpo}\n------------------------------\n")
 
 def enviar_correo_brevo(destinatario, asunto, cuerpo):
     """Envía correo usando Brevo API por HTTPS.
@@ -1104,9 +1099,7 @@ def ventas_admin():
     conexion = mysql.connection
     cur = conexion.cursor()
 
-    # =========================
-    # FILTROS Y PAGINACIÓN
-    # =========================
+
     buscar = request.args.get('buscar', '')
     metodo_pago = request.args.get('metodo_pago', '')
     pagina = request.args.get('pagina', request.args.get('page', 1, type=int), type=int)
@@ -1117,9 +1110,7 @@ def ventas_admin():
     tiene_fecha = tabla_tiene_columna(cur, 'ventas', 'fecha')
     tiene_tipo_negocio = tabla_tiene_columna(cur, 'inmuebles', 'tipo_negocio')
 
-    # =========================
-    # REGISTRAR VENTA
-    # =========================
+
     if request.method == 'POST':
 
         try:
@@ -1188,9 +1179,7 @@ def ventas_admin():
 
         return redirect(url_for('ventas_admin'))
 
-    # =========================
-    # INMUEBLES DISPONIBLES
-    # =========================
+
     filtro_tipo_negocio = "AND tipo_negocio = 'Venta'" if tiene_tipo_negocio else ""
     cur.execute(f"""
         SELECT *
@@ -1201,9 +1190,7 @@ def ventas_admin():
     """)
     inmuebles_disponibles = cur.fetchall()
 
-    # =========================
-    # CLIENTES
-    # =========================
+
     cur.execute("""
         SELECT *
         FROM clientes_inmobiliaria
@@ -1517,7 +1504,6 @@ def clientes_admin():
         valores.append(tipo_interes)
     query += " ORDER BY id DESC "
 
-    # ESTADÍSTICAS
     cur.execute("SELECT COUNT(*) AS total FROM clientes_inmobiliaria")
     total_clientes = cur.fetchone()['total']
 
@@ -1537,7 +1523,6 @@ def clientes_admin():
 
     clientes_arriendo = cur.fetchone()['total']
 
-    # PAGINACIÓN
     pagina = request.args.get('pagina', 1, type=int)
     por_pagina = 10
     offset = (pagina - 1) * por_pagina
@@ -1574,7 +1559,6 @@ def clientes_admin():
     cur.execute(count_query, count_valores)
     total_registros = cur.fetchone()['total']
 
-    # CONSULTA FINAL PAGINADA
     query += " LIMIT %s OFFSET %s "
     valores.extend([por_pagina, offset])
     cur.execute(query, valores)
@@ -1802,7 +1786,6 @@ def editar_proyecto(id):
 
     cur = mysql.connection.cursor()
 
-    # Buscar proyecto
     cur.execute("""
         SELECT *
         FROM proyectos_constructora
@@ -1971,9 +1954,6 @@ def reservas_admin():
 
         return redirect(url_for('reservas_admin'))
 
-    # =========================
-    # DATOS FORMULARIO
-    # =========================
 
     cur.execute("""
         SELECT *
@@ -1994,16 +1974,12 @@ def reservas_admin():
 
     tiene_estado_reserva = tabla_tiene_columna(cur, 'reservas', 'estado')
 
-    # =========================
-    # FILTROS
-    # =========================
+
 
     buscar = request.args.get('buscar', '')
     estado = request.args.get('estado', '')
 
-    # =========================
-    # PAGINACIÓN
-    # =========================
+
 
     pagina = request.args.get('pagina', 1, type=int)
 
@@ -2056,9 +2032,6 @@ def reservas_admin():
 
     query += " ORDER BY r.fecha_reserva DESC "
 
-    # =========================
-    # CONTAR REGISTROS
-    # =========================
 
     count_query = """
         SELECT COUNT(*) AS total
@@ -2106,9 +2079,7 @@ def reservas_admin():
         total_registros + por_pagina - 1
     ) // por_pagina
 
-    # =========================
-    # CONSULTA FINAL
-    # =========================
+
 
     query += " LIMIT %s OFFSET %s "
 
@@ -2368,7 +2339,6 @@ def clientes_constructora():
             busqueda
         ])
 
-    # FILTRO TIPO
     if tipo:
 
         sql += " AND c.tipo = %s "
@@ -2384,7 +2354,6 @@ def clientes_constructora():
     cur.execute(sql, valores)
     resultados = cur.fetchall()
 
-    # TOTAL
     cur.execute("SELECT FOUND_ROWS() AS total")
     total = cur.fetchone()['total']
     total_paginas = (total + por_pagina - 1) // por_pagina
@@ -2509,7 +2478,6 @@ def servicios_constructivos():
     finally:
         cur.close()
 
-    # ICONOS Y DESCRIPCIONES
     iconos = {
         "Obras civiles": "fa fa-helmet-safety",
         "Construcción residencial": "fa fa-house",
@@ -2609,7 +2577,6 @@ def reporte_pdf():
     pdf = canvas.Canvas(buffer, pagesize=letter)
     ancho, alto = letter
 
-    # Encabezado
     pdf.setFillColor(colors.HexColor("#111111"))
     pdf.rect(0, alto - 90, ancho, 90, fill=True, stroke=False)
 
@@ -2628,7 +2595,6 @@ def reporte_pdf():
     pdf.setFont("Helvetica", 10)
     pdf.drawString(2 * cm, alto - 145, f"Fecha de generacion: {datetime.now().strftime('%d/%m/%Y %H:%M')}")
 
-    # Indicadores
     y = alto - 190
 
     indicadores = [
@@ -2660,7 +2626,6 @@ def reporte_pdf():
 
         y -= 38
 
-    # Ultimas ventas
     y -= 10
     pdf.setFillColor(colors.HexColor("#981313"))
     pdf.setFont("Helvetica-Bold", 13)
@@ -2703,7 +2668,6 @@ def reporte_pdf():
 
         y -= 18
 
-    # Pie
     pdf.setFillColor(colors.gray)
     pdf.setFont("Helvetica", 8)
     pdf.drawString(2 * cm, 35, "Reporte generado automaticamente por CiviWeb Manager.")
@@ -2727,19 +2691,15 @@ def reportes_admin():
 
     cur = mysql.connection.cursor()
 
-    # TOTAL INGRESOS
     cur.execute("SELECT COALESCE(SUM(valor_venta), 0) AS total FROM ventas")
     ingresos = cur.fetchone()['total']
 
-    # TOTAL VENTAS REGISTRADAS
     cur.execute("SELECT COUNT(*) AS total FROM ventas")
     total_ventas = cur.fetchone()['total']
 
-    # INMUEBLES DISPONIBLES
     cur.execute("SELECT COUNT(*) AS total FROM inmuebles WHERE estado = 'Disponible'")
     inmuebles_disponibles = cur.fetchone()['total']
 
-    # ESTADO DE INMUEBLES
     cur.execute("""
         SELECT 
             COALESCE(SUM(CASE WHEN estado = 'Disponible' THEN 1 ELSE 0 END), 0) AS disponibles,
@@ -2749,7 +2709,6 @@ def reportes_admin():
     """)
     estado_inmuebles = cur.fetchone()
 
-    # INGRESOS MENSUALES
     cur.execute("""
         SELECT MONTH(fecha) AS mes,
                COALESCE(SUM(valor_venta), 0) AS ingresos
@@ -2761,7 +2720,6 @@ def reportes_admin():
 
     cur.close()
 
-    # Como no vas a usar compras, egresos queda vacío
     egresos_grafico = []
 
     return render_template(
@@ -2771,7 +2729,6 @@ def reportes_admin():
         inmuebles_disponibles=inmuebles_disponibles,
         ingresos_mensuales=ingresos_mensuales,
 
-        # Estos nombres los dejo para que el HTML no dé error con tojson
         estado_inmuebles=estado_inmuebles,
         ingresos_grafico=ingresos_mensuales,
         egresos_grafico=egresos_grafico
