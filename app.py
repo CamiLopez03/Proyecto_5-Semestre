@@ -71,14 +71,6 @@ app.config['MYSQL_SSL'] = {'ssl': {}}
 mysql = MySQL(app)
 
 
-app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
-app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT'))
-app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS') == 'True'
-app.config['MAIL_USE_SSL'] = os.getenv('MAIL_USE_SSL') == 'True'
-app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
-app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
-app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER')
-
 # Brevo API (recomendado en Render Free porque usa HTTPS/443, no SMTP)
 # Variables necesarias en Render:
 # BREVO_API_KEY, BREVO_SENDER_EMAIL, BREVO_SENDER_NAME
