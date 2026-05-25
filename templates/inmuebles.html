@@ -100,17 +100,27 @@
 
                 <p>{{ i.descripcion }}</p>
 
-                <div class="acciones">
+                <div class="actions">
                     <a class="edit" href="{{ url_for('editar_inmueble', id=i.id) }}">
                         <i class="fa fa-pen"></i> Editar
                     </a>
 
-                    <a class="delete"
-                    href="#"
-                    data-url="{{ url_for('eliminar_inmueble', id=i.id) }}"
-                    onclick="abrirModalEliminar(this.dataset.url)">
-                    <i class="fa fa-trash"></i> Eliminar
-                </a>
+                    <form action="{{ url_for('eliminar_inmueble', id=i.id) }}" method="POST">
+
+                        <button
+                            type="button"
+                            class="delete"
+                            onclick="abrirPopupEliminar(
+                                this.closest('form'),
+                                '¿Eliminar proyecto?',
+                                'Esta acción eliminarará el inmueble permanentemente.'
+                            )">
+
+                            <i class="fa fa-trash"></i>
+                            Eliminar
+
+                        </button>
+                    </form>
                 </div>
             </div>
 
@@ -124,43 +134,5 @@
         <p>Cuando registres una casa, apartamento o lote aparecerá en esta sección.</p>
     </div>
     {% endif %}
-
-
-
-<div class="modal-eliminar" id="modalEliminar">
-    <div class="modal-card">
-        <div class="modal-icon">
-            <i class="fa fa-trash"></i>
-        </div>
-
-        <h2>¿Eliminar inmueble?</h2>
-
-        <p>
-            Esta acción eliminará el inmueble del sistema.
-            No podrás recuperarlo después.
-        </p>
-
-        <div class="modal-actions">
-            <button type="button" class="btn-cancelar" onclick="cerrarModalEliminar()">
-                Cancelar
-            </button>
-
-            <a href="#" id="btnConfirmarEliminar" class="btn-eliminar">
-                Sí, eliminar
-            </a>
-        </div>
-    </div>
-</div>
-
-<script>
-    function abrirModalEliminar(url) {
-        document.getElementById('btnConfirmarEliminar').href = url;
-        document.getElementById('modalEliminar').classList.add('active');
-    }
-
-    function cerrarModalEliminar() {
-        document.getElementById('modalEliminar').classList.remove('active');
-    }
-</script>
 
 {% endblock %}

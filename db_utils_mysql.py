@@ -86,7 +86,6 @@ def init_mysql_db(mysql):
     mysql.connection.commit()
     cur.close()
 
-    # Migraciones seguras: no borran datos
     asegurar_columna(mysql, "usuarios", "activo", "TINYINT DEFAULT 1")
     asegurar_columna(mysql, "ventas", "porcentaje_anticipo", "INT DEFAULT 0")
     asegurar_columna(mysql, "ventas", "fecha", "DATE NULL")
@@ -99,7 +98,6 @@ def init_mysql_db(mysql):
     asegurar_columna(mysql, "reservas", "estado", "VARCHAR(20) DEFAULT 'Activa'")
     asegurar_columna(mysql, "clientes_interesados", "fecha_contacto", "TIMESTAMP NULL")
 
-    # Corregir IDs sin AUTO_INCREMENT
     tablas_con_id = [
         "usuarios",
         "clientes_constructora",

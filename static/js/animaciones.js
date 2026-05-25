@@ -1,6 +1,4 @@
-// ======================
-// ANIMACIONES AOS
-// ======================
+
 if (typeof AOS !== "undefined") {
   AOS.init({
     duration: 1000,
@@ -8,9 +6,7 @@ if (typeof AOS !== "undefined") {
   });
 }
 
-// ======================
-// MAPA
-// ======================
+
 const mapElement = document.getElementById("map");
 
 if (mapElement && typeof L !== "undefined") {
@@ -141,9 +137,6 @@ if (mapElement && typeof L !== "undefined") {
   });
 }
 
-// ======================
-// FUNCIÓN SCROLL PROYECTOS
-// ======================
 window.irAProyecto = function(id) {
   const elemento = document.getElementById(id);
 
@@ -163,9 +156,6 @@ window.irAProyecto = function(id) {
   }
 };
 
-// ======================
-// FORMULARIO CONTACTO
-// ======================
 const form = document.querySelector(".contact-form");
 const popup = document.getElementById("custom-popup");
 const popupBtn = document.getElementById("popup-btn");
@@ -197,9 +187,7 @@ if (form && popup && popupBtn) {
   });
 }
 
-// ======================
-// CARRUSEL SERVICIOS PRINCIPAL
-// ======================
+
 let servicioActual = 0;
 
 function mostrarServicio(index) {
@@ -241,9 +229,7 @@ function irServicio(index) {
   mostrarServicio(index);
 }
 
-// ======================
-// CARRUSEL ANTIGUO, SI EXISTE
-// ======================
+
 const track = document.querySelector(".slider-track");
 const slides = document.querySelectorAll(".service");
 const nextBtn = document.querySelector(".next");
@@ -279,9 +265,6 @@ if (track && slides.length > 0 && nextBtn && prevBtn) {
   });
 }
 
-// ======================
-// MODAL CLIENTES CONSTRUCTORA
-// ======================
 const modal = document.getElementById("client-modal");
 const openBtn = document.getElementById("open-client-modal");
 const closeBtn = document.getElementById("close-client-modal");
@@ -306,9 +289,7 @@ if (modal) {
   });
 }
 
-// ======================
-// POPUP ELIMINAR
-// ======================
+
     let formularioEliminar = null;
 
     function abrirPopupEliminar(formulario,
@@ -353,9 +334,8 @@ if (modal) {
 
     });
 
-// ======================
-// VENTAS: ANTICIPO Y SALDO
-// ======================
+
+    
 const inmuebleSelect = document.getElementById("inmuebleSelect");
 const valorVenta = document.getElementById("valorVenta");
 const slider = document.getElementById("anticipoSlider");
